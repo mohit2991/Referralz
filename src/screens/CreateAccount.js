@@ -7,21 +7,25 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { TextInput } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
-const Width = Dimensions.get("window").width;
-const Height = Dimensions.get("window").height;
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TextInput } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+const Width = Dimensions.get('window').width;
+const Height = Dimensions.get('window').height;
+
+import useCrud from '../hooks/useCrud';
+
 const CreateAccount = () => {
   const navigation = useNavigation();
+  const { create, loading, error } = useCrud('/api/user');
 
-  const [email, setEmail] = useState("");
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [confirmpassword, setConfirmpassword] = useState("");
-  const [companycode, setCompanycode] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [confirmpassword, setConfirmpassword] = useState('');
+  const [companycode, setCompanycode] = useState('');
+  const [password, setPassword] = useState('');
   const [describe, setDescribe] = useState(true);
   const [havecompanycode, setHavecompanycode] = useState(true);
   const [passwordtrue, setPasswordtrue] = useState(true);
@@ -31,11 +35,13 @@ const CreateAccount = () => {
     setTimeout(() => {}, 3000);
   }, []);
   const handleClickForSignin = () => {
-    navigation.navigate("Login");
+    navigation.navigate('Login');
   };
+
   const clickHomeowner = () => {
     setDescribe(false);
   };
+
   const clickReferalparter = () => {
     setDescribe(true);
   };
@@ -47,8 +53,9 @@ const CreateAccount = () => {
     setHavecompanycode(false);
   };
   const hitForSuccessfullySignup = () => {
-    navigation.navigate("SuccessfullySignup");
+    navigation.navigate('SuccessfullySignup');
   };
+
   const clickChangePasswordIcon = () => {
     if (passwordtrue) {
       setPasswordtrue(false);
@@ -56,6 +63,7 @@ const CreateAccount = () => {
       setPasswordtrue(true);
     }
   };
+
   const clickChangeConfirmPasswordIcon = () => {
     if (confirmpasswordtrue) {
       setConfirmpasswordtrue(false);
@@ -63,16 +71,39 @@ const CreateAccount = () => {
       setConfirmpasswordtrue(true);
     }
   };
+
+  const handleRegister = async () => {
+    const newUser = {
+      firstName: "Mohit",
+      lastName: "Chauhan",
+      emailId: "mohit2991kumar@gmail.com",
+      contactNo: "8279697551",
+      birthDate: null,
+      type: "SUPER_ADMIN",
+      status: "CREATED",
+      address: {
+        address: "Sector-16",
+        name: "Noida",
+        city: "Noida",
+        postalCode: 247121,
+        state: "UP",
+        country: "India"
+      },
+      paymentMethod: "CHECK"
+    } ;
+    const createdUser = await create(newUser);
+    console.log('Created user:', createdUser);
+  };
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <SafeAreaView></SafeAreaView>
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: 'center' }}>
         <Text
           style={{
             fontSize: 24,
-            color: "#3B4248",
-            fontWeight: "700",
-            fontFamily: "Montserrat-Regular",
+            color: '#3B4248',
+            fontWeight: '700',
+            fontFamily: 'Montserrat-Regular',
             marginTop: 26,
           }}
         >
@@ -81,9 +112,9 @@ const CreateAccount = () => {
         <Text
           style={{
             fontSize: 16,
-            color: "#555B61",
-            fontWeight: "400",
-            fontFamily: "Montserrat-Regular",
+            color: '#555B61',
+            fontWeight: '400',
+            fontFamily: 'Montserrat-Regular',
             marginTop: 12,
           }}
         >
@@ -96,7 +127,7 @@ const CreateAccount = () => {
             value={email}
             onChangeText={(email) => setEmail(email)}
             underlineColor="transparent"
-            theme={{ colors: { primary: "#ffffff" } }}
+            theme={{ colors: { primary: '#ffffff' } }}
           />
         </View>
         <View style={styles.inputStyle}>
@@ -106,7 +137,7 @@ const CreateAccount = () => {
             value={firstname}
             onChangeText={(firstname) => setFirstname(firstname)}
             underlineColor="transparent"
-            theme={{ colors: { primary: "#ffffff" } }}
+            theme={{ colors: { primary: '#ffffff' } }}
           />
         </View>
         <View style={styles.inputStyle}>
@@ -116,33 +147,33 @@ const CreateAccount = () => {
             value={lastname}
             onChangeText={(lastname) => setLastname(lastname)}
             underlineColor="transparent"
-            theme={{ colors: { primary: "#ffffff" } }}
+            theme={{ colors: { primary: '#ffffff' } }}
           />
         </View>
         <View style={styles.inputStyle}>
           <TextInput
             style={{
               width: Width / 1.22,
-              backgroundColor: "#FFFFFF",
+              backgroundColor: '#FFFFFF',
               height: 50,
               borderRadius: 9,
-              color: "#9B9EA1",
+              color: '#9B9EA1',
               fontSize: 16,
-              fontWeight: "400",
+              fontWeight: '400',
             }}
             label="Password"
             value={password}
             onChangeText={(password) => setPassword(password)}
             secureTextEntry={passwordtrue}
             underlineColor="transparent"
-            theme={{ colors: { primary: "#ffffff" } }}
+            theme={{ colors: { primary: '#ffffff' } }}
           />
           <TouchableOpacity style={{}} onPress={clickChangePasswordIcon}>
             <Image
               source={
                 passwordtrue
-                  ? require("../images/password_icon.png")
-                  : require("../images/radio_tick.png")
+                  ? require('../images/password_icon.png')
+                  : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24, marginRight: 10 }}
             />
@@ -152,13 +183,13 @@ const CreateAccount = () => {
           <TextInput
             style={{
               width: Width / 1.22,
-              backgroundColor: "#FFFFFF",
+              backgroundColor: '#FFFFFF',
               height: 50,
               borderRadius: 9,
-              color: "#9B9EA1",
+              color: '#9B9EA1',
               fontSize: 16,
-              fontFamily: "Montserrat-Regular",
-              fontWeight: "400",
+              fontFamily: 'Montserrat-Regular',
+              fontWeight: '400',
             }}
             label="Confirm Password"
             value={confirmpassword}
@@ -167,28 +198,28 @@ const CreateAccount = () => {
             }
             secureTextEntry={confirmpasswordtrue}
             underlineColor="transparent"
-            theme={{ colors: { primary: "#ffffff" } }}
+            theme={{ colors: { primary: '#ffffff' } }}
           />
           <TouchableOpacity style={{}} onPress={clickChangeConfirmPasswordIcon}>
             <Image
               source={
                 confirmpasswordtrue
-                  ? require("../images/password_icon.png")
-                  : require("../images/radio_tick.png")
+                  ? require('../images/password_icon.png')
+                  : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24, marginRight: 10 }}
             />
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: 'center' }}>
         <View style={{ width: Width / 1.1, marginTop: 20 }}>
           <Text
             style={{
               fontSize: 17,
-              color: "black",
-              fontFamily: "Montserrat-Regular",
-              fontWeight: "600",
+              color: 'black',
+              fontFamily: 'Montserrat-Regular',
+              fontWeight: '600',
               marginTop: 12,
             }}
           >
@@ -196,9 +227,9 @@ const CreateAccount = () => {
           </Text>
           <TouchableOpacity
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               width: Width / 1.1,
-              justifyContent: "space-between",
+              justifyContent: 'space-between',
               marginTop: 12,
             }}
             onPress={clickHomeowner}
@@ -206,9 +237,9 @@ const CreateAccount = () => {
             <Text
               style={{
                 fontSize: 16,
-                color: "#3B4248",
-                fontFamily: "Montserrat-Regular",
-                fontWeight: "400",
+                color: '#3B4248',
+                fontFamily: 'Montserrat-Regular',
+                fontWeight: '400',
               }}
             >
               Homeowner
@@ -216,17 +247,17 @@ const CreateAccount = () => {
             <Image
               source={
                 describe == true
-                  ? require("../images/radio_empty.png")
-                  : require("../images/radio_tick.png")
+                  ? require('../images/radio_empty.png')
+                  : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24 }}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               width: Width / 1.1,
-              justifyContent: "space-between",
+              justifyContent: 'space-between',
               marginTop: 12,
             }}
             onPress={clickReferalparter}
@@ -234,9 +265,9 @@ const CreateAccount = () => {
             <Text
               style={{
                 fontSize: 16,
-                color: "#3B4248",
-                fontFamily: "Montserrat-Regular",
-                fontWeight: "400",
+                color: '#3B4248',
+                fontFamily: 'Montserrat-Regular',
+                fontWeight: '400',
               }}
             >
               Referral partner
@@ -244,8 +275,8 @@ const CreateAccount = () => {
             <Image
               source={
                 describe == false
-                  ? require("../images/radio_empty.png")
-                  : require("../images/radio_tick.png")
+                  ? require('../images/radio_empty.png')
+                  : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24 }}
             />
@@ -254,14 +285,14 @@ const CreateAccount = () => {
       </View>
       {describe == true ? (
         <View>
-          <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: 'center' }}>
             <View style={{ width: Width / 1.1, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 17,
-                  color: "black",
-                  fontFamily: "Montserrat-Regular",
-                  fontWeight: "600",
+                  color: 'black',
+                  fontFamily: 'Montserrat-Regular',
+                  fontWeight: '600',
                   marginTop: 12,
                 }}
               >
@@ -269,9 +300,9 @@ const CreateAccount = () => {
               </Text>
               <TouchableOpacity
                 style={{
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   width: Width / 1.1,
-                  justifyContent: "space-between",
+                  justifyContent: 'space-between',
                   marginTop: 12,
                 }}
                 onPress={clickHaveCompanyCode}
@@ -279,9 +310,9 @@ const CreateAccount = () => {
                 <Text
                   style={{
                     fontSize: 16,
-                    color: "#3B4248",
-                    fontFamily: "Montserrat-Regular",
-                    fontWeight: "400",
+                    color: '#3B4248',
+                    fontFamily: 'Montserrat-Regular',
+                    fontWeight: '400',
                   }}
                 >
                   Yes
@@ -289,17 +320,17 @@ const CreateAccount = () => {
                 <Image
                   source={
                     havecompanycode == true
-                      ? require("../images/radio_tick.png")
-                      : require("../images/radio_empty.png")
+                      ? require('../images/radio_tick.png')
+                      : require('../images/radio_empty.png')
                   }
                   style={{ height: 24, width: 24 }}
                 />
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   width: Width / 1.1,
-                  justifyContent: "space-between",
+                  justifyContent: 'space-between',
                   marginTop: 12,
                 }}
                 onPress={clickDontHaveCompanyCode}
@@ -307,9 +338,9 @@ const CreateAccount = () => {
                 <Text
                   style={{
                     fontSize: 16,
-                    color: "#3B4248",
-                    fontFamily: "Montserrat-Regular",
-                    fontWeight: "400",
+                    color: '#3B4248',
+                    fontFamily: 'Montserrat-Regular',
+                    fontWeight: '400',
                   }}
                 >
                   No
@@ -317,8 +348,8 @@ const CreateAccount = () => {
                 <Image
                   source={
                     havecompanycode == true
-                      ? require("../images/radio_empty.png")
-                      : require("../images/radio_tick.png")
+                      ? require('../images/radio_empty.png')
+                      : require('../images/radio_tick.png')
                   }
                   style={{ height: 24, width: 24 }}
                 />
@@ -326,7 +357,7 @@ const CreateAccount = () => {
             </View>
           </View>
           {havecompanycode == true ? (
-            <View style={{ alignItems: "center" }}>
+            <View style={{ alignItems: 'center' }}>
               <View style={styles.inputStyle}>
                 <TextInput
                   style={styles.input}
@@ -334,7 +365,7 @@ const CreateAccount = () => {
                   value={companycode}
                   onChangeText={(companycode) => setCompanycode(companycode)}
                   underlineColor="transparent"
-                  theme={{ colors: { primary: "#ffffff" } }}
+                  theme={{ colors: { primary: '#ffffff' } }}
                 />
               </View>
             </View>
@@ -345,45 +376,45 @@ const CreateAccount = () => {
       ) : (
         <View></View>
       )}
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: 'center' }}>
         <View
-          style={{ alignItems: "center", width: Width / 1.1, marginTop: 20 }}
+          style={{ alignItems: 'center', width: Width / 1.1, marginTop: 20 }}
         >
           <Text
             style={{
               fontSize: 16,
-              color: "#3B4248",
-              fontFamily: "Montserrat-Regular",
-              fontWeight: "400",
+              color: '#3B4248',
+              fontFamily: 'Montserrat-Regular',
+              fontWeight: '400',
               marginTop: 12,
             }}
           >
-            By clicking “Agree and continue”, You agree to Referralz’s{" "}
+            By clicking “Agree and continue”, You agree to Referralz’s{' '}
             <Text
               style={{
                 fontSize: 16,
-                color: "#3B4248",
-                fontFamily: "Montserrat-Regular",
-                fontWeight: "400",
+                color: '#3B4248',
+                fontFamily: 'Montserrat-Regular',
+                fontWeight: '400',
                 marginTop: 12,
-                textDecorationLine: "underline",
+                textDecorationLine: 'underline',
               }}
             >
-              Terms of Service{" "}
-            </Text>{" "}
-            and{" "}
+              Terms of Service{' '}
+            </Text>{' '}
+            and{' '}
             <Text
               style={{
                 fontSize: 15,
-                color: "black",
-                fontFamily: "Montserrat-Regular",
-                fontWeight: "400",
+                color: 'black',
+                fontFamily: 'Montserrat-Regular',
+                fontWeight: '400',
                 marginTop: 12,
-                textDecorationLine: "underline",
+                textDecorationLine: 'underline',
               }}
             >
-              Privacy Policy.{" "}
-            </Text>{" "}
+              Privacy Policy.{' '}
+            </Text>{' '}
           </Text>
         </View>
         <TouchableOpacity
@@ -392,26 +423,30 @@ const CreateAccount = () => {
             borderRadius: 8,
             height: 52,
             marginTop: 20,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#E16032",
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#E16032',
           }}
           onPress={hitForSuccessfullySignup}
         >
           <Text
             style={{
               fontSize: 16,
-              color: "#FFFFFF",
-              fontFamily: "Montserrat-Regular",
-              fontWeight: "400",
+              color: '#FFFFFF',
+              fontFamily: 'Montserrat-Regular',
+              fontWeight: '400',
             }}
+            onPress={handleRegister}
+            disabled={loading}
           >
             Create account
           </Text>
+          {loading && <Text>Loading...</Text>}
+          {error && <Text>Error: {error.message}</Text>}
         </TouchableOpacity>
         <View
           style={{
-            alignItems: "center",
+            alignItems: 'center',
             width: Width / 1.1,
             marginTop: 20,
             marginBottom: 30,
@@ -420,10 +455,10 @@ const CreateAccount = () => {
           <Text
             style={{
               fontSize: 16,
-              color: "#3B4248",
-              fontFamily: "Montserrat-Regular",
-              fontWeight: "400",
-              alignSelf: "center",
+              color: '#3B4248',
+              fontFamily: 'Montserrat-Regular',
+              fontWeight: '400',
+              alignSelf: 'center',
             }}
           >
             Already have an account
@@ -434,11 +469,11 @@ const CreateAccount = () => {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "#3B4248",
-                  fontFamily: "Montserrat-Regular",
-                  fontWeight: "400",
-                  alignSelf: "center",
-                  textDecorationLine: "underline",
+                  color: '#3B4248',
+                  fontFamily: 'Montserrat-Regular',
+                  fontWeight: '400',
+                  alignSelf: 'center',
+                  textDecorationLine: 'underline',
                   marginLeft: 1,
                 }}
               >
@@ -451,28 +486,29 @@ const CreateAccount = () => {
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   inputStyle: {
     width: Width / 1.1,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#3B4248",
+    borderColor: '#3B4248',
     height: 56,
     marginTop: 18,
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
   },
   input: {
     width: Width / 1.11,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     height: 50,
     borderRadius: 9,
-    color: "#9B9EA1",
+    color: '#9B9EA1',
     fontSize: 16,
-    fontWeight: "400",
-    fontFamily: "Montserrat-Regular",
+    fontWeight: '400',
+    fontFamily: 'Montserrat-Regular',
   },
 });
 

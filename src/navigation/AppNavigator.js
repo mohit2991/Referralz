@@ -1,13 +1,13 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import Splash from "../screens/Splash";
-import CreateAccount from "../screens/CreateAccount";
-import Login from "../screens/Login";
-import ForgotPassword from "../screens/ForgotPassword";
-import SuccessfullySignup from "../screens/SuccessfullySignup";
-import InboxCheck from "../screens/InboxCheck";
+import { View, Text } from 'react-native';
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import Splash from '../screens/Splash';
+import CreateAccount from '../screens/CreateAccount';
+import Login from '../screens/Login';
+import ForgotPassword from '../screens/ForgotPassword';
+import SuccessfullySignup from '../screens/SuccessfullySignup';
+import InboxCheck from '../screens/InboxCheck';
 
 const Stack = createStackNavigator();
 const AppNavigator = () => {
