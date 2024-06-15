@@ -1,39 +1,47 @@
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Dimensions,
-  SafeAreaView,
-  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  Dimensions,
+  SafeAreaView
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-const Width = Dimensions.get('window').width;
-const Height = Dimensions.get('window').height;
 
-import useCrud from '../hooks/useCrud';
+import useApi from '../hooks/useApi';
+
+const Width = Dimensions.get('window').width;
 
 const CreateAccount = () => {
   const navigation = useNavigation();
-  const { create, loading, error } = useCrud('/api/user');
+  const { create, loading, error } = useApi('api/user');
 
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
-  const [confirmpassword, setConfirmpassword] = useState('');
   const [companycode, setCompanycode] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmpassword, setConfirmpassword] = useState('');
   const [describe, setDescribe] = useState(true);
   const [havecompanycode, setHavecompanycode] = useState(true);
   const [passwordtrue, setPasswordtrue] = useState(true);
   const [confirmpasswordtrue, setConfirmpasswordtrue] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => {}, 3000);
-  }, []);
+  useEffect(()=>{
+    if(email !== "" && firstname !=="" && lastname !== "" && password !== "" && confirmpassword !== ""){
+      if(password === confirmpassword){
+        setIsButtonDisabled(false)
+      }else{
+        setIsButtonDisabled(true)
+      }
+    }
+  },[email,firstname,lastname,password,confirmpassword])
+
   const handleClickForSignin = () => {
     navigation.navigate('Login');
   };
@@ -45,6 +53,7 @@ const CreateAccount = () => {
   const clickReferalparter = () => {
     setDescribe(true);
   };
+
   const clickHaveCompanyCode = () => {
     setHavecompanycode(true);
   };
@@ -52,6 +61,7 @@ const CreateAccount = () => {
   const clickDontHaveCompanyCode = () => {
     setHavecompanycode(false);
   };
+
   const hitForSuccessfullySignup = () => {
     navigation.navigate('SuccessfullySignup');
   };
@@ -73,10 +83,12 @@ const CreateAccount = () => {
   };
 
   const handleRegister = async () => {
+    console.log(">>>> mohit register");
     const newUser = {
-      firstName: "Mohit",
-      lastName: "Chauhan",
-      emailId: "mohit2991kumar@gmail.com",
+      firstName,
+      lastName,
+      emailId: email,
+      password: password,
       contactNo: "8279697551",
       birthDate: null,
       type: "SUPER_ADMIN",
@@ -90,13 +102,30 @@ const CreateAccount = () => {
         country: "India"
       },
       paymentMethod: "CHECK"
-    } ;
+    };
+
     const createdUser = await create(newUser);
     console.log('Created user:', createdUser);
+
+    if (!error) {
+      // Navigate to the success screen if registration is successful
+      navigation.navigate('SuccessfullySignup');
+    }
   };
+
+  // useEffect(()=>{
+  //   if(error){
+  //     Toast.show({
+  //       type: 'error',
+  //       text2: error.message
+  //     });
+  //   }
+    
+  // }, [error])
+ 
+  
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <SafeAreaView></SafeAreaView>
       <View style={{ alignItems: 'center' }}>
         <Text
           style={{
@@ -427,7 +456,6 @@ const CreateAccount = () => {
             justifyContent: 'center',
             backgroundColor: '#E16032',
           }}
-          onPress={hitForSuccessfullySignup}
         >
           <Text
             style={{
@@ -437,7 +465,7 @@ const CreateAccount = () => {
               fontWeight: '400',
             }}
             onPress={handleRegister}
-            disabled={loading}
+            disabled={isButtonDisabled}
           >
             Create account
           </Text>

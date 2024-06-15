@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create an instance of axios with custom configurations
 const api = axios.create({
-  baseURL: 'http://34.46.87.137:8082', // Replace with your API base URL
+  baseURL: 'http://34.46.87.137:8082/', // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
   },

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../services/api';
 
-const useCrud = (baseUrl) => {
+const useApi = (baseUrl) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -60,4 +60,4 @@ const useCrud = (baseUrl) => {
   return { create, read, update, remove, loading, error };
 };
 
-export default useCrud;
+export default useApi;
