@@ -24,6 +24,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [keeplogin, setKeeplogin] = useState(true);
   const [passwordtrue, setPasswordtrue] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {}, []);
   const handleClickForSignup = () => {
@@ -50,6 +51,14 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (email !== '' && password !== '') {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+    }
+  }, [email, password]);
+
   const handleLogin = async () => {
     const userPayload = {
       client_id: 'referralz_mobile',
@@ -60,10 +69,12 @@ const Login = () => {
 
     try {
       const response = await loginUser(userPayload);
+      const { access_token } = response.data;
+      console.log('>>>>>> mohit', response);
 
-      if (response.data.access_token) {
+      if (access_token) {
         // Store the token in AsyncStorage
-        // await AsyncStorage.setItem('userToken', token);
+        await AsyncStorage.setItem('accessToken', access_token);
 
         // Navigate to another screen
         navigation.navigate('Dashboard');
@@ -184,6 +195,7 @@ const Login = () => {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#E16032',
+            backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
           }}
           onPress={handleLogin}
         >
@@ -194,6 +206,7 @@ const Login = () => {
               fontWeight: '400',
               fontFamily: 'Montserrat-Regular',
             }}
+            disabled={isButtonDisabled}
           >
             Continue
           </Text>

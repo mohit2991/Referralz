@@ -461,7 +461,7 @@ const CreateAccount = () => {
               fontFamily: 'Montserrat-Regular',
               fontWeight: '400',
             }}
-            // disabled={isButtonDisabled}
+            disabled={isButtonDisabled}
           >
             Create account
           </Text>

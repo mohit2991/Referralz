@@ -1,9 +1,9 @@
 // src/api/apiService.js
-import api from './api';
+import { api, authApi } from './api';
 
 export const loginUser = async (userPayload) => {
   try {
-    const response = await api.post(
+    const response = await authApi.post(
       '/realms/referralz/protocol/openid-connect/token',
       userPayload,
     );
@@ -16,6 +16,15 @@ export const loginUser = async (userPayload) => {
 export const createUser = async (userData) => {
   try {
     const response = await api.post('/user', userData);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const getUserDetails = async (userPayload) => {
+  try {
+    const response = await api.get('/user', userPayload);
     return response;
   } catch (error) {
     return handleError(error);
