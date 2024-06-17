@@ -9,10 +9,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 const Width = Dimensions.get('window').width;
 const Height = Dimensions.get('window').height;
+
+import { loginUser } from '../services/apiService';
+
 const Login = () => {
   const navigation = useNavigation();
 
@@ -25,9 +29,11 @@ const Login = () => {
   const handleClickForSignup = () => {
     navigation.navigate('CreateAccount');
   };
+
   const handleClickForForgotPassword = () => {
     navigation.navigate('ForgotPassword');
   };
+
   const clickKeepMeLogin = () => {
     if (keeplogin) {
       setKeeplogin(false);
@@ -35,11 +41,43 @@ const Login = () => {
       setKeeplogin(true);
     }
   };
+
   const clickChangePasswordIcon = () => {
     if (passwordtrue) {
       setPasswordtrue(false);
     } else {
       setPasswordtrue(true);
+    }
+  };
+
+  const handleLogin = async () => {
+    const userPayload = {
+      client_id: 'referralz_mobile',
+      grant_type: 'password',
+      username: email,
+      password,
+    };
+
+    try {
+      const response = await loginUser(userPayload);
+
+      if (response.data.access_token) {
+        // Store the token in AsyncStorage
+        // await AsyncStorage.setItem('userToken', token);
+
+        // Navigate to another screen
+        navigation.navigate('Dashboard');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: response.error_description,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: error.message,
+      });
     }
   };
   return (
@@ -147,6 +185,7 @@ const Login = () => {
             justifyContent: 'center',
             backgroundColor: '#E16032',
           }}
+          onPress={handleLogin}
         >
           <Text
             style={{

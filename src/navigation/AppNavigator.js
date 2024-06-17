@@ -8,6 +8,7 @@ import Login from '../screens/Login';
 import ForgotPassword from '../screens/ForgotPassword';
 import SuccessfullySignup from '../screens/SuccessfullySignup';
 import InboxCheck from '../screens/InboxCheck';
+import Dashboard from '../screens/Dashboard';
 
 const Stack = createStackNavigator();
 const AppNavigator = () => {
@@ -43,6 +44,11 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
           name="InboxCheck"
           component={InboxCheck}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Dashboard"
+          component={Dashboard}
         />
       </Stack.Navigator>
     </NavigationContainer>

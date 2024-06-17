@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Toast from 'react-native-toast-message';
 import {
   View,
   Text,
@@ -13,10 +14,7 @@ import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import PasswordIcon from './../images/password_icon.png';
 
-// import useApi from '../hooks/useApi';
-// import authService from '../services/apiService';
 import { createUser } from '../services/apiService';
-// import { useCreateUser } from './../hooks/useApi';
 
 const Width = Dimensions.get('window').width;
 
@@ -87,19 +85,6 @@ const CreateAccount = () => {
     }
   }, [email, firstname, lastname, password, confirmpassword]);
 
-  // useEffect(() => {
-  //   console.log('>>>>> response', data);
-  //   if (data) {
-  //     navigation.navigate('SuccessfullySignup');
-  //   }
-  // }, [data]);
-
-  // useEffect(() => {
-  //   if (error) {
-  //     console.log('>>>>> error', error);
-  //   }
-  // }, [error]);
-
   const handleRegister = async () => {
     const userPayload = {
       email_id: email,
@@ -114,29 +99,26 @@ const CreateAccount = () => {
       contact_no: null,
     };
 
-    console.log('>>>> mohit register', userPayload);
-
     try {
-      const response = await createUser(userData);
-      // navigation.navigate('SuccessfullySignup');
-      // const createdUser = await create(newUser);
-      console.log('Created user:', response);
+      const response = await createUser(userPayload);
 
-      // Navigate to the success screen if registration is successful
+      // after success
+      if (response.status == 201) {
+        navigation.navigate('SuccessfullySignup');
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: response.status === 400 ? response.data : response.error,
+        });
+      }
     } catch (error) {
-      console.error('Error creating user:', error);
-      // Optionally, you can set an error state here to display a message to the user
+      Toast.show({
+        type: 'error',
+        text1: 'Hello',
+        text2: error.message,
+      });
     }
   };
-  // useEffect(()=>{
-  //   if(error){
-  //     Toast.show({
-  //       type: 'error',
-  //       text2: error.message
-  //     });
-  //   }
-
-  // }, [error])
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
@@ -470,6 +452,7 @@ const CreateAccount = () => {
             justifyContent: 'center',
             backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
           }}
+          onPress={handleRegister}
         >
           <Text
             style={{
@@ -478,7 +461,6 @@ const CreateAccount = () => {
               fontFamily: 'Montserrat-Regular',
               fontWeight: '400',
             }}
-            onPress={handleRegister}
             // disabled={isButtonDisabled}
           >
             Create account
