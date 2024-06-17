@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Toast from 'react-native-toast-message';
 import {
   View,
   Text,
@@ -7,18 +8,18 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import PasswordIcon from './../images/password_icon.png';
 
-import useApi from '../hooks/useApi';
+import { createUser } from '../services/apiService';
 
 const Width = Dimensions.get('window').width;
 
 const CreateAccount = () => {
   const navigation = useNavigation();
-  const { create, loading, error } = useApi('api/user');
 
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
@@ -26,21 +27,11 @@ const CreateAccount = () => {
   const [companycode, setCompanycode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmpassword] = useState('');
-  const [describe, setDescribe] = useState(true);
+  const [describe, setDescribe] = useState(false);
   const [havecompanycode, setHavecompanycode] = useState(true);
   const [passwordtrue, setPasswordtrue] = useState(true);
   const [confirmpasswordtrue, setConfirmpasswordtrue] = useState(true);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-
-  useEffect(()=>{
-    if(email !== "" && firstname !=="" && lastname !== "" && password !== "" && confirmpassword !== ""){
-      if(password === confirmpassword){
-        setIsButtonDisabled(false)
-      }else{
-        setIsButtonDisabled(true)
-      }
-    }
-  },[email,firstname,lastname,password,confirmpassword])
 
   const handleClickForSignin = () => {
     navigation.navigate('Login');
@@ -62,10 +53,6 @@ const CreateAccount = () => {
     setHavecompanycode(false);
   };
 
-  const hitForSuccessfullySignup = () => {
-    navigation.navigate('SuccessfullySignup');
-  };
-
   const clickChangePasswordIcon = () => {
     if (passwordtrue) {
       setPasswordtrue(false);
@@ -82,48 +69,57 @@ const CreateAccount = () => {
     }
   };
 
+  useEffect(() => {
+    if (
+      email !== '' &&
+      firstname !== '' &&
+      lastname !== '' &&
+      password !== '' &&
+      confirmpassword !== ''
+    ) {
+      if (password === confirmpassword) {
+        setIsButtonDisabled(false);
+      } else {
+        setIsButtonDisabled(true);
+      }
+    }
+  }, [email, firstname, lastname, password, confirmpassword]);
+
   const handleRegister = async () => {
-    console.log(">>>> mohit register");
-    const newUser = {
-      firstName,
-      lastName,
-      emailId: email,
+    const userPayload = {
+      email_id: email,
+      first_name: firstname,
+      last_name: lastname,
       password: password,
-      contactNo: "8279697551",
-      birthDate: null,
-      type: "SUPER_ADMIN",
-      status: "CREATED",
-      address: {
-        address: "Sector-16",
-        name: "Noida",
-        city: "Noida",
-        postalCode: 247121,
-        state: "UP",
-        country: "India"
-      },
-      paymentMethod: "CHECK"
+      status: 'CREATED',
+      type: 'HOME_OWNER',
+      user_unique_code: companycode !== '' ? companycode : null,
+      address: null,
+      birth_date: null,
+      contact_no: null,
     };
 
-    const createdUser = await create(newUser);
-    console.log('Created user:', createdUser);
+    try {
+      const response = await createUser(userPayload);
 
-    if (!error) {
-      // Navigate to the success screen if registration is successful
-      navigation.navigate('SuccessfullySignup');
+      // after success
+      if (response.status == 201) {
+        navigation.navigate('SuccessfullySignup');
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: response.status === 400 ? response.data : response.error,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Hello',
+        text2: error.message,
+      });
     }
   };
 
-  // useEffect(()=>{
-  //   if(error){
-  //     Toast.show({
-  //       type: 'error',
-  //       text2: error.message
-  //     });
-  //   }
-    
-  // }, [error])
- 
-  
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <View style={{ alignItems: 'center' }}>
@@ -201,7 +197,7 @@ const CreateAccount = () => {
             <Image
               source={
                 passwordtrue
-                  ? require('../images/password_icon.png')
+                  ? PasswordIcon
                   : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24, marginRight: 10 }}
@@ -233,7 +229,7 @@ const CreateAccount = () => {
             <Image
               source={
                 confirmpasswordtrue
-                  ? require('../images/password_icon.png')
+                  ? PasswordIcon
                   : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24, marginRight: 10 }}
@@ -454,8 +450,9 @@ const CreateAccount = () => {
             marginTop: 20,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#E16032',
+            backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
           }}
+          onPress={handleRegister}
         >
           <Text
             style={{
@@ -464,13 +461,10 @@ const CreateAccount = () => {
               fontFamily: 'Montserrat-Regular',
               fontWeight: '400',
             }}
-            onPress={handleRegister}
             disabled={isButtonDisabled}
           >
             Create account
           </Text>
-          {loading && <Text>Loading...</Text>}
-          {error && <Text>Error: {error.message}</Text>}
         </TouchableOpacity>
         <View
           style={{

@@ -1,63 +1,30 @@
 import { useState } from 'react';
-import api from '../services/api';
+import axiosInstance from '../services/api';
 
-const useApi = (baseUrl) => {
-  const [loading, setLoading] = useState(false);
+const useApi = (apiFunc) => {
+  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const create = async (data) => {
+  const request = async (...args) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.post(baseUrl, data);
-      return response.data;
+      const response = await apiFunc(...args);
+      setData(response.data);
     } catch (err) {
-      setError(err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const read = async (id = '') => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get(`${baseUrl}/${id}`);
-      return response.data;
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const update = async (id, data) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.put(`${baseUrl}/${id}`, data);
-      return response.data;
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const remove = async (id) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.delete(`${baseUrl}/${id}`);
-      return response.data;
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { create, read, update, remove, loading, error };
+  return { data, error, loading, request };
 };
 
-export default useApi;
+export const useCreateUser = () => {
+  const createUser = async (userData) => {
+    return await axiosInstance.post('/user', userData);
+  };
+  return useApi(createUser);
+};

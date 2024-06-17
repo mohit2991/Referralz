@@ -6,6 +6,7 @@ import Login from '../screens/Login';
 import ForgotPassword from '../screens/ForgotPassword';
 import SuccessfullySignup from '../screens/SuccessfullySignup';
 import InboxCheck from '../screens/InboxCheck';
+import Dashboard from '../screens/Dashboard';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import EditProfileVerification from '../screens/profile/EditProfileVerification';
@@ -34,6 +35,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="EditProfileVerification"
           component={EditProfileVerification}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Dashboard"
+          component={Dashboard}
         />
       </Stack.Navigator>
     </NavigationContainer>
