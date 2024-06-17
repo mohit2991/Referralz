@@ -7,6 +7,6 @@ export const icons = {
   info: require('../../assets/icons/info.png'),
   logout: require('../../assets/icons/logout.png'),
   rightChevron: require('../../assets/icons/rightChevron.png'),
-  // setting: require('../../assets/icons/setting.png'),
-  // shield: require('../../assets/icons/shield.png'),
+  setting: require('../../assets/icons/setting.png'),
+  shield: require('../../assets/icons/shield.png'),
 };
