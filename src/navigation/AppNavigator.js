@@ -1,6 +1,4 @@
-import { View, Text } from 'react-native';
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Splash from '../screens/Splash';
 import CreateAccount from '../screens/CreateAccount';
@@ -8,41 +6,34 @@ import Login from '../screens/Login';
 import ForgotPassword from '../screens/ForgotPassword';
 import SuccessfullySignup from '../screens/SuccessfullySignup';
 import InboxCheck from '../screens/InboxCheck';
+import ProfileScreen from '../screens/profile/ProfileScreen';
+import EditProfileScreen from '../screens/profile/EditProfileScreen';
+import EditProfileVerification from '../screens/profile/EditProfileVerification';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
+
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        // initialRouteName="ProfileScreen"
+        screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
+      >
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="CreateAccount" component={CreateAccount} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen
-          options={{ headerShown: false }}
-          name="Splash"
-          component={Splash}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="CreateAccount"
-          component={CreateAccount}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Login"
-          component={Login}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="ForgotPassword"
-          component={ForgotPassword}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
           name="SuccessfullySignup"
           component={SuccessfullySignup}
         />
+        <Stack.Screen name="InboxCheck" component={InboxCheck} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
         <Stack.Screen
-          options={{ headerShown: false }}
-          name="InboxCheck"
-          component={InboxCheck}
+          name="EditProfileVerification"
+          component={EditProfileVerification}
         />
       </Stack.Navigator>
     </NavigationContainer>
