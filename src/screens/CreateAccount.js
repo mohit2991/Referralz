@@ -7,18 +7,21 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import PasswordIcon from './../images/password_icon.png';
 
-import useApi from '../hooks/useApi';
+// import useApi from '../hooks/useApi';
+// import authService from '../services/apiService';
+import { createUser } from '../services/apiService';
+// import { useCreateUser } from './../hooks/useApi';
 
 const Width = Dimensions.get('window').width;
 
 const CreateAccount = () => {
   const navigation = useNavigation();
-  const { create, loading, error } = useApi('api/user');
 
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
@@ -26,21 +29,11 @@ const CreateAccount = () => {
   const [companycode, setCompanycode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmpassword] = useState('');
-  const [describe, setDescribe] = useState(true);
+  const [describe, setDescribe] = useState(false);
   const [havecompanycode, setHavecompanycode] = useState(true);
   const [passwordtrue, setPasswordtrue] = useState(true);
   const [confirmpasswordtrue, setConfirmpasswordtrue] = useState(true);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-
-  useEffect(()=>{
-    if(email !== "" && firstname !=="" && lastname !== "" && password !== "" && confirmpassword !== ""){
-      if(password === confirmpassword){
-        setIsButtonDisabled(false)
-      }else{
-        setIsButtonDisabled(true)
-      }
-    }
-  },[email,firstname,lastname,password,confirmpassword])
 
   const handleClickForSignin = () => {
     navigation.navigate('Login');
@@ -62,10 +55,6 @@ const CreateAccount = () => {
     setHavecompanycode(false);
   };
 
-  const hitForSuccessfullySignup = () => {
-    navigation.navigate('SuccessfullySignup');
-  };
-
   const clickChangePasswordIcon = () => {
     if (passwordtrue) {
       setPasswordtrue(false);
@@ -82,37 +71,63 @@ const CreateAccount = () => {
     }
   };
 
+  useEffect(() => {
+    if (
+      email !== '' &&
+      firstname !== '' &&
+      lastname !== '' &&
+      password !== '' &&
+      confirmpassword !== ''
+    ) {
+      if (password === confirmpassword) {
+        setIsButtonDisabled(false);
+      } else {
+        setIsButtonDisabled(true);
+      }
+    }
+  }, [email, firstname, lastname, password, confirmpassword]);
+
+  // useEffect(() => {
+  //   console.log('>>>>> response', data);
+  //   if (data) {
+  //     navigation.navigate('SuccessfullySignup');
+  //   }
+  // }, [data]);
+
+  // useEffect(() => {
+  //   if (error) {
+  //     console.log('>>>>> error', error);
+  //   }
+  // }, [error]);
+
   const handleRegister = async () => {
-    console.log(">>>> mohit register");
-    const newUser = {
-      firstName,
-      lastName,
-      emailId: email,
+    const userPayload = {
+      email_id: email,
+      first_name: firstname,
+      last_name: lastname,
       password: password,
-      contactNo: "8279697551",
-      birthDate: null,
-      type: "SUPER_ADMIN",
-      status: "CREATED",
-      address: {
-        address: "Sector-16",
-        name: "Noida",
-        city: "Noida",
-        postalCode: 247121,
-        state: "UP",
-        country: "India"
-      },
-      paymentMethod: "CHECK"
+      status: 'CREATED',
+      type: 'HOME_OWNER',
+      user_unique_code: companycode !== '' ? companycode : null,
+      address: null,
+      birth_date: null,
+      contact_no: null,
     };
 
-    const createdUser = await create(newUser);
-    console.log('Created user:', createdUser);
+    console.log('>>>> mohit register', userPayload);
 
-    if (!error) {
+    try {
+      const response = await createUser(userData);
+      // navigation.navigate('SuccessfullySignup');
+      // const createdUser = await create(newUser);
+      console.log('Created user:', response);
+
       // Navigate to the success screen if registration is successful
-      navigation.navigate('SuccessfullySignup');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      // Optionally, you can set an error state here to display a message to the user
     }
   };
-
   // useEffect(()=>{
   //   if(error){
   //     Toast.show({
@@ -120,10 +135,9 @@ const CreateAccount = () => {
   //       text2: error.message
   //     });
   //   }
-    
+
   // }, [error])
- 
-  
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <View style={{ alignItems: 'center' }}>
@@ -201,7 +215,7 @@ const CreateAccount = () => {
             <Image
               source={
                 passwordtrue
-                  ? require('../images/password_icon.png')
+                  ? PasswordIcon
                   : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24, marginRight: 10 }}
@@ -233,7 +247,7 @@ const CreateAccount = () => {
             <Image
               source={
                 confirmpasswordtrue
-                  ? require('../images/password_icon.png')
+                  ? PasswordIcon
                   : require('../images/radio_tick.png')
               }
               style={{ height: 24, width: 24, marginRight: 10 }}
@@ -454,7 +468,7 @@ const CreateAccount = () => {
             marginTop: 20,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#E16032',
+            backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
           }}
         >
           <Text
@@ -465,12 +479,10 @@ const CreateAccount = () => {
               fontWeight: '400',
             }}
             onPress={handleRegister}
-            disabled={isButtonDisabled}
+            // disabled={isButtonDisabled}
           >
             Create account
           </Text>
-          {loading && <Text>Loading...</Text>}
-          {error && <Text>Error: {error.message}</Text>}
         </TouchableOpacity>
         <View
           style={{
