@@ -38,7 +38,7 @@ const TextInputComp = ({
         mode="flat"
         underlineColor={colors.grey}
         activeUnderlineColor={colors.grey}
-        label={<Text style={styles.labelStyle}>{labelText}</Text>}
+        label={<Text style={styles.labelBlurStyle}>{labelText}</Text>}
         onSubmitEditing={onSubmitEditing}
         defaultValue={defaultValue}
         keyboardType={keyboardType}
@@ -91,15 +91,19 @@ const styles = StyleSheet.create({
     borderRadius: wp(8),
     backgroundColor: colors.white,
   },
-  labelStyle: {
+  labelFocusStyle: {
     lineHeight: hp(16),
     fontSize: fontSize(12),
     color: colors.darkGrey,
     fontFamily: fonts.regular,
   },
-  contentStyle: {
-    top: hp(-4),
+  labelBlurStyle: {
     lineHeight: hp(24),
+    fontSize: fontSize(16),
+    color: colors.grey,
+    fontFamily: fonts.regular,
+  },
+  contentStyle: {
     fontSize: fontSize(16),
     color: colors.darkBlack,
     fontFamily: fonts.regular,

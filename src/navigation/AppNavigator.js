@@ -10,6 +10,10 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import EditProfileVerification from '../screens/profile/EditProfileVerification';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AboutAppScreen from '../screens/profile/AboutAppScreen';
+import SettingScreen from '../screens/profile/SettingScreen';
+import ChangePassword from '../screens/profile/ChangePassword';
+import PayBilling from '../screens/profile/PayBilling';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +39,10 @@ const AppNavigator = () => {
           name="EditProfileVerification"
           component={EditProfileVerification}
         />
+        <Stack.Screen name="AboutAppScreen" component={AboutAppScreen} />
+        <Stack.Screen name="SettingScreen" component={SettingScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePassword} />
+        <Stack.Screen name="PayBilling" component={PayBilling} />
       </Stack.Navigator>
     </NavigationContainer>
   );
