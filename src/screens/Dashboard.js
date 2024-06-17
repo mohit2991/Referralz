@@ -9,7 +9,7 @@ const Dashboard = () => {
 
   const getUserData = async () => {
     const payload = {
-      id: "mohit2991kumar@gmail.com",
+      id: 'mohit2991kumar@gmail.com',
     };
     try {
       const response = await getUserDetails(payload);
@@ -32,7 +32,7 @@ const Dashboard = () => {
       <Text>Dashboard</Text>
       <TouchableOpacity
         style={{ width: 80, marginLeft: 12, marginTop: -2 }}
-        onPress={() => navigation.navigate('Profile')} // Corrected navigation
+        onPress={() => navigation.navigate('ProfileScreen')}
       >
         <Text
           style={{
