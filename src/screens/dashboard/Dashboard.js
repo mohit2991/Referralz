@@ -15,11 +15,33 @@ import {
   dashboardFilterOptionsList,
   homeLeadsList,
 } from '../../utils/dataConstants';
+import { getUserDetails } from '../../services/apiService';
+import Toast from 'react-native-toast-message';
 
 const Dashboard = () => {
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
+
+  const getUserData = async () => {
+    const payload = {
+      id: 'mohit2991kumar@gmail.com',
+    };
+    try {
+      const response = await getUserDetails(payload);
+      console.log('User details response:', response);
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.message,
+      });
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   const onFilterPress = (item) => {
     let updateFilterOptions = filterOptions?.map((obj) => {
