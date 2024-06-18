@@ -13,4 +13,5 @@ export const colors = {
   transparent: 'transparent',
   grey300: '#D9D9D9',
   green: '#06D001',
+  red: '#C92B2B',
 };

@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { commonStyles } from '../../styles/styles';
 import { BottomButton, Header, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import { changePassword } from '../../services/apiService';
 
 export const CheckItem = ({ condition, value }) => {
   return (
@@ -59,12 +60,39 @@ const ChangePassword = () => {
       checkPwdLength &&
       checkSpecialChar &&
       checkNumber &&
+      currentPwd !== newPwd &&
       newPwd === confirmPwd &&
       currentPwd !== ''
     ) {
       return false;
     }
     return true;
+  };
+
+  const handleChangePassword = async () => {
+    const userPayload = {
+      current_password: currentPwd,
+      new_password: newPwd,
+      confirm_password: confirmPwd
+    };
+    try {
+      const response = await changePassword(userPayload);
+      console.log("change password", { response })
+      setCurrentPwd('');
+      setNewPwd('');
+      setConfirmPwd('');
+      setCurrentSecure(true);
+      setNewSecure(true);
+      setConfirmSecure(true);
+      setCheckUpperCase(false);
+      setCheckLowerCase(false);
+      setCheckPwdLength(false);
+      setCheckSpecialChar(false);
+      setCheckNumber(false);
+      navigate('ProfileScreen');
+    } catch (error) {
+      console.log({ response })
+    }
   };
 
   return (
@@ -98,6 +126,7 @@ const ChangePassword = () => {
             }
             onRightPress={() => setNewSecure(!newSecure)}
           />
+          {(currentPwd === newPwd && newPwd !== "") && <Text style={styles.errorText}>Current password and new password cannot be the same.</Text>}
           <View style={styles.devider} />
           <Text style={[styles.conditionText, styles.pwdConditionHeader]}>
             {'Your password must contain'}
@@ -123,12 +152,13 @@ const ChangePassword = () => {
             }
             onRightPress={() => setConfirmSecure(!confirmSecure)}
           />
+          {newPwd !== confirmPwd && <Text style={styles.errorText}>Password and Confirm Password do not match.</Text>}
         </ScrollView>
       </View>
       <BottomButton
         disabled={isEnableTochangePwd()}
         title={'Change'}
-        onPress={() => navigate('ProfileScreen')}
+        onPress={handleChangePassword}
       />
       <SafeAreaView style={styles.safeAreaViewStyle} />
     </View>
@@ -161,5 +191,12 @@ const styles = StyleSheet.create({
   pwdConditionHeader: {
     marginLeft: 0,
     marginVertical: hp(4),
+  },
+  errorText: {
+    color: colors.red,
+    fontSize: fontSize(12),
+    fontFamily: fonts.regular,
+    marginTop: hp(2),
+    marginLeft: wp(8),
   },
 });
