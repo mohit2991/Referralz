@@ -1,9 +1,9 @@
 import axios from 'axios';
-import config from '../config';
+import { apiBaseUrlLogin, apiBaseUrl } from '../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const authApi = axios.create({
-  baseURL: config.apiBaseUrlLogin,
+  baseURL: apiBaseUrlLogin,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
     accept: '*/*',
@@ -11,7 +11,7 @@ const authApi = axios.create({
 });
 
 const api = axios.create({
-  baseURL: config.apiBaseUrl,
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
     accept: '*/*',
@@ -19,12 +19,13 @@ const api = axios.create({
 });
 
 // Add a request interceptor to include the token in headers
-authApi.interceptors.request.use(
+api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => {

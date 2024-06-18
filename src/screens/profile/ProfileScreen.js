@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   View,
@@ -9,17 +9,34 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { Header } from '../../components';
+import { ConfirmationModal, Header } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { profileItemList1, profileItemList2 } from '../../utils/dataConstants';
 import { useNavigation } from '@react-navigation/native';
+import { deleteUser } from '../../services/apiService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
+
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [isLogoutModal, setIsLogoutModal] = useState(false);
+
   const renderProfileListItem = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.flatListItemContainer}>
+      <TouchableOpacity
+        onPress={() => {
+          if (item?.title === 'Log out') {
+            setIsLogoutModal(true);
+          } else if (item?.title === 'Delete account') {
+            setIsDeleteModal(true);
+          } else {
+            navigate(item?.route);
+          }
+        }}
+        style={styles.flatListItemContainer}
+      >
         <View style={commonStyles.flexRowCenter}>
           <Image source={item.icon} style={commonStyles.icon24} />
           <Text style={styles.itemTitleText}>{item.title}</Text>
@@ -32,6 +49,23 @@ const ProfileScreen = () => {
   const ItemSeparatorComponent = () => {
     return <View style={styles.itemSeparatorStyle} />;
   };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await deleteUser();
+      console.log('delete Account', { response });
+      await AsyncStorage.clear();
+      navigate('Login');
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    navigate('Login');
+  };
+
   return (
     <View style={commonStyles.flex}>
       <Header isBackButton title={'Profile'} />
@@ -64,6 +98,33 @@ const ProfileScreen = () => {
           />
         </ScrollView>
       </View>
+      <ConfirmationModal
+        isVisible={isDeleteModal}
+        title={'Are you sure you want to delete your account?'}
+        description={
+          'Once deleted, you would lose access to this account along with the saved details on Referralz'
+        }
+        primaryBtnText={'Yes, Delete'}
+        secondaryBtnText={'Cancel'}
+        primaryBtnPress={handleDeleteAccount}
+        secondaryBtnPress={() => {}}
+        toggleModal={() => setIsDeleteModal(!isDeleteModal)}
+        primaryBtnStyle={{ backgroundColor: colors.darkRed }}
+        secondaryTextStyle={{ color: colors.darkGrey }}
+      />
+      <ConfirmationModal
+        isVisible={isLogoutModal}
+        title={'Log out'}
+        description={
+          'Do you really want to end your session? Please confirm if you wish to log out now.'
+        }
+        primaryBtnText={'Log out'}
+        secondaryBtnText={'Cancel'}
+        primaryBtnPress={handleLogout}
+        secondaryBtnPress={() => {}}
+        primaryBtnStyle={{ marginTop: hp(48) }}
+        toggleModal={() => setIsLogoutModal(!isLogoutModal)}
+      />
     </View>
   );
 };
