@@ -14,6 +14,7 @@ import AboutAppScreen from '../screens/profile/AboutAppScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
 import ChangePassword from '../screens/profile/ChangePassword';
 import PayBilling from '../screens/profile/PayBilling';
+import Dashboard from '../screens/dashboard/Dashboard';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen
           name="SuccessfullySignup"

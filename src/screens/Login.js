@@ -139,7 +139,7 @@ const Login = () => {
       </View>
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ProfileScreen')}
+          onPress={() => navigation.navigate('Dashboard')}
           style={{
             width: Width / 1.1,
             borderRadius: 8,
