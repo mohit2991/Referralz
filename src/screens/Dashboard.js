@@ -8,11 +8,8 @@ const Dashboard = () => {
   const navigation = useNavigation();
 
   const getUserData = async () => {
-    const payload = {
-      id: 'mohit2991kumar@gmail.com',
-    };
     try {
-      const response = await getUserDetails(payload);
+      const response = await getUserDetails();
       console.log('User details response:', response);
     } catch (error) {
       Toast.show({

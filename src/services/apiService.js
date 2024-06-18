@@ -22,9 +22,9 @@ export const createUser = async (userData) => {
   }
 };
 
-export const getUserDetails = async (userPayload) => {
+export const getUserDetails = async () => {
   try {
-    const response = await api.get('/user', userPayload);
+    const response = await api.get('/user');
     return response;
   } catch (error) {
     return handleError(error);

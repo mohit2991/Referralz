@@ -70,7 +70,6 @@ const Login = () => {
     try {
       const response = await loginUser(userPayload);
       const { access_token } = response.data;
-      console.log('>>>>>> mohit', response);
 
       if (access_token) {
         // Store the token in AsyncStorage
