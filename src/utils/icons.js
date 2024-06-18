@@ -9,4 +9,7 @@ export const icons = {
   rightChevron: require('../../assets/icons/rightChevron.png'),
   setting: require('../../assets/icons/setting.png'),
   shield: require('../../assets/icons/shield.png'),
+  eye: require('../../assets/icons/eye.png'),
+  eyeOff: require('../../assets/icons/eye-off.png'),
+  checkRing: require('../../assets/icons/checkRing.png'),
 };

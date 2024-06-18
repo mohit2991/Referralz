@@ -53,7 +53,7 @@ const EditProfileScreen = () => {
   return (
     <View style={commonStyles.flex}>
       <Header isBackButton title={'Edit profile'} />
-      <View style={styles.container}>
+      <View style={commonStyles.container}>
         <KeyboardAwareScrollView
           bounces={false}
           style={styles.scrollViewStyle}
@@ -160,11 +160,6 @@ const EditProfileScreen = () => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: wp(16),
-    backgroundColor: colors.white,
-  },
   scrollViewStyle: {
     flex: 1,
     paddingTop: hp(16),
@@ -189,7 +184,7 @@ const styles = StyleSheet.create({
     padding: wp(10),
   },
   bottomPadding: {
-    height: hp(100),
+    height: hp(30),
   },
   safeAreaViewStyle: {
     backgroundColor: colors.white,

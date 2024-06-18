@@ -12,6 +12,7 @@ export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: wp(16),
+    backgroundColor: colors.white,
   },
   flexRow: {
     flexDirection: 'row',
@@ -23,6 +24,11 @@ export const commonStyles = StyleSheet.create({
   icon24: {
     width: wp(24),
     height: wp(24),
+    resizeMode: 'contain',
+  },
+  icon16: {
+    width: wp(16),
+    height: wp(16),
     resizeMode: 'contain',
   },
 });
