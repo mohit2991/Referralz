@@ -103,7 +103,7 @@ const EditProfileScreen = () => {
                 style={[commonStyles.icon24, { tintColor: colors.darkRed }]}
               />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <TextInputComp
             value={moment(dob)?.format('DD.MM.YYYY')}

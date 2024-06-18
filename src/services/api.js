@@ -24,7 +24,6 @@ api.interceptors.request.use(
     const token = await AsyncStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('>>>>>>> mohit config', config);
     }
 
     return config;

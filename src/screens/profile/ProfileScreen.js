@@ -14,6 +14,8 @@ import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { profileItemList1, profileItemList2 } from '../../utils/dataConstants';
 import { useNavigation } from '@react-navigation/native';
+import { deleteUser } from '../../services/apiService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
@@ -47,6 +49,23 @@ const ProfileScreen = () => {
   const ItemSeparatorComponent = () => {
     return <View style={styles.itemSeparatorStyle} />;
   };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await deleteUser();
+      console.log('delete Account', { response });
+      await AsyncStorage.clear();
+      navigate('Login');
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    navigate('Login');
+  };
+
   return (
     <View style={commonStyles.flex}>
       <Header isBackButton title={'Profile'} />
@@ -87,7 +106,7 @@ const ProfileScreen = () => {
         }
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
-        primaryBtnPress={() => {}}
+        primaryBtnPress={handleDeleteAccount}
         secondaryBtnPress={() => {}}
         toggleModal={() => setIsDeleteModal(!isDeleteModal)}
         primaryBtnStyle={{ backgroundColor: colors.darkRed }}
@@ -101,7 +120,7 @@ const ProfileScreen = () => {
         }
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
-        primaryBtnPress={() => {}}
+        primaryBtnPress={handleLogout}
         secondaryBtnPress={() => {}}
         primaryBtnStyle={{ marginTop: hp(48) }}
         toggleModal={() => setIsLogoutModal(!isLogoutModal)}
