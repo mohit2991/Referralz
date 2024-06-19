@@ -11,21 +11,33 @@ import {
 import React, { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { forgotPassword } from '../services/apiService';
 
 const Width = Dimensions.get('window').width;
 const Height = Dimensions.get('window').height;
+
 const ForgotPassword = () => {
-  const navigation = useNavigation();
-
+  const { navigate } = useNavigation();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    setTimeout(() => {}, 3000);
-  }, []);
   const handleClickForGoBack = () => {
-    navigation.navigate('Login');
+    navigate('Login');
   };
+
+  const handleForgotPassword = async () => {
+    try {
+      const response = await forgotPassword(email);
+      if (response.status === 201) {
+        console.log('logout Account', { response });
+        navigate('InboxCheck');
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <SafeAreaView></SafeAreaView>
@@ -101,6 +113,7 @@ const ForgotPassword = () => {
             justifyContent: 'center',
             backgroundColor: '#E16032',
           }}
+          onPress={handleForgotPassword}
         >
           <Text
             style={{

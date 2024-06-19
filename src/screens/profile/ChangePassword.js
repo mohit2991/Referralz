@@ -69,6 +69,20 @@ const ChangePassword = () => {
     return true;
   };
 
+  const resetState = () => {
+    setCurrentPwd('');
+    setNewPwd('');
+    setConfirmPwd('');
+    setCurrentSecure(true);
+    setNewSecure(true);
+    setConfirmSecure(true);
+    setCheckUpperCase(false);
+    setCheckLowerCase(false);
+    setCheckPwdLength(false);
+    setCheckSpecialChar(false);
+    setCheckNumber(false);
+  };
+
   const handleChangePassword = async () => {
     const userPayload = {
       current_password: currentPwd,
@@ -77,19 +91,8 @@ const ChangePassword = () => {
     };
     try {
       const response = await changePassword(userPayload);
-
       if (response.status === 201) {
-        setCurrentPwd('');
-        setNewPwd('');
-        setConfirmPwd('');
-        setCurrentSecure(true);
-        setNewSecure(true);
-        setConfirmSecure(true);
-        setCheckUpperCase(false);
-        setCheckLowerCase(false);
-        setCheckPwdLength(false);
-        setCheckSpecialChar(false);
-        setCheckNumber(false);
+        resetState();
         navigate('ProfileScreen');
       } else {
         console.log(response.data);
@@ -106,6 +109,7 @@ const ChangePassword = () => {
         <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
           <TextInputComp
             value={currentPwd}
+            maxLength={16}
             secureTextEntry={currentSecure}
             labelText={'Current password'}
             onChangeText={(text) => setCurrentPwd(text)}
@@ -119,6 +123,7 @@ const ChangePassword = () => {
           />
           <TextInputComp
             value={newPwd}
+            maxLength={16}
             secureTextEntry={newSecure}
             labelText={'Password'}
             onChangeText={(text) => setNewPwd(text)}
@@ -149,6 +154,7 @@ const ChangePassword = () => {
           <CheckItem value={checkNumber} condition={'a number'} />
           <TextInputComp
             value={confirmPwd}
+            maxLength={16}
             secureTextEntry={confirmSecure}
             labelText={'Confirm password'}
             onChangeText={(text) => setConfirmPwd(text)}
@@ -160,7 +166,7 @@ const ChangePassword = () => {
             }
             onRightPress={() => setConfirmSecure(!confirmSecure)}
           />
-          {newPwd !== confirmPwd && (
+          {newPwd !== confirmPwd && confirmPwd !== "" && (
             <Text style={styles.errorText}>
               Password and Confirm Password do not match.
             </Text>
