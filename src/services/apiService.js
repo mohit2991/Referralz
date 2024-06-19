@@ -31,6 +31,14 @@ export const getUserDetails = async () => {
   }
 };
 
+export const updateUserDetails = async (userPayload) => {
+  try {
+    const response = await api.put('/user', userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
 
 export const deleteUser = async () => {
   try {
