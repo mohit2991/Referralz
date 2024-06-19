@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Splash from '../screens/Splash';
 import CreateAccount from '../screens/CreateAccount';
 import Login from '../screens/Login';
@@ -19,10 +20,25 @@ import Dashboard from '../screens/dashboard/Dashboard';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('accessToken');
+      setIsLoggedIn(!!token);
+    };
+
+    checkLoginStatus();
+  });
+
+  if (isLoggedIn === null) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        // initialRouteName="ProfileScreen"
+        initialRouteName={isLoggedIn ? 'Dashboard' : 'Login'}
         screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
       >
         <Stack.Screen name="Splash" component={Splash} />
