@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
 import { Button, Header } from '../../components';
-import OtpInput from '../../components/common/OtpInput';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 const EditProfileVerification = () => {

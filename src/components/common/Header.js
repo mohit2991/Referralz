@@ -13,22 +13,32 @@ import { useNavigation } from '@react-navigation/native';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 
-const Header = ({ title, isBackButton }) => {
-  const { goBack } = useNavigation();
+const Header = ({ title, isBackButton, isAvatar }) => {
+  const { goBack, navigate } = useNavigation();
   return (
     <>
       <SafeAreaView style={styles.safearea} />
       <View style={styles.container}>
-        <View style={styles.mainView}>
-          {isBackButton && (
+        <View style={commonStyles.flexRowJustify}>
+          <View style={styles.mainView}>
+            {isBackButton && (
+              <TouchableOpacity
+                style={styles.backBtnView}
+                onPress={() => goBack()}
+              >
+                <Image source={icons.backArrow} style={commonStyles.icon24} />
+              </TouchableOpacity>
+            )}
+            {title && <Text style={styles.titleText}>{title}</Text>}
+          </View>
+          {isAvatar && (
             <TouchableOpacity
-              style={styles.backBtnView}
-              onPress={() => goBack()}
+              activeOpacity={0.8}
+              onPress={() => navigate('ProfileScreen')}
             >
-              <Image source={icons.backArrow} style={commonStyles.icon24} />
+              <Image source={icons.avatar} style={styles.avatarStyle} />
             </TouchableOpacity>
           )}
-          {title && <Text style={styles.titleText}>{title}</Text>}
         </View>
       </View>
     </>
@@ -62,5 +72,11 @@ const styles = StyleSheet.create({
     height: hp(40),
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  avatarStyle: {
+    width: wp(40),
+    height: wp(40),
+    borderRadius: wp(40),
+    resizeMode: 'contain',
   },
 });

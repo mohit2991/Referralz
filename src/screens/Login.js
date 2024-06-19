@@ -9,10 +9,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 const Width = Dimensions.get('window').width;
 const Height = Dimensions.get('window').height;
+
+import { loginUser } from '../services/apiService';
+
 const Login = () => {
   const navigation = useNavigation();
 
@@ -20,14 +24,17 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [keeplogin, setKeeplogin] = useState(true);
   const [passwordtrue, setPasswordtrue] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {}, []);
   const handleClickForSignup = () => {
     navigation.navigate('CreateAccount');
   };
+
   const handleClickForForgotPassword = () => {
     navigation.navigate('ForgotPassword');
   };
+
   const clickKeepMeLogin = () => {
     if (keeplogin) {
       setKeeplogin(false);
@@ -35,11 +42,53 @@ const Login = () => {
       setKeeplogin(true);
     }
   };
+
   const clickChangePasswordIcon = () => {
     if (passwordtrue) {
       setPasswordtrue(false);
     } else {
       setPasswordtrue(true);
+    }
+  };
+
+  useEffect(() => {
+    if (email !== '' && password !== '') {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+    }
+  }, [email, password]);
+
+  const handleLogin = async () => {
+    const userPayload = {
+      client_id: 'referralz_mobile',
+      grant_type: 'password',
+      username: email,
+      password,
+    };
+
+    try {
+      const response = await loginUser(userPayload);
+      const { access_token } = response.data;
+      console.log('>>>>>> mohit', response);
+
+      if (access_token) {
+        // Store the token in AsyncStorage
+        await AsyncStorage.setItem('accessToken', access_token);
+
+        // Navigate to another screen
+        navigation.navigate('Dashboard');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: response.error_description,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: error.message,
+      });
     }
   };
   return (
@@ -139,7 +188,6 @@ const Login = () => {
       </View>
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ProfileScreen')}
           style={{
             width: Width / 1.1,
             borderRadius: 8,
@@ -147,7 +195,9 @@ const Login = () => {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#E16032',
+            backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
           }}
+          onPress={handleLogin}
         >
           <Text
             style={{
@@ -156,6 +206,7 @@ const Login = () => {
               fontWeight: '400',
               fontFamily: 'Montserrat-Regular',
             }}
+            disabled={isButtonDisabled}
           >
             Continue
           </Text>
