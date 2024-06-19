@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import moment from 'moment';
+import axios from 'axios';
 import DatePicker from 'react-native-date-picker';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -17,7 +18,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { BottomButton, Header, TextInputComp } from '../../components';
-import { updateUserDetails } from '../../services/apiService';
+import { updateUserDetails, profileImageUpdate } from '../../services/apiService';
 
 const EditProfileScreen = () => {
   const { navigate } = useNavigation();
@@ -34,8 +35,8 @@ const EditProfileScreen = () => {
     "birth_date": null,
     "type": "HOME_OWNER",
     "status": "CREATED",
-    "download_profile_img_url": null,
-    "upload_profile_img_url": "https://storage.googleapis.com/referralz-public/referralz/user_29/profile_img?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=cs-cf-cst-service-account%40homespark-409114.iam.gserviceaccount.com%2F20240619%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240619T051343Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=85139a7fb5fa0e1fddc3e17d6d6ee4613b9052f7912e4463f692e3ef1d5126b04dcfda0bb587569293a97476539d6de75dfc976880665fd139a24c0a6f68c5744916fffc9ce4f217fae4a67d5343f923f82120098d23f31b2c5a4734fe712eed841378c0d6d43d8e8ab7d7eb623c7c406cb9e664ab6e1df7cb38dcb5624e3f28dbd06a15cedf0fdf29b922061e09b33a5ac13231331ba691987472851bc907c0d902c1ef150e07221626a626a678f6972cd776c40bdeeb2ef62304125b28d55d8363d8b612f1f42fa1b5a0f87b87b47df9ba8a10bc413d3c55b2010c1672506061b768c49df495059f888cbbab4426083ee11b933ee35c995c9e2703911bcb85",
+    "download_profile_img_url": "https://storage.googleapis.com/referralz-public/referralz/user_29/profile_img?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=cs-cf-cst-service-account%40homespark-409114.iam.gserviceaccount.com%2F20240619%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240619T093558Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=11b9b8a72d81dce37ac69be55beb6ed84621a4e5de996e8026cb6daf53b68f584277e8da3762e8e06af283a595401ef20c032718f42289782175c8b4aabe20d32dd310b7d34649b8091d4c097df322294021997961080c8401a8093c64e20eeb2f902bc171557ecdc44ae640585e7baa3a92917f47b663d3128ff8d0d957b43f87626fde0c309fde1fabdf0cf6e4135452f2f5dcc296beea588178e245853c10ad499593adae74f8157ddd64f490d58b972fbe29a903442f7c04fdc0b0a8c737354fcbe36e203069aad500cf4c3906a7c09266f4e8e5b10aeb94819b088b7c6d1da8e266d6e0a5f58ea61235e201f4643e94740a81615914c9a4f1a290039690",
+    "upload_profile_img_url": "https://storage.googleapis.com/referralz-public/referralz/user_29/profile_img?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=cs-cf-cst-service-account%40homespark-409114.iam.gserviceaccount.com%2F20240619%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240619T083217Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=32b97859170df7b35f78c7d621fd935a6456dcd64d6d70eed4d6634befef93f7241c055b673119f5c705f104de621624c11479ee38b7b94a1d9c4b7ce8d42a509724248ec5dc681e57e6a61c0e1b3e5af76335518cf95974848e136a7e8af5885e1585119ebed14fd6302c6372a1bfbb38b5c42d7ba538e13f388746c0b76781f69139e774fe731145b83ccd279b1dd24bb79f6287b1432335ed8ab7de057692b0a3722e7eb4788ade4472b53b0e20051b3cf3f534a21fc5eee2220654490a215a38a4dbd9f0974ae43d60cece422003bde71e08441bf363b6cedf41c67a32072617c25a8f1ea7574cf8d5635b566e5be7e6e98393a6068b84b169f6306f6fdc",
     "img_upload_status": false,
     "created_on": "2024-06-19T05:13:11.456653",
     "updated_on": "2024-06-19T05:13:11.508125",
@@ -47,7 +48,6 @@ const EditProfileScreen = () => {
   const [formData, setFormData] = useState(initialState);
   const [hasChanges, setHasChanges] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [isDatePicker, setIsDatePicker] = useState(false);
 
   const pickImage = () => {
@@ -64,8 +64,45 @@ const EditProfileScreen = () => {
       } else {
         const uri = response.assets[0].uri;
         setImageUri(uri);
+        uploadProfileImage(response.assets[0]);
       }
     });
+  };
+
+  const profileImageHandle = async () => {
+    try {
+      const response = await profileImageUpdate();
+      if (response.status === 200) {
+        console.log("Image uploaded successfully", response)
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const uploadProfileImage = async (image) => {
+    const imgData = new FormData();
+    imgData.append('file', {
+      uri: image.uri,
+      type: image.type,
+      name: image.fileName,
+    });
+    try {
+      const response = await axios.post(formData.upload_profile_img_url, imgData, {
+        headers: {
+          'Content-Type': image.type,
+        },
+      });
+      if (response.status === 200) {
+        profileImageHandle()
+      } else {
+        console.log("aa", response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const handleChange = (field, value) => {
@@ -87,7 +124,6 @@ const EditProfileScreen = () => {
       company_unique_code: formData.company_unique_code,
       user_unique_code: formData.user_unique_code,
     };
-    console.log({ userPayload })
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
@@ -115,7 +151,7 @@ const EditProfileScreen = () => {
         >
           <View style={styles.profileContainer}>
             <Image
-              source={imageUri ? { uri: imageUri } : icons.avatar}
+              source={imageUri ? { uri: imageUri } : formData?.download_profile_img_url !== null ? { uri: formData.download_profile_img_url } : icons.avatar}
               style={styles.profileImgStyle}
             />
             <TouchableOpacity style={styles.uploadImgBtn} onPress={pickImage}>
