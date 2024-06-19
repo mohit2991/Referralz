@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { Header, ItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
@@ -481,7 +482,7 @@ const Dashboard = () => {
         <View style={[commonStyles.flexRowCenter, { marginBottom: hp(16) }]}>
           <Text style={styles.cardTitleText}>{item?.rating}</Text>
           <View style={styles.verticalDevider} />
-          <Text style={styles.referalCardDate}>{item?.created_on}</Text>
+          <Text style={styles.referalCardDate}>{moment(item?.created_on).format('MMM D, YYYY')}</Text>
           <View style={styles.verticalDevider} />
           <View
             style={[
@@ -501,7 +502,7 @@ const Dashboard = () => {
 
   return (
     <View style={commonStyles.flex}>
-      <Header isAvatar profileImage={userData?.download_profile_img_url} title={`Welcome ${userData?.first_name} ${userData?.last_name}`} />
+      <Header isAvatar profileImage={userData?.download_profile_img_url} title={`Welcome, ${userData?.first_name} ${userData?.last_name}`} />
       {dashboardData?.lead_details?.length ?
         <View style={styles.container}>
           <View style={styles.filterContainer}>

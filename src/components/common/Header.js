@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(20),
     fontFamily: fonts.bold,
     color: colors.darkBlack,
+    textTransform: "capitalize",
   },
   backBtnView: {
     padding: wp(8),
