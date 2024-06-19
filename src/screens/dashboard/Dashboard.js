@@ -39,8 +39,8 @@ const Dashboard = () => {
 
   const getDasboardData = async (selectedFilter) => {
     const userPayload = {
-      filter_by_date: selectedFilter ? selectedFilter.value : "ONE_WEEK",
-      isPaginationRequired: false
+      filter_by_date: selectedFilter ? selectedFilter.value : 'ONE_WEEK',
+      isPaginationRequired: false,
     };
     try {
       const response = await dashboardDetails(userPayload);
@@ -67,7 +67,9 @@ const Dashboard = () => {
       return { ...obj, isSelected: false };
     });
     setFilterOptions(updateFilterOptions);
-    const selectedFilter = updateFilterOptions.find(method => method.isSelected);
+    const selectedFilter = updateFilterOptions.find(
+      (method) => method.isSelected,
+    );
     getDasboardData(selectedFilter);
   };
 
@@ -121,7 +123,9 @@ const Dashboard = () => {
         cardContainerStyle={styles.listCardView}
       >
         <View style={commonStyles.flexRowJustify}>
-          <Text style={styles.referalCardName}>{item?.customer?.first_name} {item?.customer?.last_name}</Text>
+          <Text style={styles.referalCardName}>
+            {item?.customer?.first_name} {item?.customer?.last_name}
+          </Text>
           <View
             style={[
               styles.tagView,
@@ -145,28 +149,39 @@ const Dashboard = () => {
         <View style={[commonStyles.flexRowCenter, { marginBottom: hp(16) }]}>
           <Text style={styles.cardTitleText}>{item?.rating}</Text>
           <View style={styles.verticalDevider} />
-          <Text style={styles.referalCardDate}>{moment(item?.created_on).format('MMM D, YYYY')}</Text>
+          <Text style={styles.referalCardDate}>
+            {moment(item?.created_on).format('MMM D, YYYY')}
+          </Text>
           <View style={styles.verticalDevider} />
           <View
             style={[
               styles.greenDot,
               {
                 backgroundColor:
-                  item?.priority?.name === 'low' ? colors.green : colors.liteSaffron,
+                  item?.priority?.name === 'low'
+                    ? colors.green
+                    : colors.liteSaffron,
               },
             ]}
           />
           <Text style={styles.referalCardInt}>{item?.priority?.name}</Text>
         </View>
-        <Text style={styles.cardTitleText}>{item?.address?.address} {item?.address?.name} {item?.address?.city}, {item?.address?.postalCode}</Text>
+        <Text style={styles.cardTitleText}>
+          {item?.address?.address} {item?.address?.name} {item?.address?.city},{' '}
+          {item?.address?.postalCode}
+        </Text>
       </ItemCard>
     );
   };
 
   return (
     <View style={commonStyles.flex}>
-      <Header isAvatar profileImage={userData?.download_profile_img_url} title={`Welcome, ${userData?.first_name} ${userData?.last_name}`} />
-      {dashboardData?.lead_details?.length ?
+      <Header
+        isAvatar
+        profileImage={userData?.download_profile_img_url}
+        title={`Welcome, ${userData?.first_name} ${userData?.last_name}`}
+      />
+      {dashboardData?.lead_details?.length ? (
         <View style={styles.container}>
           <View style={styles.filterContainer}>
             <Text style={[styles.filterText, { marginRight: wp(14) }]}>
@@ -188,27 +203,117 @@ const Dashboard = () => {
               <ItemCard>
                 <Text style={styles.cardTitleText}>{'Leads created'}</Text>
                 <View style={commonStyles.flexRowCenter}>
-                  <Text style={styles.cardValueText}>{dashboardData?.leads_created_stats?.leads_created_count}</Text>
-                  <Image source={dashboardData?.leads_created_stats?.leads_created_count_difference < 0 ? icons.dropDown : icons.dropUp} style={commonStyles.icon24} />
-                  <Text style={[styles.cardDiffText, dashboardData?.leads_created_stats?.leads_created_count_difference < 0 && { color: colors.darkRed }]}>{Math.abs(dashboardData?.leads_created_stats?.leads_created_count_difference).toFixed(2)} ({Math.abs(dashboardData?.leads_created_stats?.leads_created_count_percent_difference).toFixed(2)}%)</Text>
+                  <Text style={styles.cardValueText}>
+                    {dashboardData?.leads_created_stats?.leads_created_count}
+                  </Text>
+                  <Image
+                    source={
+                      dashboardData?.leads_created_stats
+                        ?.leads_created_count_difference < 0
+                        ? icons.dropDown
+                        : icons.dropUp
+                    }
+                    style={commonStyles.icon24}
+                  />
+                  <Text
+                    style={[
+                      styles.cardDiffText,
+                      dashboardData?.leads_created_stats
+                        ?.leads_created_count_difference < 0 && {
+                        color: colors.darkRed,
+                      },
+                    ]}
+                  >
+                    {Math.abs(
+                      dashboardData?.leads_created_stats
+                        ?.leads_created_count_difference,
+                    ).toFixed(2)}{' '}
+                    (
+                    {Math.abs(
+                      dashboardData?.leads_created_stats
+                        ?.leads_created_count_percent_difference,
+                    ).toFixed(2)}
+                    %)
+                  </Text>
                 </View>
               </ItemCard>
               <View style={{ width: wp(16) }} />
               <ItemCard>
                 <Text style={styles.cardTitleText}>{'Jobs sold'}</Text>
                 <View style={commonStyles.flexRowCenter}>
-                  <Text style={styles.cardValueText}>{dashboardData?.jobs_sold_stats?.jobs_sold_count}</Text>
-                  <Image source={dashboardData?.jobs_sold_stats?.jobs_sold_count_difference < 0 ? icons.dropDown : icons.dropUp} style={commonStyles.icon24} />
-                  <Text style={[styles.cardDiffText, dashboardData?.jobs_sold_stats?.jobs_sold_count_difference < 0 && { color: colors.darkRed }]}>{Math.abs(dashboardData?.jobs_sold_stats?.jobs_sold_count_difference).toFixed(2)} ({Math.abs(dashboardData?.jobs_sold_stats?.jobs_sold_count_percent_difference).toFixed(2)}%)</Text>
+                  <Text style={styles.cardValueText}>
+                    {dashboardData?.jobs_sold_stats?.jobs_sold_count}
+                  </Text>
+                  <Image
+                    source={
+                      dashboardData?.jobs_sold_stats
+                        ?.jobs_sold_count_difference < 0
+                        ? icons.dropDown
+                        : icons.dropUp
+                    }
+                    style={commonStyles.icon24}
+                  />
+                  <Text
+                    style={[
+                      styles.cardDiffText,
+                      dashboardData?.jobs_sold_stats
+                        ?.jobs_sold_count_difference < 0 && {
+                        color: colors.darkRed,
+                      },
+                    ]}
+                  >
+                    {Math.abs(
+                      dashboardData?.jobs_sold_stats
+                        ?.jobs_sold_count_difference,
+                    ).toFixed(2)}{' '}
+                    (
+                    {Math.abs(
+                      dashboardData?.jobs_sold_stats
+                        ?.jobs_sold_count_percent_difference,
+                    ).toFixed(2)}
+                    %)
+                  </Text>
                 </View>
               </ItemCard>
             </View>
             <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
               <Text style={styles.cardTitleText}>{'Conversion rate'}</Text>
               <View style={commonStyles.flexRowCenter}>
-                <Text style={styles.cardValueText}>{dashboardData?.conversion_rate_stats?.conversion_rate.toFixed(2)}%</Text>
-                <Image source={dashboardData?.conversion_rate_stats?.conversion_rate_difference < 0 ? icons.dropDown : icons.dropUp} style={commonStyles.icon24} />
-                <Text style={[styles.cardDiffText, dashboardData?.conversion_rate_stats?.conversion_rate_difference < 0 && { color: colors.darkRed }]}>{Math.abs(dashboardData?.conversion_rate_stats?.conversion_rate_difference).toFixed(2)} ({Math.abs(dashboardData?.conversion_rate_stats?.conversion_rate_percent_difference).toFixed(2)}%)</Text>
+                <Text style={styles.cardValueText}>
+                  {dashboardData?.conversion_rate_stats?.conversion_rate.toFixed(
+                    2,
+                  )}
+                  %
+                </Text>
+                <Image
+                  source={
+                    dashboardData?.conversion_rate_stats
+                      ?.conversion_rate_difference < 0
+                      ? icons.dropDown
+                      : icons.dropUp
+                  }
+                  style={commonStyles.icon24}
+                />
+                <Text
+                  style={[
+                    styles.cardDiffText,
+                    dashboardData?.conversion_rate_stats
+                      ?.conversion_rate_difference < 0 && {
+                      color: colors.darkRed,
+                    },
+                  ]}
+                >
+                  {Math.abs(
+                    dashboardData?.conversion_rate_stats
+                      ?.conversion_rate_difference,
+                  ).toFixed(2)}{' '}
+                  (
+                  {Math.abs(
+                    dashboardData?.conversion_rate_stats
+                      ?.conversion_rate_percent_difference,
+                  ).toFixed(2)}
+                  %)
+                </Text>
               </View>
             </ItemCard>
             <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
@@ -224,11 +329,11 @@ const Dashboard = () => {
             />
           </ScrollView>
         </View>
-        :
+      ) : (
         <View>
           <Text> No Data</Text>
         </View>
-      }
+      )}
     </View>
   );
 };
@@ -269,7 +374,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(24),
     fontFamily: fonts.regular,
     color: colors.darkGrey,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   cardValueText: {
     fontSize: fontSize(32),
@@ -297,7 +402,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(24),
     fontFamily: fonts.bold,
     color: colors.xDarkGrey,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   referalCardDate: {
     fontSize: fontSize(14),
@@ -310,7 +415,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(16),
     fontFamily: fonts.regular,
     color: colors.xDarkGrey,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   verticalDevider: {
     width: wp(1),

@@ -26,7 +26,7 @@ const Login = () => {
   const [passwordtrue, setPasswordtrue] = useState(true);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
   const handleClickForSignup = () => {
     navigate('CreateAccount');
   };
@@ -68,7 +68,7 @@ const Login = () => {
       username: email,
       password,
     };
-    console.log({ userPayload })
+    console.log({ userPayload });
     try {
       const response = await loginUser(userPayload);
       const { access_token } = response.data;
@@ -92,6 +92,7 @@ const Login = () => {
       });
     }
   };
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <SafeAreaView></SafeAreaView>
