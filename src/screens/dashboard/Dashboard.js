@@ -17,6 +17,7 @@ import {
   homeLeadsList,
 } from '../../utils/dataConstants';
 import { getUserDetails, dashboardDetails } from '../../services/apiService';
+import { useUser } from '../../contexts/userContext';
 
 const data = {
   "leads_created_stats": {
@@ -337,7 +338,9 @@ const initialState = {
   "last_name": "bisht",
   "email_id": "rohitbisht@gmail.com",
   "contact_no": null,
-  "contact_verification_status": null,
+  "contact_verification_status": false,
+  "push_notification_enable": true,
+  "email_notification_enable": true,
   "company_unique_code": null,
   "user_unique_code": "X8OP9C",
   "birth_date": null,
@@ -357,9 +360,10 @@ const Dashboard = () => {
     dashboardFilterOptionsList,
   );
   const [dashboardData, setdashboardData] = useState(data);
-  const [userData, setUserData] = useState(initialState);
+  const { userData, setUserData } = useUser();
 
   const getUserData = async () => {
+    setUserData(initialState)
     try {
       const response = await getUserDetails();
       if (response.status === 200) {
@@ -393,7 +397,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getUserData();
-    getDasboardData();
+    // getDasboardData();
   }, []);
 
   const onFilterPress = (item) => {

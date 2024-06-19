@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { payoutMethodsListData } from '../../utils/dataConstants';
 import { updateUserDetails } from '../../services/apiService';
+import { useUser } from '../../contexts/userContext';
 
 export const PaymentMethodItem = ({ item, onPress }) => {
   return (
@@ -42,37 +43,11 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 
 const PayBilling = () => {
   const { navigate } = useNavigation();
-  const initialState = {
-    "id": 29,
-    "first_name": "rohit",
-    "last_name": "bisht",
-    "email_id": "rohitbisht@gmail.com",
-    "contact_no": null,
-    "contact_verification_status": null,
-    "company_unique_code": null,
-    "user_unique_code": "X8OP9C",
-    "birth_date": null,
-    "type": "HOME_OWNER",
-    "status": "CREATED",
-    "download_profile_img_url": null,
-    "upload_profile_img_url": "https://storage.googleapis.com/referralz-public/referralz/user_29/profile_img?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=cs-cf-cst-service-account%40homespark-409114.iam.gserviceaccount.com%2F20240619%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240619T051343Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=85139a7fb5fa0e1fddc3e17d6d6ee4613b9052f7912e4463f692e3ef1d5126b04dcfda0bb587569293a97476539d6de75dfc976880665fd139a24c0a6f68c5744916fffc9ce4f217fae4a67d5343f923f82120098d23f31b2c5a4734fe712eed841378c0d6d43d8e8ab7d7eb623c7c406cb9e664ab6e1df7cb38dcb5624e3f28dbd06a15cedf0fdf29b922061e09b33a5ac13231331ba691987472851bc907c0d902c1ef150e07221626a626a678f6972cd776c40bdeeb2ef62304125b28d55d8363d8b612f1f42fa1b5a0f87b87b47df9ba8a10bc413d3c55b2010c1672506061b768c49df495059f888cbbab4426083ee11b933ee35c995c9e2703911bcb85",
-    "img_upload_status": false,
-    "created_on": "2024-06-19T05:13:11.456653",
-    "updated_on": "2024-06-19T05:13:11.508125",
-    "address": {
-      "address": "checking",
-      "name": "aaa",
-      "city": "New York",
-      "postalCode": 123456,
-      "state": "Nevada",
-      "country": "US"
-    },
-    "company": null
-  }
   const [payoutMethodsList, setPayoutMethodsList] = useState(
     payoutMethodsListData,
   );
-  const [formData, setFormData] = useState(initialState);
+  const { userData, setUserData } = useUser();
+  const [formData, setFormData] = useState(userData);
   const [isConditionChecked, setIsConditionChecked] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -118,6 +93,10 @@ const PayBilling = () => {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
         setHasChanges(false);
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          ...userPayload,
+        }));
         console.log("pay billing successfully", response)
       } else {
         console.log(response.data);
