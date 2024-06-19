@@ -23,4 +23,5 @@ export const icons = {
   starFill: require('../../assets/icons/starFill.png'),
   dropDown: require('../../assets/icons/dropDown.png'),
   dropUp: require('../../assets/icons/dropUp.png'),
+  inbox: require('../../assets/icons/inbox.png'),
 };

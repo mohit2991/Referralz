@@ -1,55 +1,38 @@
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Dimensions,
-  SafeAreaView,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-const Width = Dimensions.get('window').width;
-const Height = Dimensions.get('window').height;
 
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { commonStyles } from '../styles/styles';
 import { loginUser } from '../services/apiService';
+import { Button, TextInputComp } from '../components';
+import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
 
 const Login = () => {
   const navigation = useNavigation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [keeplogin, setKeeplogin] = useState(true);
-  const [passwordtrue, setPasswordtrue] = useState(true);
+  const [isPwdSecure, setIsPwdSecure] = useState(true);
+  const [isRemember, setIsRemember] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  useEffect(() => { }, []);
   const handleClickForSignup = () => {
     navigation.navigate('CreateAccount');
   };
 
   const handleClickForForgotPassword = () => {
-    // navigation.navigate('ForgotPassword');
-    navigation.navigate('ProfileScreen');
-  };
-
-  const clickKeepMeLogin = () => {
-    if (keeplogin) {
-      setKeeplogin(false);
-    } else {
-      setKeeplogin(true);
-    }
-  };
-
-  const clickChangePasswordIcon = () => {
-    if (passwordtrue) {
-      setPasswordtrue(false);
-    } else {
-      setPasswordtrue(true);
-    }
+    navigation.navigate('ForgotPassword');
+    // navigation.navigate('ProfileScreen');
   };
 
   useEffect(() => {
@@ -91,204 +74,97 @@ const Login = () => {
       });
     }
   };
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <SafeAreaView></SafeAreaView>
-      <View style={{ alignItems: 'center' }}>
-        <Text
-          style={{
-            fontSize: 24,
-            color: '#3B4248',
-            fontWeight: '700',
-            marginTop: 26,
-            fontFamily: 'Montserrat-Regular',
-          }}
-        >
-          Welcome to Referralz!
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            color: '#555B61',
-            fontWeight: '400',
-            marginTop: 12,
-            fontFamily: 'Montserrat-Regular',
-          }}
-        >
-          Refer, track, and earn with ease.
-        </Text>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={styles.input}
-            label="Email"
+    <View style={{flex:1, backgroundColor: colors.white, alignItems: 'center'}}>
+      <SafeAreaView/>
+      <Text style={styles.welcomeText}>{'Welcome to Referralz!'}</Text>
+      <Text style={styles.motoText}>{'Refer, track, and earn with ease.'}</Text>
+      <ScrollView style={styles.scrollViewStyle} bounces={false}>
+          <TextInputComp
             value={email}
-            onChangeText={(email) => setEmail(email)}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
+            labelText={'Email'}
+            onChangeText={(text) => setEmail(text)}
           />
-        </View>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={{
-              width: Width / 1.22,
-              backgroundColor: '#FFFFFF',
-              height: 50,
-              borderRadius: 9,
-              color: '#9B9EA1',
-              fontSize: 16,
-              fontWeight: '400',
-            }}
-            label="Password"
+          <View style={{height: hp(16)}}/>
+          <TextInputComp
             value={password}
-            onChangeText={(password) => setPassword(password)}
-            secureTextEntry={passwordtrue}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
+            secureTextEntry={isPwdSecure}
+            labelText={'Password'}
+            onChangeText={(text) => setPassword(text)}
+            rightIcon={
+              <Image
+                source={isPwdSecure ? icons.eye : icons.eyeOff}
+                style={[commonStyles.icon24, { tintColor: colors.darkGrey }]}
+              />
+            }
+            onRightPress={() => setIsPwdSecure(!isPwdSecure)}
           />
-          <TouchableOpacity style={{}} onPress={clickChangePasswordIcon}>
-            <Image
-              source={
-                passwordtrue
-                  ? require('../images/password_icon.png')
-                  : require('../images/radio_tick.png')
-              }
-              style={{ height: 24, width: 24, marginRight: 10 }}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={{ alignItems: 'center', marginVertical: 25 }}>
-        <View style={{ width: Width / 1.1, alignItems: 'center' }}>
-          <TouchableOpacity
-            style={{ flexDirection: 'row', width: Width / 1.1 }}
-            onPress={clickKeepMeLogin}
+          <Pressable
+            onPress={() => setIsRemember(!isRemember)}
+            style={styles.conditionView}
           >
-            <Image
-              source={
-                keeplogin
-                  ? require('../images/checkbox.png')
-                  : require('../images/radio_tick.png')
-              }
-              style={{ height: 24, width: 24 }}
-            />
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#3B4248',
-                fontWeight: '400',
-                marginLeft: 15,
-                marginTop: 2,
-                fontFamily: 'Montserrat-Regular',
-              }}
+            <View
+              style={[
+                styles.checkBox,
+                {
+                  backgroundColor: !isRemember
+                    ? colors.darkSaffron
+                    : colors.white,
+                    borderColor: !isRemember ? colors.darkSaffron : colors.grey,
+                },
+              ]}
             >
-              Keep me signed in
+              {!isRemember && (
+                <Image source={icons.checkMark} style={commonStyles.icon24} />
+              )}
+            </View>
+            <Text style={[styles.motoText, {marginTop:0}]}>
+              {'Keep me signed in'}
             </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={{ alignItems: 'center' }}>
-        <TouchableOpacity
-          style={{
-            width: Width / 1.1,
-            borderRadius: 8,
-            height: 52,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#E16032',
-            backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
-          }}
-          onPress={handleLogin}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#FFFFFF',
-              fontWeight: '400',
-              fontFamily: 'Montserrat-Regular',
-            }}
-            disabled={isButtonDisabled}
-          >
-            Continue
+          </Pressable>
+          <Button title={'Continue'} onPress={handleLogin} disabled={isButtonDisabled} customBtnStyle={{backgroundColor: isButtonDisabled? colors.lightSaffron : colors.darkSaffron}}/>
+          <Text style={[styles.motoText, {textAlign:'center', marginTop: hp(24)}]}>{`Don't have an account? `}
+            <Text onPress={handleClickForSignup} style={{textDecorationLine:'underline'}}>{'Sign up'}</Text>
           </Text>
-        </TouchableOpacity>
-        <View
-          style={{ alignItems: 'center', width: Width / 1.1, marginTop: 20 }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#555B61',
-              fontWeight: '400',
-              alignSelf: 'center',
-              fontFamily: 'Montserrat-Regular',
-              marginLeft: 12,
-            }}
-          >
-            Don't have an account?
-            <TouchableOpacity
-              style={{ width: 80, marginLeft: 15, marginTop: -2 }}
-              onPress={handleClickForSignup}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: '#3B4248',
-                  fontWeight: '400',
-                  alignSelf: 'center',
-                  fontFamily: 'Montserrat-Regular',
-                  textDecorationLine: 'underline',
-                }}
-              >
-                Sign up
-              </Text>
-            </TouchableOpacity>
-          </Text>
-        </View>
-        <View
-          style={{ alignItems: 'center', width: Width / 1.1, marginTop: 15 }}
-        >
-          <TouchableOpacity
-            style={{ marginLeft: 12, marginTop: -2 }}
-            onPress={handleClickForForgotPassword}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#3B4248',
-                fontWeight: '400',
-                fontFamily: 'Montserrat-Regular',
-                alignSelf: 'center',
-              }}
-            >
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+          <Text onPress={handleClickForForgotPassword} style={[styles.motoText, {textAlign:'center'}]}>{'Forgot Password?'}</Text>
+      </ScrollView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
-  inputStyle: {
-    width: Width / 1.1,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#3B4248',
-    height: 56,
-    marginTop: 18,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
+  scrollViewStyle:{
+    flex: 1, 
+    paddingHorizontal: wp(16), 
+    paddingTop:hp(16)
   },
-  input: {
-    width: Width / 1.11,
-    backgroundColor: '#FFFFFF',
-    height: 50,
-    borderRadius: 9,
-    color: '#9B9EA1',
-    fontSize: 16,
-    fontWeight: '400',
+  welcomeText:{
+    marginTop: hp(24),
+    lineHeight: hp(36),
+    fontSize: fontSize(24),
+    fontFamily: fonts.bold,
+    color: colors.xDarkGrey,
+  },
+  motoText:{
+    marginTop: hp(8),
+    lineHeight: hp(24),
+    color: colors.grey1,
+    fontSize: fontSize(16),
+    fontFamily: fonts.regular,
+  },
+  conditionView: {
+    flexDirection: 'row',
+    marginVertical: hp(32),
+    alignSelf:'flex-start',
+  },
+  checkBox: {
+    width: wp(24),
+    height: wp(24),
+    borderWidth: wp(1),
+    marginRight: wp(16),
+    borderRadius: wp(5),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
