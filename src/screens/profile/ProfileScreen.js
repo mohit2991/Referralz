@@ -14,12 +14,13 @@ import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { profileItemList1, profileItemList2 } from '../../utils/dataConstants';
 import { useNavigation } from '@react-navigation/native';
-import { deleteUser } from '../../services/apiService';
+import { deleteUser, logoutUser } from '../../services/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../../contexts/userContext';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
-
+  const { userData, setUserData } = useUser();
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isLogoutModal, setIsLogoutModal] = useState(false);
 
@@ -53,17 +54,31 @@ const ProfileScreen = () => {
   const handleDeleteAccount = async () => {
     try {
       const response = await deleteUser();
-      console.log('delete Account', { response });
-      await AsyncStorage.clear();
-      navigate('Login');
+      if (response.status === 201) {
+        console.log('delete Account', { response });
+        await AsyncStorage.clear();
+        navigate('Login');
+      } else {
+        console.log(response.data);
+      }
     } catch (error) {
       console.log(error.message);
     }
   };
 
   const handleLogout = async () => {
-    await AsyncStorage.clear();
-    navigate('Login');
+    try {
+      const response = await logoutUser();
+      if (response.status === 201) {
+        console.log('logout Account', { response });
+        await AsyncStorage.clear();
+        navigate('Login');
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -72,9 +87,9 @@ const ProfileScreen = () => {
       <View style={styles.container}>
         <ScrollView bounces={false} style={styles.scrollViewStyle}>
           <View style={styles.profileContainer}>
-            <Image source={icons.avatar} style={styles.profileImgView} />
+            <Image source={userData?.download_profile_img_url !== null ? { uri: userData.download_profile_img_url } : icons.avatar} style={styles.profileImgView} />
             <View style={styles.profileNameView}>
-              <Text style={styles.profileNameText}>{'Adam Smita'}</Text>
+              <Text style={styles.profileNameText}>{userData?.first_name} {userData?.last_name}</Text>
               <TouchableOpacity onPress={() => navigate('EditProfileScreen')}>
                 <Text style={styles.updateInfoText}>
                   {'Update personal info'}
@@ -107,7 +122,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleDeleteAccount}
-        secondaryBtnPress={() => {}}
+        secondaryBtnPress={() => { }}
         toggleModal={() => setIsDeleteModal(!isDeleteModal)}
         primaryBtnStyle={{ backgroundColor: colors.darkRed }}
         secondaryTextStyle={{ color: colors.darkGrey }}
@@ -121,7 +136,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleLogout}
-        secondaryBtnPress={() => {}}
+        secondaryBtnPress={() => { }}
         primaryBtnStyle={{ marginTop: hp(48) }}
         toggleModal={() => setIsLogoutModal(!isLogoutModal)}
       />
@@ -145,6 +160,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     color: colors.darkBlack,
     fontFamily: fonts.semiBold,
+    textTransform: 'capitalize'
   },
   updateInfoText: {
     lineHeight: hp(20),
