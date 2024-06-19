@@ -1,6 +1,7 @@
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { icons } from '../utils/icons';
 
 const Splash = () => {
   const navigation = useNavigation();
@@ -11,7 +12,7 @@ const Splash = () => {
   }, []);
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 25 }}>Referralz</Text>
+      <Text><Image source={icons.logo} /></Text>
     </View>
   );
 };

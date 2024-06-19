@@ -41,9 +41,8 @@ const SettingScreen = () => {
           ...prevUserData,
           ...userPayload,
         }));
-        console.log("update notification settings", response)
       } else {
-        console.log(response.data);
+        console.log("notification error", response.data);
       }
     } catch (error) {
       console.log(error.message);

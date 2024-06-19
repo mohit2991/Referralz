@@ -1,4 +1,5 @@
 export const icons = {
+  logo: require('../../assets/icons/logo.png'),
   avatar: require('../../assets/icons/avatar.png'),
   backArrow: require('../../assets/icons/backArrow.png'),
   calendar: require('../../assets/icons/calendar.png'),
