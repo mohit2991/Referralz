@@ -13,7 +13,9 @@ export const colors = {
   liteGrey: '#E0E1E2',
   transparent: 'transparent',
   grey300: '#D9D9D9',
-  green: '#26B765',
+  // green: '#26B765',
   darkSaffron: '#E16032',
   liteSaffron: '#FFB03B',
+  green: '#06D001',
+  red: '#C92B2B',
 };

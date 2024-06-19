@@ -22,14 +22,34 @@ export const createUser = async (userData) => {
   }
 };
 
-export const getUserDetails = async (userPayload) => {
+export const getUserDetails = async () => {
   try {
-    const response = await api.get('/user', userPayload);
+    const response = await api.get('/user');
     return response;
   } catch (error) {
     return handleError(error);
   }
 };
+
+
+export const deleteUser = async () => {
+  try {
+    const response = await api.delete('/user');
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const changePassword = async (userPayload) => {
+  try {
+    const response = await api.post('/user/change-password', userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 
 const handleError = (error) => {
   if (error.response) {

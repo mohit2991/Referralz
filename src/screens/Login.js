@@ -26,13 +26,14 @@ const Login = () => {
   const [passwordtrue, setPasswordtrue] = useState(true);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   const handleClickForSignup = () => {
     navigation.navigate('CreateAccount');
   };
 
   const handleClickForForgotPassword = () => {
-    navigation.navigate('ForgotPassword');
+    // navigation.navigate('ForgotPassword');
+    navigation.navigate('ProfileScreen');
   };
 
   const clickKeepMeLogin = () => {
@@ -66,11 +67,10 @@ const Login = () => {
       username: email,
       password,
     };
-
+    console.log({ userPayload })
     try {
       const response = await loginUser(userPayload);
       const { access_token } = response.data;
-      console.log('>>>>>> mohit', response);
 
       if (access_token) {
         // Store the token in AsyncStorage

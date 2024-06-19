@@ -28,11 +28,16 @@ const AppNavigator = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Dashboard" component={Dashboard} />
+        {/* <Stack.Screen name="Dashboard" component={Dashboard} /> */}
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen
           name="SuccessfullySignup"
           component={SuccessfullySignup}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Dashboard"
+          component={Dashboard}
         />
         <Stack.Screen name="InboxCheck" component={InboxCheck} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
