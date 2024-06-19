@@ -18,7 +18,7 @@ import { Button, TextInputComp } from '../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
 
 const Login = () => {
-  const navigation = useNavigation();
+  const {navigate} = useNavigation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,12 +27,12 @@ const Login = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const handleClickForSignup = () => {
-    navigation.navigate('CreateAccount');
+    navigate('CreateAccount');
   };
 
   const handleClickForForgotPassword = () => {
-    navigation.navigate('ForgotPassword');
-    // navigation.navigate('ProfileScreen');
+    navigate('ForgotPassword');
+    // navigate('ProfileScreen');
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const Login = () => {
         await AsyncStorage.setItem('accessToken', access_token);
 
         // Navigate to another screen
-        navigation.navigate('Dashboard');
+        navigate('Dashboard');
       } else {
         Toast.show({
           type: 'error',
