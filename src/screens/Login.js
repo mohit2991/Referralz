@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { commonStyles } from '../styles/styles';
 import { loginUser } from '../services/apiService';
-import { Button, TextInputComp } from '../components';
+import { Button, TextInputComp, ToastAlert } from '../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
 
 const Login = () => {
@@ -62,16 +62,16 @@ const Login = () => {
         // Navigate to another screen
         navigate('Dashboard');
       } else {
-        Toast.show({
-          type: 'error',
-          text1: response.error_description,
-        });
+        ToastAlert({
+          type:'error',
+          description: response.error_description
+        })
       }
     } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: error.message,
-      });
+      ToastAlert({
+        type:'error',
+        description: `Oops! We couldn't log you in via Facebook, Gmail, or Apple. Please check your details and try again.`
+      })
     }
   };
 
@@ -108,14 +108,14 @@ const Login = () => {
               style={[
                 styles.checkBox,
                 {
-                  backgroundColor: !isRemember
+                  backgroundColor: isRemember
                     ? colors.darkSaffron
                     : colors.white,
-                    borderColor: !isRemember ? colors.darkSaffron : colors.grey,
+                    borderColor: isRemember ? colors.darkSaffron : colors.grey,
                 },
               ]}
             >
-              {!isRemember && (
+              {isRemember && (
                 <Image source={icons.checkMark} style={commonStyles.icon24} />
               )}
             </View>

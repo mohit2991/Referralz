@@ -39,6 +39,7 @@ const CreateAccount = () => {
   const [isHomeOver, setIsHomeOver] = useState(true);
   const [isReferralPartner, setIsReferralPartner] = useState(false);
   const [haveCompanyCode, setHaveCompanyCode] = useState(false);
+  const [isPwdErr, setIsPwdErr] = useState(false);
 
   const onSignInPress = () => {
     navigate('Login');
@@ -64,6 +65,15 @@ const CreateAccount = () => {
       } else {
         return true
       }
+  }
+
+  const validatePassword=(password)=> {
+    const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  }
+
+  const onPwdBlur = () =>{
+    validatePassword(password) ? setIsPwdErr(false) : setIsPwdErr(true)
   }
 
   const onCreateAccountPress = async () => {
@@ -139,7 +149,10 @@ const CreateAccount = () => {
               />
             }
             onRightPress={() => setIsPwdSecure(!isPwdSecure)}
+            onBlur={onPwdBlur}
+            additionalContainerStyle={{borderColor: isPwdErr ? colors.darkRed : colors.grey }}
           />
+          {isPwdErr && <Text style={styles.errText}>{'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'}</Text>}
           <TextInputComp
             value={confirmpassword}
             secureTextEntry={isConfirmPwdSecure}
@@ -229,6 +242,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     color: colors.xDarkGrey,
   },
+  errText:{
+    fontSize: fontSize(12),
+    lineHeight: hp(16),
+    fontFamily: fonts.regular,
+    color: colors.darkRed,
+    marginTop: hp(4)
+  }
 });
 
 export default CreateAccount;
