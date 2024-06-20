@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -8,24 +8,24 @@ import { commonStyles } from '../styles/styles';
 import { Header, InfoComponent } from '../components';
 
 const SuccessfullySignup = () => {
-  const {navigate} = useNavigation();
+  const { navigate } = useNavigation();
 
   return (
     <View style={commonStyles.flex}>
-      <Header isBackButton/>
+      <Header isBackButton />
       <View style={styles.container}>
-        <InfoComponent 
+        <InfoComponent
           title={'Success!'}
           description={'Your registration has been completed successfully. An email with instructions to activate your membership has been sent to you.'}
           btnText={'Sign into Referralz'}
-          onPress={()=>{}}
+          onPress={() => { navigate('Login') }}
         />
       </View>
-      </View>
+    </View>
   );
 };
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

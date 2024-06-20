@@ -174,12 +174,13 @@ const CreateAccount = () => {
           onChangeText={(text) => setConfirmpassword(text)}
           rightIcon={
             <Image
-              source={isPwdSecure ? icons.eye : icons.eyeOff}
+              source={isConfirmPwdSecure ? icons.eye : icons.eyeOff}
               style={[commonStyles.icon24, { tintColor: colors.darkGrey }]}
             />
           }
           onRightPress={() => setIsConfirmPwdSecure(!isConfirmPwdSecure)}
         />
+        {password !== confirmpassword && confirmpassword !== "" && (<Text style={styles.errText}>Password and Confirm Password do not match.</Text>)}
 
         <Text style={styles.subTitleText}>{'Describe yourself'}</Text>
         <RadioSelector value={isHomeOver} text={'Homeowner'} onPress={onHomeOwnerPress} />
