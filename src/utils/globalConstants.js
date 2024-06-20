@@ -16,7 +16,7 @@ export const hp = (val) => {
   return heightPercentageToDP((val * 100) / screenHeight);
 };
 
-export const fontSize = (val) => RFValue(val, 812);
+export const fontSize = (val) => RFValue(val, screenHeight);
 
 export const isIos = Platform.OS === 'ios' ? true : false;
 

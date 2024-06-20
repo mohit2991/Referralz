@@ -1,25 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Toast from 'react-native-toast-message';
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   Image,
-  Dimensions,
   SafeAreaView,
 } from 'react-native';
-import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import PasswordIcon from './../images/password_icon.png';
 
 import { createUser } from '../services/apiService';
+import { Button, TextInputComp, ToastAlert } from '../components';
+import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
+import { commonStyles } from '../styles/styles';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const Width = Dimensions.get('window').width;
+export const RadioSelector = ({ text, value, onPress }) => {
+  return (
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={commonStyles.flexRowJustify}>
+      <Text style={styles.radioText}>{text}</Text>
+      <Image style={commonStyles.icon24} source={value ? icons.activeRadio : icons.inActiveRadio} />
+    </TouchableOpacity>
+  )
+}
 
 const CreateAccount = () => {
-  const navigation = useNavigation();
+  const { navigate } = useNavigation();
 
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
@@ -27,72 +34,56 @@ const CreateAccount = () => {
   const [companycode, setCompanycode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmpassword] = useState('');
-  const [describe, setDescribe] = useState(false);
-  const [havecompanycode, setHavecompanycode] = useState(true);
-  const [passwordtrue, setPasswordtrue] = useState(true);
-  const [confirmpasswordtrue, setConfirmpasswordtrue] = useState(true);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isPwdSecure, setIsPwdSecure] = useState(true);
+  const [isConfirmPwdSecure, setIsConfirmPwdSecure] = useState(true);
+  const [isHomeOver, setIsHomeOver] = useState(true);
+  const [isReferralPartner, setIsReferralPartner] = useState(false);
+  const [haveCompanyCode, setHaveCompanyCode] = useState(true);
+  const [isPwdErr, setIsPwdErr] = useState(false);
 
-  const handleClickForSignin = () => {
-    navigation.navigate('Login');
+  const onSignInPress = () => {
+    navigate('Login');
   };
 
-  const clickHomeowner = () => {
-    setDescribe(false);
-  };
+  const onHomeOwnerPress = () => {
+    setIsHomeOver(true);
+    setIsReferralPartner(false)
+  }
 
-  const clickReferalparter = () => {
-    setDescribe(true);
-  };
+  const onReferralPartnerPress = () => {
+    setIsReferralPartner(true)
+    setIsHomeOver(false);
+  }
 
-  const clickHaveCompanyCode = () => {
-    setHavecompanycode(true);
-  };
-
-  const clickDontHaveCompanyCode = () => {
-    setHavecompanycode(false);
-  };
-
-  const clickChangePasswordIcon = () => {
-    if (passwordtrue) {
-      setPasswordtrue(false);
-    } else {
-      setPasswordtrue(true);
-    }
-  };
-
-  const clickChangeConfirmPasswordIcon = () => {
-    if (confirmpasswordtrue) {
-      setConfirmpasswordtrue(false);
-    } else {
-      setConfirmpasswordtrue(true);
-    }
-  };
-
-  useEffect(() => {
-    if (
-      email !== '' &&
+  const isReadyToCreate = () => {
+    if (email !== '' &&
       firstname !== '' &&
       lastname !== '' &&
       password !== '' &&
-      confirmpassword !== ''
-    ) {
-      if (password === confirmpassword) {
-        setIsButtonDisabled(false);
-      } else {
-        setIsButtonDisabled(true);
-      }
+      confirmpassword !== '' && password === confirmpassword) {
+      return false
+    } else {
+      return true
     }
-  }, [email, firstname, lastname, password, confirmpassword]);
+  }
 
-  const handleRegister = async () => {
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  }
+
+  const onPwdBlur = () => {
+    validatePassword(password) ? setIsPwdErr(false) : setIsPwdErr(true)
+  }
+
+  const onCreateAccountPress = async () => {
     const userPayload = {
       email_id: email,
       first_name: firstname,
       last_name: lastname,
       password: password,
       status: 'CREATED',
-      type: 'HOME_OWNER',
+      type: isHomeOver ? 'HOME_OWNER' : "TECHNICIAN",
       user_unique_code: companycode !== '' ? companycode : null,
       address: null,
       birth_date: null,
@@ -101,437 +92,177 @@ const CreateAccount = () => {
 
     try {
       const response = await createUser(userPayload);
-
-      // after success
       if (response.status == 201) {
-        navigation.navigate('SuccessfullySignup');
+        navigate('SuccessfullySignup');
+        resetState();
       } else {
-        Toast.show({
-          type: 'success',
-          text1: response.status === 400 ? response.data : response.error,
+        ToastAlert.show({
+          type: 'error',
+          description: response.status === 400 ? response.data : response.error,
         });
       }
     } catch (error) {
-      Toast.show({
+      ToastAlert.show({
         type: 'error',
-        text1: 'Hello',
-        text2: error.message,
+        description: error.message,
       });
     }
   };
 
+  const resetState = () => {
+    setEmail('');
+    setFirstname('');
+    setLastname('');
+    setCompanycode('');
+    setPassword('');
+    setConfirmpassword('');
+    setIsPwdSecure(true);
+    setIsConfirmPwdSecure(true);
+    setIsHomeOver(true);
+    setIsReferralPartner(false);
+    setHaveCompanyCode(true);
+    setIsPwdErr(false);
+  };
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <View style={{ alignItems: 'center' }}>
-        <Text
-          style={{
-            fontSize: 24,
-            color: '#3B4248',
-            fontWeight: '700',
-            fontFamily: 'Montserrat-Regular',
-            marginTop: 26,
-          }}
-        >
-          Create a Referralz account
+    <View style={styles.root}>
+      <SafeAreaView />
+      <Text style={styles.welcomeText}>{'Create a Referralz account'}</Text>
+      <Text style={styles.motoText}>{'Refer, track, and earn with ease.'}</Text>
+      <KeyboardAwareScrollView
+        bounces={false}
+        style={styles.scrollViewStyle}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps={'handled'}
+        contentContainerStyle={{ paddingBottom: hp(50) }}
+      >
+        <TextInputComp
+          value={email}
+          labelText={'Email'}
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInputComp
+          value={firstname}
+          labelText={'First name'}
+          onChangeText={(text) => setFirstname(text)}
+        />
+        <TextInputComp
+          value={lastname}
+          labelText={'Last name'}
+          onChangeText={(text) => setLastname(text)}
+        />
+        <TextInputComp
+          value={password}
+          secureTextEntry={isPwdSecure}
+          labelText={'Password'}
+          onChangeText={(text) => setPassword(text)}
+          rightIcon={
+            <Image
+              source={isPwdSecure ? icons.eye : icons.eyeOff}
+              style={[commonStyles.icon24, { tintColor: colors.darkGrey }]}
+            />
+          }
+          onRightPress={() => setIsPwdSecure(!isPwdSecure)}
+          onBlur={onPwdBlur}
+          additionalContainerStyle={{ borderColor: isPwdErr ? colors.darkRed : colors.grey }}
+        />
+        {isPwdErr && <Text style={styles.errText}>{'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'}</Text>}
+        <TextInputComp
+          value={confirmpassword}
+          secureTextEntry={isConfirmPwdSecure}
+          labelText={'Confirm password'}
+          onChangeText={(text) => setConfirmpassword(text)}
+          rightIcon={
+            <Image
+              source={isPwdSecure ? icons.eye : icons.eyeOff}
+              style={[commonStyles.icon24, { tintColor: colors.darkGrey }]}
+            />
+          }
+          onRightPress={() => setIsConfirmPwdSecure(!isConfirmPwdSecure)}
+        />
+
+        <Text style={styles.subTitleText}>{'Describe yourself'}</Text>
+        <RadioSelector value={isHomeOver} text={'Homeowner'} onPress={onHomeOwnerPress} />
+        <View style={{ height: hp(12) }} />
+        <RadioSelector value={isReferralPartner} text={'Referral partner'} onPress={onReferralPartnerPress} />
+
+        {isReferralPartner &&
+          <>
+            <Text style={styles.subTitleText}>{'Do you have a company code?'}</Text>
+            <RadioSelector value={haveCompanyCode} text={'Yes'} onPress={() => setHaveCompanyCode(true)} />
+            <View style={{ height: hp(12) }} />
+            <RadioSelector value={!haveCompanyCode} text={'No'} onPress={() => setHaveCompanyCode(false)} />
+          </>}
+
+        {isReferralPartner && haveCompanyCode &&
+          <TextInputComp
+            value={companycode}
+            labelText={'Company code'}
+            onChangeText={(text) => setCompanycode(text)}
+            additionalContainerStyle={{ borderColor: colors.primary }}
+          />
+        }
+
+        <Text style={[styles.motoText, { marginTop: hp(24), marginBottom: hp(24) }]}>{`By clicking "Agree and continue", You agree to Referralz's `}
+          <Text onPress={() => { }} style={{ textDecorationLine: 'underline' }}>{'Terms of Service'}</Text>{' and '}
+          <Text onPress={() => { }} style={{ textDecorationLine: 'underline' }}>{'Privacy Policy.'}</Text>
         </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            color: '#555B61',
-            fontWeight: '400',
-            fontFamily: 'Montserrat-Regular',
-            marginTop: 12,
-          }}
-        >
-          Refer, track, and earn with ease.
+
+        <Button title={'Create account'} onPress={onCreateAccountPress} disabled={isReadyToCreate()} customBtnStyle={{ backgroundColor: isReadyToCreate() ? colors.lightSaffron : colors.darkSaffron }} />
+        <Text style={[styles.motoText, { textAlign: 'center', marginTop: hp(16) }]}>{`Already have an account? `}
+          <Text onPress={onSignInPress} style={{ textDecorationLine: 'underline' }}>{'Sign in'}</Text>
         </Text>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={styles.input}
-            label="Email"
-            value={email}
-            onChangeText={(email) => setEmail(email)}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
-          />
-        </View>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={styles.input}
-            label="First Name"
-            value={firstname}
-            onChangeText={(firstname) => setFirstname(firstname)}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
-          />
-        </View>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={styles.input}
-            label="Last Name"
-            value={lastname}
-            onChangeText={(lastname) => setLastname(lastname)}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
-          />
-        </View>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={{
-              width: Width / 1.22,
-              backgroundColor: '#FFFFFF',
-              height: 50,
-              borderRadius: 9,
-              color: '#9B9EA1',
-              fontSize: 16,
-              fontWeight: '400',
-            }}
-            label="Password"
-            value={password}
-            onChangeText={(password) => setPassword(password)}
-            secureTextEntry={passwordtrue}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
-          />
-          <TouchableOpacity style={{}} onPress={clickChangePasswordIcon}>
-            <Image
-              source={
-                passwordtrue
-                  ? PasswordIcon
-                  : require('../images/radio_tick.png')
-              }
-              style={{ height: 24, width: 24, marginRight: 10 }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.inputStyle}>
-          <TextInput
-            style={{
-              width: Width / 1.22,
-              backgroundColor: '#FFFFFF',
-              height: 50,
-              borderRadius: 9,
-              color: '#9B9EA1',
-              fontSize: 16,
-              fontFamily: 'Montserrat-Regular',
-              fontWeight: '400',
-            }}
-            label="Confirm Password"
-            value={confirmpassword}
-            onChangeText={(confirmpassword) =>
-              setConfirmpassword(confirmpassword)
-            }
-            secureTextEntry={confirmpasswordtrue}
-            underlineColor="transparent"
-            theme={{ colors: { primary: '#ffffff' } }}
-          />
-          <TouchableOpacity style={{}} onPress={clickChangeConfirmPasswordIcon}>
-            <Image
-              source={
-                confirmpasswordtrue
-                  ? PasswordIcon
-                  : require('../images/radio_tick.png')
-              }
-              style={{ height: 24, width: 24, marginRight: 10 }}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={{ alignItems: 'center' }}>
-        <View style={{ width: Width / 1.1, marginTop: 20 }}>
-          <Text
-            style={{
-              fontSize: 17,
-              color: 'black',
-              fontFamily: 'Montserrat-Regular',
-              fontWeight: '600',
-              marginTop: 12,
-            }}
-          >
-            Describe yourself
-          </Text>
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              width: Width / 1.1,
-              justifyContent: 'space-between',
-              marginTop: 12,
-            }}
-            onPress={clickHomeowner}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#3B4248',
-                fontFamily: 'Montserrat-Regular',
-                fontWeight: '400',
-              }}
-            >
-              Homeowner
-            </Text>
-            <Image
-              source={
-                describe == true
-                  ? require('../images/radio_empty.png')
-                  : require('../images/radio_tick.png')
-              }
-              style={{ height: 24, width: 24 }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              width: Width / 1.1,
-              justifyContent: 'space-between',
-              marginTop: 12,
-            }}
-            onPress={clickReferalparter}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#3B4248',
-                fontFamily: 'Montserrat-Regular',
-                fontWeight: '400',
-              }}
-            >
-              Referral partner
-            </Text>
-            <Image
-              source={
-                describe == false
-                  ? require('../images/radio_empty.png')
-                  : require('../images/radio_tick.png')
-              }
-              style={{ height: 24, width: 24 }}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      {describe == true ? (
-        <View>
-          <View style={{ alignItems: 'center' }}>
-            <View style={{ width: Width / 1.1, marginTop: 20 }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  color: 'black',
-                  fontFamily: 'Montserrat-Regular',
-                  fontWeight: '600',
-                  marginTop: 12,
-                }}
-              >
-                Do you have a company code?
-              </Text>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  width: Width / 1.1,
-                  justifyContent: 'space-between',
-                  marginTop: 12,
-                }}
-                onPress={clickHaveCompanyCode}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: '#3B4248',
-                    fontFamily: 'Montserrat-Regular',
-                    fontWeight: '400',
-                  }}
-                >
-                  Yes
-                </Text>
-                <Image
-                  source={
-                    havecompanycode == true
-                      ? require('../images/radio_tick.png')
-                      : require('../images/radio_empty.png')
-                  }
-                  style={{ height: 24, width: 24 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  width: Width / 1.1,
-                  justifyContent: 'space-between',
-                  marginTop: 12,
-                }}
-                onPress={clickDontHaveCompanyCode}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: '#3B4248',
-                    fontFamily: 'Montserrat-Regular',
-                    fontWeight: '400',
-                  }}
-                >
-                  No
-                </Text>
-                <Image
-                  source={
-                    havecompanycode == true
-                      ? require('../images/radio_empty.png')
-                      : require('../images/radio_tick.png')
-                  }
-                  style={{ height: 24, width: 24 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          {havecompanycode == true ? (
-            <View style={{ alignItems: 'center' }}>
-              <View style={styles.inputStyle}>
-                <TextInput
-                  style={styles.input}
-                  label="Company code"
-                  value={companycode}
-                  onChangeText={(companycode) => setCompanycode(companycode)}
-                  underlineColor="transparent"
-                  theme={{ colors: { primary: '#ffffff' } }}
-                />
-              </View>
-            </View>
-          ) : (
-            <View></View>
-          )}
-        </View>
-      ) : (
-        <View></View>
-      )}
-      <View style={{ alignItems: 'center' }}>
-        <View
-          style={{ alignItems: 'center', width: Width / 1.1, marginTop: 20 }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#3B4248',
-              fontFamily: 'Montserrat-Regular',
-              fontWeight: '400',
-              marginTop: 12,
-            }}
-          >
-            By clicking “Agree and continue”, You agree to Referralz’s{' '}
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#3B4248',
-                fontFamily: 'Montserrat-Regular',
-                fontWeight: '400',
-                marginTop: 12,
-                textDecorationLine: 'underline',
-              }}
-            >
-              Terms of Service{' '}
-            </Text>{' '}
-            and{' '}
-            <Text
-              style={{
-                fontSize: 15,
-                color: 'black',
-                fontFamily: 'Montserrat-Regular',
-                fontWeight: '400',
-                marginTop: 12,
-                textDecorationLine: 'underline',
-              }}
-            >
-              Privacy Policy.{' '}
-            </Text>{' '}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={{
-            width: Width / 1.1,
-            borderRadius: 8,
-            height: 52,
-            marginTop: 20,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: isButtonDisabled ? '#F6CFC1' : '#E16032',
-          }}
-          onPress={handleRegister}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#FFFFFF',
-              fontFamily: 'Montserrat-Regular',
-              fontWeight: '400',
-            }}
-            disabled={isButtonDisabled}
-          >
-            Create account
-          </Text>
-        </TouchableOpacity>
-        <View
-          style={{
-            alignItems: 'center',
-            width: Width / 1.1,
-            marginTop: 20,
-            marginBottom: 30,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#3B4248',
-              fontFamily: 'Montserrat-Regular',
-              fontWeight: '400',
-              alignSelf: 'center',
-            }}
-          >
-            Already have an account
-            <TouchableOpacity
-              style={{ width: 80, marginLeft: 12, marginTop: -2 }}
-              onPress={handleClickForSignin}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: '#3B4248',
-                  fontFamily: 'Montserrat-Regular',
-                  fontWeight: '400',
-                  alignSelf: 'center',
-                  textDecorationLine: 'underline',
-                  marginLeft: 1,
-                }}
-              >
-                Sign in
-              </Text>
-            </TouchableOpacity>
-          </Text>
-        </View>
-      </View>
-    </ScrollView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  inputStyle: {
-    width: Width / 1.1,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#3B4248',
-    height: 56,
-    marginTop: 18,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
+  root: {
+    flex: 1,
+    backgroundColor: colors.white,
+    alignItems: 'center'
   },
-  input: {
-    width: Width / 1.11,
-    backgroundColor: '#FFFFFF',
-    height: 50,
-    borderRadius: 9,
-    color: '#9B9EA1',
-    fontSize: 16,
-    fontWeight: '400',
-    fontFamily: 'Montserrat-Regular',
+  scrollViewStyle: {
+    flex: 1,
+    paddingHorizontal: wp(16),
+    paddingTop: hp(8)
   },
+  welcomeText: {
+    marginTop: hp(24),
+    lineHeight: hp(36),
+    fontSize: fontSize(24),
+    fontFamily: fonts.bold,
+    color: colors.xDarkGrey,
+  },
+  motoText: {
+    marginTop: hp(8),
+    lineHeight: hp(24),
+    color: colors.grey1,
+    fontSize: fontSize(16),
+    fontFamily: fonts.regular,
+  },
+  subTitleText: {
+    fontSize: fontSize(18),
+    lineHeight: hp(28),
+    fontFamily: fonts.semiBold,
+    color: colors.xDarkGrey,
+    marginTop: hp(24),
+    marginBottom: hp(16)
+  },
+  radioText: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fonts.regular,
+    color: colors.xDarkGrey,
+  },
+  errText: {
+    fontSize: fontSize(12),
+    lineHeight: hp(16),
+    fontFamily: fonts.regular,
+    color: colors.darkRed,
+    marginTop: hp(4)
+  }
 });
 
 export default CreateAccount;
