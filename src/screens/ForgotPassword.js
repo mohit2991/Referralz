@@ -28,7 +28,6 @@ const ForgotPassword = () => {
     try {
       const response = await forgotPassword(email);
       if (response.status === 201) {
-        console.log('logout Account', { response });
         navigate('InboxCheck');
       } else {
         console.log(response.data);

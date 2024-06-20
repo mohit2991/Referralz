@@ -91,7 +91,7 @@ const EditProfileScreen = () => {
         console.log(response.data);
       }
     } catch (error) {
-      console.log("bbb", error.message);
+      console.log(error.message);
     }
   };
 
