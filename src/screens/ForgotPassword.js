@@ -24,7 +24,8 @@ const ForgotPassword = () => {
     try {
       const response = await forgotPassword(email);
       if (response.status === 200) {
-        navigate('InboxCheck');
+        navigate('InboxCheck', { email });
+        resetState();
       } else {
         console.log(response.data);
       }
@@ -32,6 +33,10 @@ const ForgotPassword = () => {
       console.log(error.message);
     }
   }
+
+  const resetState = () => {
+    setEmail('');
+  };
 
   return (
     <View style={commonStyles.flex}>
