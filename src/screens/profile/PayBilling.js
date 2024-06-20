@@ -82,13 +82,15 @@ const PayBilling = () => {
         address: formData?.address?.address,
         name: formData?.address?.name,
         city: formData?.address?.city,
-        postal_code: formData?.address?.postalCode,
+        postal_code: formData?.address?.postal_code,
+        postalcode: formData?.address?.postal_code,
         state: formData?.address?.state,
         country: formData?.address?.country
       },
       payment_method: selectedPayoutMethod.value
     };
 
+    console.log({ userPayload })
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
@@ -97,9 +99,8 @@ const PayBilling = () => {
           ...prevUserData,
           ...userPayload,
         }));
-        console.log("pay billing successfully", response)
       } else {
-        console.log(response.data);
+        console.log("pay billing error", response.data);
       }
     } catch (error) {
       console.log(error.message);
@@ -164,7 +165,7 @@ const PayBilling = () => {
             onRightPress={() => { }}
           />
           <TextInputComp
-            value={formData?.address?.postalCode}
+            value={formData?.address?.postal_code}
             labelText={'Postal code'}
             onChangeText={(text) => handleChange('postal_code', text)}
           />

@@ -54,12 +54,11 @@ const ProfileScreen = () => {
   const handleDeleteAccount = async () => {
     try {
       const response = await deleteUser();
-      if (response.status === 201) {
-        console.log('delete Account', { response });
+      if (response.status === 204) {
         await AsyncStorage.clear();
         navigate('Login');
       } else {
-        console.log(response.data);
+        console.log("delete error", response);
       }
     } catch (error) {
       console.log(error.message);
@@ -70,7 +69,6 @@ const ProfileScreen = () => {
     try {
       const response = await logoutUser();
       if (response.status === 201) {
-        console.log('logout Account', { response });
         await AsyncStorage.clear();
         navigate('Login');
       } else {

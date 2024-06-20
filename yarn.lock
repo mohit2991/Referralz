@@ -2640,6 +2640,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+base-64@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/base-64/-/base-64-0.1.0.tgz"
+  integrity sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==
+
 base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
@@ -4081,7 +4086,7 @@ human-signals@^2.1.0:
   resolved "https://registry.npmjs.org/human-signals/-/human-signals-2.1.0.tgz"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-ieee754@^1.1.13:
+ieee754@^1.1.13, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/ieee754/-/ieee754-1.2.1.tgz"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
@@ -6012,6 +6017,14 @@ react-native-animatable@1.3.3:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-buffer@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.npmjs.org/react-native-buffer/-/react-native-buffer-6.0.3.tgz"
+  integrity sha512-zZ0+TytQukFkdq7l9VQ8eypY83qQLMYNNVA+1skHQWcjXWRxsJvR6TAW4/HwD1FTLIySQt7cyvbNYSO30RuNvA==
+  dependencies:
+    ieee754 "^1.2.1"
+    react-native-fast-base64 "^0.1.1"
+
 react-native-date-picker@^5.0.4:
   version "5.0.4"
   resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-5.0.4.tgz"
@@ -6028,6 +6041,19 @@ react-native-drop-shadow@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/react-native-drop-shadow/-/react-native-drop-shadow-1.0.0.tgz"
   integrity sha512-om6oMDDn90ClFa+tEGMsFcACKlea5TO4jYur8PJKRpzfz+SnDIJlddhzp2kbOLpRTe7lleq6Md5QqC3u7RfOow==
+
+react-native-fast-base64@^0.1.1:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/react-native-fast-base64/-/react-native-fast-base64-0.1.2.tgz"
+  integrity sha512-LBwGGdAQirfU++1r4DX1ufkWKUhY6wwVEbVhyH247YXeubW0jxl7+yl8xlOchz6W/J1KFzXrGTcMiHlv+OpIig==
+
+react-native-fs@^2.20.0:
+  version "2.20.0"
+  resolved "https://registry.npmjs.org/react-native-fs/-/react-native-fs-2.20.0.tgz"
+  integrity sha512-VkTBzs7fIDUiy/XajOSNk0XazFE9l+QlMAce7lGuebZcag5CnjszB+u4BdqzwaQOdcYb5wsJIsqq4kxInIRpJQ==
+  dependencies:
+    base-64 "^0.1.0"
+    utf8 "^3.0.0"
 
 react-native-gesture-handler@^2.16.2:
   version "2.16.2"
@@ -7074,6 +7100,11 @@ use-latest-callback@^0.1.5, use-latest-callback@^0.1.9:
   version "0.1.9"
   resolved "https://registry.npmjs.org/use-latest-callback/-/use-latest-callback-0.1.9.tgz"
   integrity sha512-CL/29uS74AwreI/f2oz2hLTW7ZqVeV5+gxFeGudzQrgkCytrHw33G4KbnQOrRlAEzzAFXi7dDLMC9zhWcVpzmw==
+
+utf8@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/utf8/-/utf8-3.0.0.tgz"
+  integrity sha512-E8VjFIQ/TyQgp+TZfS6l8yp/xWppSAHzidGiRrqe4bK4XP9pTRyKFgGJpO3SN7zdX4DeomTrwaseCHovfpFcqQ==
 
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"

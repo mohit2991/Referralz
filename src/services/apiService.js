@@ -24,7 +24,7 @@ export const createUser = async (userData) => {
 
 export const forgotPassword = async (email) => {
   try {
-    const response = await api.post(`/user/forget-password/${email}?validation=false`);
+    const response = await api.put(`/user/forget-password/${email}?validation=false`);
     return response;
   } catch (error) {
     return handleError(error);
@@ -69,7 +69,7 @@ export const logoutUser = async () => {
 
 export const profileImageUpdate = async () => {
   try {
-    const response = await api.put('/img-upload-success');
+    const response = await api.put('/user/img-upload-success');
     return response;
   } catch (error) {
     return handleError(error);
