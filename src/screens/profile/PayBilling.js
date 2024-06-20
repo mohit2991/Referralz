@@ -14,6 +14,8 @@ import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { payoutMethodsListData } from '../../utils/dataConstants';
+import { updateUserDetails } from '../../services/apiService';
+import { useUser } from '../../contexts/userContext';
 
 export const PaymentMethodItem = ({ item, onPress }) => {
   return (
@@ -41,17 +43,15 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 
 const PayBilling = () => {
   const { navigate } = useNavigation();
-
   const [payoutMethodsList, setPayoutMethodsList] = useState(
     payoutMethodsListData,
   );
-  const [fullName, setFullName] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('');
+  const { userData, setUserData } = useUser();
+  const [formData, setFormData] = useState(userData);
   const [isConditionChecked, setIsConditionChecked] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const selectedPayoutMethod = payoutMethodsList.find(method => method.isSelected);
 
   const onSelectPayoutMethod = (item) => {
     let updateMethodList = payoutMethodsList?.map((obj) => {
@@ -61,6 +61,52 @@ const PayBilling = () => {
       return { ...obj, isSelected: false };
     });
     setPayoutMethodsList(updateMethodList);
+    setHasChanges(true);
+  };
+
+  const handleChange = (field, value) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      address: {
+        ...prevState.address,
+        [field]: value,
+      },
+    }));
+    setHasChanges(true);
+  };
+
+  const payBilling = async () => {
+    setLoading(true);
+    const userPayload = {
+      address: {
+        address: formData?.address?.address,
+        name: formData?.address?.name,
+        city: formData?.address?.city,
+        postal_code: formData?.address?.postal_code,
+        postalcode: formData?.address?.postal_code,
+        state: formData?.address?.state,
+        country: formData?.address?.country
+      },
+      payment_method: selectedPayoutMethod.value
+    };
+
+    console.log({ userPayload })
+    try {
+      const response = await updateUserDetails(userPayload);
+      if (response.status === 200) {
+        setHasChanges(false);
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          ...userPayload,
+        }));
+      } else {
+        console.log("pay billing error", response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,42 +137,46 @@ const PayBilling = () => {
             {'Billing address'}
           </Text>
           <TextInputComp
-            value={fullName}
-            labelText={'Full name'}
-            onChangeText={(text) => setFullName(text)}
+            value={formData?.address?.address}
+            maxLength={100}
+            labelText={'Address'}
+            onChangeText={(text) => handleChange('address', text)}
           />
           <TextInputComp
-            value={address}
+            value={formData?.address?.name}
+            maxLength={100}
             labelText={'Apt, suite, etc...'}
-            onChangeText={(text) => setAddress(text)}
+            onChangeText={(text) => handleChange('name', text)}
           />
           <TextInputComp
-            value={city}
+            value={formData?.address?.city}
+            maxLength={20}
             labelText={'City'}
-            onChangeText={(text) => setCity(text)}
+            onChangeText={(text) => handleChange('city', text)}
           />
           <TextInputComp
-            value={state}
+            value={formData?.address?.state}
+            maxLength={100}
             labelText={'State'}
-            onChangeText={(text) => setState(text)}
+            onChangeText={(text) => handleChange('state', text)}
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <TextInputComp
-            value={postalCode}
+            value={formData?.address?.postal_code}
             labelText={'Postal code'}
-            onChangeText={(text) => setPostalCode(text)}
+            onChangeText={(text) => handleChange('postal_code', text)}
           />
           <TextInputComp
-            value={country}
+            value={formData?.address?.country}
             labelText={'Country'}
-            onChangeText={(text) => setCountry(text)}
+            onChangeText={(text) => handleChange('country', text)}
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <Pressable
             onPress={() => setIsConditionChecked(!isConditionChecked)}
@@ -154,9 +204,9 @@ const PayBilling = () => {
         </KeyboardAwareScrollView>
       </View>
       <BottomButton
-        disabled={false}
         title={'Update'}
-        onPress={() => navigate('ProfileScreen')}
+        disabled={loading || !hasChanges}
+        onPress={payBilling}
       />
       <SafeAreaView style={styles.safeAreaViewStyle} />
     </View>

@@ -1,15 +1,16 @@
 import React from 'react';
-
-import Toast from 'react-native-toast-message';
-
-import { toastConfig } from './components';
+import { UserProvider } from './contexts/userContext';
 import AppNavigator from './navigation/AppNavigator';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './components';
 
 const App = () => {
   return (
     <>
-      <AppNavigator />
-      <Toast config={toastConfig}/>
+      <UserProvider>
+        <AppNavigator />
+        <Toast config={toastConfig} />
+      </UserProvider>
     </>
   )
 };

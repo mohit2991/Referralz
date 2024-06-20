@@ -1,31 +1,33 @@
 import React from 'react';
-import {View,StyleSheet} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { colors, wp } from '../utils';
 import { commonStyles } from '../styles/styles';
 import { Header, InfoComponent } from '../components';
 
 const InboxCheck = () => {
-  const {navigate} = useNavigation();
+  const { navigate } = useNavigation();
+  const route = useRoute();
+  const { email } = route.params;
 
   return (
     <View style={commonStyles.flex}>
-      <Header isBackButton/>
+      <Header isBackButton />
       <View style={styles.container}>
-        <InfoComponent 
+        <InfoComponent
           title={'Check your inbox!'}
-          description={'A link to reset your password has been sent to adam.smith@gmail.com.'}
+          description={`A link to reset your password has been sent to ${email}.`}
           btnText={'Open inbox'}
-          onPress={()=>{}}
+          onPress={() => { }}
         />
       </View>
-      </View>
+    </View>
   );
 };
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 
-const Header = ({ title, isBackButton, isAvatar }) => {
+const Header = ({ title, isBackButton, isAvatar, profileImage }) => {
   const { goBack, navigate } = useNavigation();
   return (
     <>
@@ -36,7 +36,7 @@ const Header = ({ title, isBackButton, isAvatar }) => {
               activeOpacity={0.8}
               onPress={() => navigate('ProfileScreen')}
             >
-              <Image source={icons.avatar} style={styles.avatarStyle} />
+              <Image source={profileImage !== null ? { uri: profileImage } : icons.avatar} style={styles.avatarStyle} />
             </TouchableOpacity>
           )}
         </View>
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(20),
     fontFamily: fonts.bold,
     color: colors.darkBlack,
+    textTransform: "capitalize",
   },
   backBtnView: {
     padding: wp(8),

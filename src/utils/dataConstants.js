@@ -46,7 +46,8 @@ export const payoutMethodsListData = [
     icon: icons.checkDollar,
     title: 'Check',
     desc: 'Description',
-    isSelected: false,
+    isSelected: true,
+    value: "CHECK",
   },
   {
     id: 2,
@@ -54,6 +55,7 @@ export const payoutMethodsListData = [
     title: 'Venmo',
     desc: 'If your account has a balance of more than $5000, you can make a payment using a card.',
     isSelected: false,
+    value: "VENMO",
   },
   {
     id: 3,
@@ -61,6 +63,7 @@ export const payoutMethodsListData = [
     title: 'ACH',
     desc: 'Description',
     isSelected: false,
+    value: "ACH",
   },
   {
     id: 4,
@@ -68,6 +71,7 @@ export const payoutMethodsListData = [
     title: 'Virtual card',
     desc: 'Description',
     isSelected: false,
+    value: "VIRTUAL_CARD",
   },
 ];
 
@@ -76,21 +80,25 @@ export const dashboardFilterOptionsList = [
     id: 1,
     title: '1 week',
     isSelected: true,
+    value: "ONE_WEEK"
   },
   {
     id: 2,
     title: '30 days',
     isSelected: false,
+    value: "THIRTY_DAYS"
   },
   {
     id: 3,
     title: '6 months',
     isSelected: false,
+    value: "SIX_MONTHS"
   },
   {
     id: 4,
     title: '1 year',
     isSelected: false,
+    value: "ONE_YEAR"
   },
 ];
 

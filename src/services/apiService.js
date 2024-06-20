@@ -22,6 +22,15 @@ export const createUser = async (userData) => {
   }
 };
 
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.put(`/user/forget-password/${email}?validation=false`);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 export const getUserDetails = async () => {
   try {
     const response = await api.get('/user');
@@ -31,10 +40,36 @@ export const getUserDetails = async () => {
   }
 };
 
+export const updateUserDetails = async (userPayload) => {
+  try {
+    const response = await api.put('/user', userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
 
 export const deleteUser = async () => {
   try {
     const response = await api.delete('/user');
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const response = await api.post('/user/logout');
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const profileImageUpdate = async () => {
+  try {
+    const response = await api.put('/user/img-upload-success');
     return response;
   } catch (error) {
     return handleError(error);
@@ -50,6 +85,15 @@ export const changePassword = async (userPayload) => {
   }
 };
 
+
+export const dashboardDetails = async (userPayload) => {
+  try {
+    const response = await api.post('/dashboard/', userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
 
 const handleError = (error) => {
   if (error.response) {

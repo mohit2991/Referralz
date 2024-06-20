@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-
 import { Switch } from 'react-native-paper';
-
 import { Header } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
+import { updateUserDetails } from '../../services/apiService';
+import { useUser } from '../../contexts/userContext';
 
 export const SettingItem = ({
   title,
@@ -29,8 +29,29 @@ export const SettingItem = ({
 };
 
 const SettingScreen = () => {
-  const [isPushNotificationOn, setIsPushNotificationOn] = useState(false);
-  const [isEmailNotificationOn, setIsEmailNotificationOn] = useState(false);
+  const { userData, setUserData } = useUser();
+  const [isPushNotificationOn, setIsPushNotificationOn] = useState(userData?.push_notification_enable);
+  const [isEmailNotificationOn, setIsEmailNotificationOn] = useState(userData?.email_notification_enable);
+
+  const updateNotificationSettings = async (userPayload) => {
+    try {
+      const response = await updateUserDetails(userPayload);
+      if (response.status === 200) {
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          ...userPayload,
+        }));
+      } else {
+        console.log("notification error", response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    updateNotificationSettings({ push_notification_enable: isPushNotificationOn, email_notification_enable: isEmailNotificationOn, });
+  }, [isPushNotificationOn, isEmailNotificationOn]);
 
   return (
     <View style={commonStyles.flex}>
