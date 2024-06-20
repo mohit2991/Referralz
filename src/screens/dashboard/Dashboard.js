@@ -225,7 +225,10 @@ const Dashboard = () => {
               ))}
             </ScrollView>
           </View>
-          <ScrollView style={styles.scrollViewContainer}>
+          <ScrollView
+            style={styles.scrollViewContainer}
+            contentContainerStyle={{ paddingBottom: hp(100) }}
+          >
             <View style={commonStyles.flexRowCenter}>
               <ItemCard>
                 <Text style={styles.cardTitleText}>{'Leads created'}</Text>
