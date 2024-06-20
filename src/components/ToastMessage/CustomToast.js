@@ -4,15 +4,29 @@ import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
 
 const CustomToast = ({ text1, text2, type }) => {
-  const backgroundColor = type === 'error' ? colors.darkBlack : type === 'success' ? 'green' : 'blue';
+  const icon =
+    type === 'error'
+      ? icons.block
+      : type === 'success'
+        ? icons.checkRing
+        : icons.info;
+  const iconColor =
+    type === 'error'
+      ? colors.darkRed
+      : type === 'success'
+        ? colors.green
+        : colors.grey;
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-        <Image source={icons.checkRing} style={[commonStyles.icon24, {tintColor: colors.darkRed}]}/>
-        <View style={styles.textView}>
-            {text1 && <Text style={styles.text1}>{text1}</Text>}
-            {text2 && <Text style={styles.text2}>{text2}</Text>}
-        </View>
+    <View style={styles.container}>
+      <Image
+        source={icon}
+        style={[commonStyles.icon24, { tintColor: iconColor }]}
+      />
+      <View style={styles.textView}>
+        {text1 && <Text style={styles.text1}>{text1}</Text>}
+        {text2 && <Text style={styles.text2}>{text2}</Text>}
+      </View>
     </View>
   );
 };
@@ -25,10 +39,11 @@ const styles = StyleSheet.create({
     width: '92%',
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.darkBlack,
   },
-  textView:{
-    flex:1,
-    marginLeft: wp(8)
+  textView: {
+    flex: 1,
+    marginLeft: wp(8),
   },
   text1: {
     fontSize: fontSize(16),

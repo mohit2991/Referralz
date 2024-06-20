@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
-import { Header, ItemCard } from '../../components';
+import { BarGraph, Header, ItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import {
@@ -208,7 +208,7 @@ const Dashboard = () => {
         profileImage={userData?.download_profile_img_url}
         title={`Welcome, ${userData?.first_name} ${userData?.last_name}`}
       />
-      {dashboardData?.lead_details?.length ? (
+      {!dashboardData?.lead_details?.length ? (
         <View style={styles.container}>
           <View style={styles.filterContainer}>
             <Text style={[styles.filterText, { marginRight: wp(14) }]}>
@@ -345,6 +345,16 @@ const Dashboard = () => {
             </ItemCard>
             <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
               <Text style={styles.chartHeaderText}>{'Leads'}</Text>
+              <Text
+                style={{
+                  ...styles.referalCardDate,
+                  color: colors.darkGrey,
+                  marginBottom: hp(16),
+                }}
+              >
+                {'Showing 989 results'}
+              </Text>
+              <BarGraph />
             </ItemCard>
             <Text style={[styles.chartHeaderText, { marginVertical: hp(16) }]}>
               {'Individual leads by referrals'}

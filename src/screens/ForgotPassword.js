@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
-import { forgotPassword } from '../services/apiService';
+
 import { commonStyles } from '../styles/styles';
 import { colors, fontSize, fonts, hp } from '../utils';
+import { forgotPassword } from '../services/apiService';
 import { Button, Header, TextInputComp } from '../components';
 
 const ForgotPassword = () => {
@@ -32,7 +34,7 @@ const ForgotPassword = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   const resetState = () => {
     setEmail('');
@@ -43,14 +45,25 @@ const ForgotPassword = () => {
       <Header isBackButton />
       <ScrollView style={commonStyles.container}>
         <Text style={styles.headerText}>{'Forgot password?'}</Text>
-        <Text style={styles.descText}>{`Enter the email address associated with your account, and we'll email you a link to reset your password.`}</Text>
+        <Text style={styles.descText}>
+          {`Enter the email address associated with your account, and we'll email you a link to reset your password.`}
+        </Text>
         <TextInputComp
           value={email}
           labelText={'Email'}
           onChangeText={(text) => setEmail(text)}
           additionalContainerStyle={styles.textInputStyle}
         />
-        <Button title={'Send reset link'} onPress={resetLinkPress} disabled={isButtonDisabled} customBtnStyle={{ backgroundColor: isButtonDisabled ? colors.lightSaffron : colors.darkSaffron }} />
+        <Button
+          title={'Send reset link'}
+          onPress={resetLinkPress}
+          disabled={isButtonDisabled}
+          customBtnStyle={{
+            backgroundColor: isButtonDisabled
+              ? colors.lightSaffron
+              : colors.darkSaffron,
+          }}
+        />
       </ScrollView>
     </View>
   );

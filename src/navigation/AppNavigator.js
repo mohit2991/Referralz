@@ -15,7 +15,7 @@ import AboutAppScreen from '../screens/profile/AboutAppScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
 import ChangePassword from '../screens/profile/ChangePassword';
 import PayBilling from '../screens/profile/PayBilling';
-import Dashboard from '../screens/dashboard/Dashboard';
+import BottomTabs from './BottomNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +38,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={isLoggedIn ? 'Dashboard' : 'Login'}
+        initialRouteName={isLoggedIn ? 'BottomTabs' : 'Login'}
         screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
       >
         <Stack.Screen name="Splash" component={Splash} />
@@ -51,8 +51,8 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           options={{ headerShown: false }}
-          name="Dashboard"
-          component={Dashboard}
+          name="BottomTabs"
+          component={BottomTabs}
         />
         <Stack.Screen name="InboxCheck" component={InboxCheck} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
