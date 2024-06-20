@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header, ItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
@@ -97,6 +97,10 @@ const Dashboard = () => {
   };
 
   const renderLeadsByReferrals = ({ item }) => {
+    const filledStars = Math.floor(item?.rating);
+    const halfStar = item?.rating % 1 !== 0;
+    const unfilledStars = 5 - Math.ceil(item?.rating);
+
     return (
       <ItemCard
         shadowStyle={{ shadowOpacity: 0 }}
@@ -125,7 +129,14 @@ const Dashboard = () => {
           </View>
         </View>
         <View style={[commonStyles.flexRowCenter, { marginBottom: hp(16) }]}>
-          <Text style={styles.cardTitleText}>{item?.rating}</Text>
+          <Text style={[styles.cardTitleText, {marginRight: wp(2)}]}>{item?.rating}</Text>
+          {[...Array(filledStars)].map((_, index) => (
+            <Image key={`filled-${index}`} source={icons.starFill} style={commonStyles.icon16} />
+          ))}
+          {halfStar && <Image source={icons.star} style={commonStyles.icon16} />}
+          {[...Array(unfilledStars)].map((_, index) => (
+            <Image key={`filled-${index}`} source={icons.star} style={commonStyles.icon16} />
+          ))}
           <View style={styles.verticalDevider} />
           <Text style={styles.referalCardDate}>{item?.date}</Text>
           <View style={styles.verticalDevider} />
@@ -196,6 +207,7 @@ const Dashboard = () => {
           </ItemCard>
           <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
             <Text style={styles.chartHeaderText}>{'Leads'}</Text>
+            <Text style={[styles.referalCardDate, {color: colors.darkGrey}]}>{'Showing 989 results'}</Text>
           </ItemCard>
           <Text style={[styles.chartHeaderText, { marginVertical: hp(16) }]}>
             {'Individual leads by referrals'}
