@@ -46,6 +46,7 @@ const ForgotPassword = () => {
         <Text style={styles.descText}>{`Enter the email address associated with your account, and we'll email you a link to reset your password.`}</Text>
         <TextInputComp
           value={email}
+          maxLength={100}
           labelText={'Email'}
           onChangeText={(text) => setEmail(text)}
           additionalContainerStyle={styles.textInputStyle}

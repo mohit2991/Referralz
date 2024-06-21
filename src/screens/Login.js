@@ -76,12 +76,14 @@ const Login = () => {
       <ScrollView style={styles.scrollViewStyle} bounces={false}>
         <TextInputComp
           value={email}
+          maxLength={100}
           labelText={'Email'}
           onChangeText={(text) => setEmail(text)}
         />
         <View style={{ height: hp(16) }} />
         <TextInputComp
           value={password}
+          maxLength={16}
           secureTextEntry={isPwdSecure}
           labelText={'Password'}
           onChangeText={(text) => setPassword(text)}

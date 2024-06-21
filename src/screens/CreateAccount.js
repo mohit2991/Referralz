@@ -138,21 +138,25 @@ const CreateAccount = () => {
       >
         <TextInputComp
           value={email}
+          maxLength={100}
           labelText={'Email'}
           onChangeText={(text) => setEmail(text)}
         />
         <TextInputComp
           value={firstname}
+          maxLength={20}
           labelText={'First name'}
           onChangeText={(text) => setFirstname(text)}
         />
         <TextInputComp
           value={lastname}
+          maxLength={20}
           labelText={'Last name'}
           onChangeText={(text) => setLastname(text)}
         />
         <TextInputComp
           value={password}
+          maxLength={16}
           secureTextEntry={isPwdSecure}
           labelText={'Password'}
           onChangeText={(text) => setPassword(text)}
@@ -169,6 +173,7 @@ const CreateAccount = () => {
         {isPwdErr && <Text style={styles.errText}>{'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'}</Text>}
         <TextInputComp
           value={confirmpassword}
+          maxLength={16}
           secureTextEntry={isConfirmPwdSecure}
           labelText={'Confirm password'}
           onChangeText={(text) => setConfirmpassword(text)}
@@ -198,6 +203,7 @@ const CreateAccount = () => {
         {isReferralPartner && haveCompanyCode &&
           <TextInputComp
             value={companycode}
+            maxLength={6}
             labelText={'Company code'}
             onChangeText={(text) => setCompanycode(text)}
             additionalContainerStyle={{ borderColor: colors.primary }}
