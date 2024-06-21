@@ -90,7 +90,6 @@ const PayBilling = () => {
       payment_method: selectedPayoutMethod.value
     };
 
-    console.log({ userPayload })
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
-import { BarGraph, Header, ItemCard } from '../../components';
+import { BarGraph, Header, ItemCard, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import {
@@ -20,9 +20,7 @@ import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 
 const Dashboard = () => {
-  const [filterOptions, setFilterOptions] = useState(
-    dashboardFilterOptionsList,
-  );
+  const [filterOptions, setFilterOptions] = useState(dashboardFilterOptionsList);
   const [dashboardData, setdashboardData] = useState(null);
   const { userData, setUserData } = useUser();
 
@@ -32,10 +30,16 @@ const Dashboard = () => {
       if (response.status === 200) {
         setUserData(response.data);
       } else {
-        console.log('user detailserror', response.error);
+        ToastAlert({
+          type: 'error',
+          description: response.error,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
@@ -49,10 +53,16 @@ const Dashboard = () => {
       if (response.status === 201) {
         setdashboardData(response?.data);
       } else {
-        console.log('dsahboard details error', response.error);
+        ToastAlert({
+          type: 'error',
+          description: response.error,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 

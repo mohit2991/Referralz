@@ -52,6 +52,7 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
+    console.log("okkkkkkk")
     try {
       const response = await profileImageUpdate();
       if (response.status === 201) {
@@ -79,13 +80,6 @@ const EditProfileScreen = () => {
   }
 
   const uploadProfileImage = async (image) => {
-    const imgData = new FormData();
-    imgData.append('file', {
-      uri: image.uri,
-      type: image.type,
-      name: image.fileName,
-    });
-
     const binaryFile = await RNFS.readFile(image.uri, 'base64');
     const binaryData = Buffer.from(binaryFile, 'base64');
     try {
@@ -110,8 +104,6 @@ const EditProfileScreen = () => {
       });
     }
   };
-
-  console.log({ userData })
 
   const handleChange = (field, value) => {
     setFormData((prevState) => ({
@@ -158,7 +150,6 @@ const EditProfileScreen = () => {
         setLoading(false);
       }
     } else {
-      console.log("okkkkkkkkk")
       try {
         const response = await updateUserDetails(userPayload);
         if (response.status === 200) {

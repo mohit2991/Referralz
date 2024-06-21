@@ -36,7 +36,6 @@ const SettingScreen = () => {
   const updateNotificationSettings = async (userPayload) => {
     try {
       const response = await updateUserDetails(userPayload);
-      console.log({ response })
       if (response.status === 200) {
         ToastAlert({
           type: 'success',
