@@ -16,9 +16,12 @@ import { commonStyles } from '../styles/styles';
 import { loginUser } from '../services/apiService';
 import { Button, TextInputComp, ToastAlert } from '../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
+import useApiHandler from '../hooks/useApiHandler';
+import messages from '../constants/messages';
 
 const Login = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
   const [email, setEmail] = useState('bisht4125@gmail.com');
   const [password, setPassword] = useState('Test@123');
   const [isPwdSecure, setIsPwdSecure] = useState(true);
@@ -48,29 +51,21 @@ const Login = () => {
       username: email,
       password,
     };
-    try {
-      const response = await loginUser(userPayload);
-      const { access_token } = response.data;
 
-      if (access_token) {
-        await AsyncStorage.setItem('accessToken', access_token);
-        ToastAlert({
-          type: 'success',
-          description: `You're logged in successfully!`,
-        });
-        navigate('BottomTabs');
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response?.data?.error_description,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Login API Call
+    handleApiCall(
+      () => loginUser(userPayload), // Call API
+      messages.loginSuccess, // Success message
+      messages.loginError, // Error message
+      async (response) => {
+        // Callback respose after success
+        const { access_token } = response.data;
+        if (access_token) {
+          await AsyncStorage.setItem('accessToken', access_token);
+          navigate('BottomTabs');
+        }
+      },
+    );
   };
 
   return (
@@ -156,12 +151,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   scrollViewStyle: {
     flex: 1,
     paddingHorizontal: wp(16),
-    paddingTop: hp(16)
+    paddingTop: hp(16),
   },
   welcomeText: {
     marginTop: hp(24),
