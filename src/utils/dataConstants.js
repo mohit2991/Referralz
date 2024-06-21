@@ -115,7 +115,7 @@ export const homeLeadsList = [
   {
     id: 2,
     name: 'David Dumon',
-    rating: 4.1,
+    rating: 2,
     date: 'Aug 8, 2023',
     address: '3831 Cedar Lane, Somerville, MA 02143',
     status: 'Scheduled',
@@ -133,7 +133,7 @@ export const homeLeadsList = [
   {
     id: 4,
     name: 'Rodgers McKinley',
-    rating: 4.5,
+    rating: 5,
     date: 'Aug 8, 2023',
     address: '2323 Dancing Dove Lane, Long Island City, NY 11101',
     status: 'Job Sold',

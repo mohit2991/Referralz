@@ -25,4 +25,10 @@ export const icons = {
   dropDown: require('../../assets/icons/dropDown.png'),
   dropUp: require('../../assets/icons/dropUp.png'),
   inbox: require('../../assets/icons/inbox.png'),
+  block: require('../../assets/icons/block.png'),
+  wallet: require('../../assets/icons/wallet.png'),
+  activity: require('../../assets/icons/activity.png'),
+  add: require('../../assets/icons/add.png'),
+  leadsIcon: require('../../assets/icons/leadsIcon.png'),
+  dashboard: require('../../assets/icons/dashboard.png'),
 };

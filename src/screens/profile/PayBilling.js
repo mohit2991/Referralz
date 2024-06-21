@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { BottomButton, Header, TextInputComp } from '../../components';
+import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
@@ -94,16 +94,26 @@ const PayBilling = () => {
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
+        ToastAlert({
+          type: 'success',
+          description: "Your Details has been submitted successfully!",
+        });
         setHasChanges(false);
         setUserData((prevUserData) => ({
           ...prevUserData,
           ...userPayload,
         }));
       } else {
-        console.log("pay billing error", response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     } finally {
       setLoading(false);
     }

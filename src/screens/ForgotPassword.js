@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
-import { forgotPassword } from '../services/apiService';
+
 import { commonStyles } from '../styles/styles';
 import { colors, fontSize, fonts, hp } from '../utils';
-import { Button, Header, TextInputComp } from '../components';
+import { forgotPassword } from '../services/apiService';
+import { Button, Header, TextInputComp, ToastAlert } from '../components';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();
@@ -24,15 +26,25 @@ const ForgotPassword = () => {
     try {
       const response = await forgotPassword(email);
       if (response.status === 200) {
+        ToastAlert({
+          type: 'success',
+          description: response?.data,
+        });
         navigate('InboxCheck', { email });
         resetState();
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response?.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
-  }
+  };
 
   const resetState = () => {
     setEmail('');
@@ -43,7 +55,9 @@ const ForgotPassword = () => {
       <Header isBackButton />
       <ScrollView style={commonStyles.container}>
         <Text style={styles.headerText}>{'Forgot password?'}</Text>
-        <Text style={styles.descText}>{`Enter the email address associated with your account, and we'll email you a link to reset your password.`}</Text>
+        <Text style={styles.descText}>
+          {`Enter the email address associated with your account, and we'll email you a link to reset your password.`}
+        </Text>
         <TextInputComp
           value={email}
           maxLength={100}
@@ -51,7 +65,16 @@ const ForgotPassword = () => {
           onChangeText={(text) => setEmail(text)}
           additionalContainerStyle={styles.textInputStyle}
         />
-        <Button title={'Send reset link'} onPress={resetLinkPress} disabled={isButtonDisabled} customBtnStyle={{ backgroundColor: isButtonDisabled ? colors.lightSaffron : colors.darkSaffron }} />
+        <Button
+          title={'Send reset link'}
+          onPress={resetLinkPress}
+          disabled={isButtonDisabled}
+          customBtnStyle={{
+            backgroundColor: isButtonDisabled
+              ? colors.mediumGrey
+              : colors.darkSaffron,
+          }}
+        />
       </ScrollView>
     </View>
   );
