@@ -11,6 +11,7 @@ import {
 
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { commonStyles } from '../styles/styles';
 import { loginUser } from '../services/apiService';
 import { Button, TextInputComp, ToastAlert } from '../components';
@@ -18,8 +19,8 @@ import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
 
 const Login = () => {
   const { navigate } = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('bisht4125@gmail.com');
+  const [password, setPassword] = useState('Test@123');
   const [isPwdSecure, setIsPwdSecure] = useState(true);
   const [isRemember, setIsRemember] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -53,15 +54,19 @@ const Login = () => {
 
       if (access_token) {
         await AsyncStorage.setItem('accessToken', access_token);
-        navigate('Dashboard');
+        ToastAlert({
+          type: 'success',
+          description: `You're logged in successfully!`,
+        });
+        navigate('BottomTabs');
       } else {
-        ToastAlert.show({
+        ToastAlert({
           type: 'error',
-          description: response.error_description,
+          description: response?.data?.error_description,
         });
       }
     } catch (error) {
-      ToastAlert.show({
+      ToastAlert({
         type: 'error',
         description: error.message,
       });
@@ -76,12 +81,14 @@ const Login = () => {
       <ScrollView style={styles.scrollViewStyle} bounces={false}>
         <TextInputComp
           value={email}
+          maxLength={100}
           labelText={'Email'}
           onChangeText={(text) => setEmail(text)}
         />
         <View style={{ height: hp(16) }} />
         <TextInputComp
           value={password}
+          maxLength={16}
           secureTextEntry={isPwdSecure}
           labelText={'Password'}
           onChangeText={(text) => setPassword(text)}
@@ -101,9 +108,7 @@ const Login = () => {
             style={[
               styles.checkBox,
               {
-                backgroundColor: isRemember
-                  ? colors.darkSaffron
-                  : colors.white,
+                backgroundColor: isRemember ? colors.darkSaffron : colors.white,
                 borderColor: isRemember ? colors.darkSaffron : colors.grey,
               },
             ]}
@@ -116,11 +121,33 @@ const Login = () => {
             {'Keep me signed in'}
           </Text>
         </Pressable>
-        <Button title={'Continue'} onPress={handleLogin} disabled={isButtonDisabled} customBtnStyle={{ backgroundColor: isButtonDisabled ? colors.lightSaffron : colors.darkSaffron }} />
-        <Text style={[styles.motoText, { textAlign: 'center', marginTop: hp(24) }]}>{`Don't have an account? `}
-          <Text onPress={handleClickForSignup} style={{ textDecorationLine: 'underline' }}>{'Sign up'}</Text>
+        <Button
+          title={'Continue'}
+          onPress={handleLogin}
+          disabled={isButtonDisabled}
+          customBtnStyle={{
+            backgroundColor: isButtonDisabled
+              ? colors.mediumGrey
+              : colors.darkSaffron,
+          }}
+        />
+        <Text
+          style={[styles.motoText, { textAlign: 'center', marginTop: hp(24) }]}
+        >
+          {`Don't have an account? `}
+          <Text
+            onPress={handleClickForSignup}
+            style={{ textDecorationLine: 'underline' }}
+          >
+            {'Sign up'}
+          </Text>
         </Text>
-        <Text onPress={handleClickForForgotPassword} style={[styles.motoText, { textAlign: 'center' }]}>{'Forgot Password?'}</Text>
+        <Text
+          onPress={handleClickForForgotPassword}
+          style={[styles.motoText, { textAlign: 'center' }]}
+        >
+          {'Forgot Password?'}
+        </Text>
       </ScrollView>
     </View>
   );

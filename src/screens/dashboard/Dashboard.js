@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
-import { Header, ItemCard } from '../../components';
+import { BarGraph, Header, ItemCard, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import {
@@ -28,12 +28,18 @@ const Dashboard = () => {
     try {
       const response = await getUserDetails();
       if (response.status === 200) {
-        setUserData(response.data)
+        setUserData(response.data);
       } else {
-        console.log("user detailserror", response.error);
+        ToastAlert({
+          type: 'error',
+          description: response.error,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
@@ -45,12 +51,18 @@ const Dashboard = () => {
     try {
       const response = await dashboardDetails(userPayload);
       if (response.status === 201) {
-        setdashboardData(response?.data)
+        setdashboardData(response?.data);
       } else {
-        console.log("dsahboard details error", response.error);
+        ToastAlert({
+          type: 'error',
+          description: response.error,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
@@ -119,6 +131,10 @@ const Dashboard = () => {
   };
 
   const renderLeadsByReferrals = ({ item }) => {
+    const filledStars = Math.floor(item?.rating);
+    const halfStar = item?.rating % 1 !== 0;
+    const unfilledStars = 5 - Math.ceil(item?.rating);
+
     return (
       <ItemCard
         shadowStyle={{ shadowOpacity: 0 }}
@@ -149,7 +165,26 @@ const Dashboard = () => {
           </View>
         </View>
         <View style={[commonStyles.flexRowCenter, { marginBottom: hp(16) }]}>
-          <Text style={styles.cardTitleText}>{item?.rating}</Text>
+          <Text style={[styles.cardTitleText, { marginRight: wp(2) }]}>
+            {item?.rating}
+          </Text>
+          {[...Array(filledStars)].map((_, index) => (
+            <Image
+              key={`filled-${index}`}
+              source={icons.starFill}
+              style={commonStyles.icon16}
+            />
+          ))}
+          {halfStar && (
+            <Image source={icons.star} style={commonStyles.icon16} />
+          )}
+          {[...Array(unfilledStars)].map((_, index) => (
+            <Image
+              key={`filled-${index}`}
+              source={icons.star}
+              style={commonStyles.icon16}
+            />
+          ))}
           <View style={styles.verticalDevider} />
           <Text style={styles.referalCardDate}>
             {moment(item?.created_on).format('MMM D, YYYY')}
@@ -200,7 +235,10 @@ const Dashboard = () => {
               ))}
             </ScrollView>
           </View>
-          <ScrollView style={styles.scrollViewContainer}>
+          <ScrollView
+            style={styles.scrollViewContainer}
+            contentContainerStyle={{ paddingBottom: hp(100) }}
+          >
             <View style={commonStyles.flexRowCenter}>
               <ItemCard>
                 <Text style={styles.cardTitleText}>{'Leads created'}</Text>
@@ -320,6 +358,16 @@ const Dashboard = () => {
             </ItemCard>
             <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
               <Text style={styles.chartHeaderText}>{'Leads'}</Text>
+              <Text
+                style={{
+                  ...styles.referalCardDate,
+                  color: colors.darkGrey,
+                  marginBottom: hp(16),
+                }}
+              >
+                {`Showing ${dashboardData?.lead_details?.length} results`}
+              </Text>
+              <BarGraph graphData={dashboardData?.leads_stat} />
             </ItemCard>
             <Text style={[styles.chartHeaderText, { marginVertical: hp(16) }]}>
               {'Individual leads by referrals'}

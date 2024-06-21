@@ -19,8 +19,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
-import { BottomButton, Header, TextInputComp } from '../../components';
-import { updateUserDetails, profileImageUpdate } from '../../services/apiService';
+import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
+import { updateUserDetails, profileImageUpdate, contactVerification } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 
 const EditProfileScreen = () => {
@@ -52,6 +52,7 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
+    console.log("okkkkkkk")
     try {
       const response = await profileImageUpdate();
       if (response.status === 201) {
@@ -60,22 +61,25 @@ const EditProfileScreen = () => {
           ...prevUserData,
           ...updatedProfileImage,
         }));
+        ToastAlert({
+          type: 'success',
+          description: response?.data,
+        });
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   }
 
   const uploadProfileImage = async (image) => {
-    const imgData = new FormData();
-    imgData.append('file', {
-      uri: image.uri,
-      type: image.type,
-      name: image.fileName,
-    });
-
     const binaryFile = await RNFS.readFile(image.uri, 'base64');
     const binaryData = Buffer.from(binaryFile, 'base64');
     try {
@@ -88,10 +92,16 @@ const EditProfileScreen = () => {
       if (response.status === 200) {
         profileImageHandle()
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
@@ -114,22 +124,55 @@ const EditProfileScreen = () => {
       company_unique_code: formData.company_unique_code ? formData.company_unique_code : null,
       user_unique_code: formData.user_unique_code,
     };
-    if (!userData?.contact_verification_status) {
-      navigate('EditProfileVerification');
+    const shouldVerifyContact = userPayload?.contact_no !== userData?.contact_no ? false : !userData?.contact_verification_status ? false : true;
+    if (!shouldVerifyContact) {
+      try {
+        const response = await contactVerification(userPayload?.contact_no);
+        if (response.status === 201) {
+          ToastAlert({
+            type: 'success',
+            description: response?.data,
+          });
+          navigate('EditProfileVerification', { userPayload });
+        } else {
+          ToastAlert({
+            type: 'error',
+            description: response,
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
+        ToastAlert({
+          type: 'error',
+          description: error.message,
+        });
+      } finally {
+        setLoading(false);
+      }
     } else {
       try {
         const response = await updateUserDetails(userPayload);
         if (response.status === 200) {
+          ToastAlert({
+            type: 'success',
+            description: "Your Details has been submitted successfully!",
+          });
           setHasChanges(false);
           setUserData((prevUserData) => ({
             ...prevUserData,
             ...userPayload,
           }));
         } else {
-          console.log("Profile updated error", response.data);
+          ToastAlert({
+            type: 'error',
+            description: response.data,
+          });
         }
       } catch (error) {
-        console.log(error.message);
+        ToastAlert({
+          type: 'error',
+          description: error.message,
+        });
       } finally {
         setLoading(false);
       }
@@ -230,7 +273,7 @@ const EditProfileScreen = () => {
         <DatePicker
           modal
           open={isDatePicker}
-          date={formData.birth_date ?? new Date()}
+          date={formData.birth_date ? new Date(formData.birth_date.replace(/-/g, '/')) : new Date()}
           onConfirm={(date) => {
             setIsDatePicker(false);
             handleChange('birth_date', date);

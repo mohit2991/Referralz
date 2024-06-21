@@ -1,20 +1,70 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Keyboard } from 'react-native';
 
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
-import { Button, Header } from '../../components';
+import { Button, Header, ToastAlert } from '../../components';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import { updateUserDetails, contactVerificationOtp } from '../../services/apiService';
+import { useUser } from '../../contexts/userContext';
 
 const EditProfileVerification = () => {
+  const { navigate } = useNavigation();
   const otpInputRef = useRef(null);
+  const route = useRoute();
+  const { userPayload } = route.params;
+  const { userData, setUserData } = useUser();
   const [code, setCode] = useState('');
+
   const handleOtpChange = (code) => {
     setCode(code);
   };
 
-  const handleOtpComplete = (code) => {
-    console.log(`OTP is ${code}`);
+  const handleOtpComplete = async (otp) => {
+    console.log(`OTP is ${otp}`);
+  };
+
+  const updateProfile = async () => {
+    try {
+      const response = await contactVerificationOtp(code);
+      if (response.status === 201) {
+        try {
+          const response = await updateUserDetails(userPayload);
+          if (response.status === 200) {
+            ToastAlert({
+              type: 'success',
+              description: "Your Details has been submitted successfully!",
+            });
+            setUserData((prevUserData) => ({
+              ...prevUserData,
+              ...userPayload,
+            }));
+            navigate('EditProfileScreen');
+          } else {
+            ToastAlert({
+              type: 'error',
+              description: response.data,
+            });
+          }
+        } catch (error) {
+          ToastAlert({
+            type: 'error',
+            description: error.message,
+          });
+        }
+      } else {
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
+      }
+    } catch (error) {
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
+    }
   };
 
   useEffect(() => {
@@ -29,7 +79,7 @@ const EditProfileVerification = () => {
       <View style={styles.container}>
         <Text style={styles.titleText}>{'Enter code'}</Text>
         <Text style={styles.descText}>
-          {'We sent a verification code to your phone number (518) 744-6291'}
+          {`We sent a verification code to your phone number ${userPayload?.contact_no}`}
         </Text>
         <View style={styles.otpInputView}>
           <OTPInputView
@@ -49,8 +99,9 @@ const EditProfileVerification = () => {
         </View>
         <Button
           title={'Verify'}
-          onPress={() => {}}
           customBtnStyle={{ marginTop: hp(32) }}
+          disabled={code.length < 5}
+          onPress={updateProfile}
         />
       </View>
     </View>
