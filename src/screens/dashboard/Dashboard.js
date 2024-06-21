@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import moment from 'moment';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import React, { useState, useEffect } from 'react';
 import { BarGraph, Header, ItemCard, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
@@ -18,9 +19,12 @@ import {
 } from '../../utils/dataConstants';
 import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import SkeletonLoader from '../../components/SkeletonLoader';
 
 const Dashboard = () => {
-  const [filterOptions, setFilterOptions] = useState(dashboardFilterOptionsList);
+  const [filterOptions, setFilterOptions] = useState(
+    dashboardFilterOptionsList,
+  );
   const [dashboardData, setdashboardData] = useState(null);
   const { userData, setUserData } = useUser();
 
@@ -210,6 +214,23 @@ const Dashboard = () => {
       </ItemCard>
     );
   };
+
+  // if (true) {
+  //   return (
+  //     <SkeletonPlaceholder>
+  //       <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+  //         <SkeletonPlaceholder.Item width={60} height={60} borderRadius={30} />
+  //         <SkeletonPlaceholder.Item marginLeft={20}>
+  //           <SkeletonPlaceholder.Item
+  //             width={120}
+  //             height={20}
+  //             borderRadius={4}
+  //           />
+  //         </SkeletonPlaceholder.Item>
+  //       </SkeletonPlaceholder.Item>
+  //     </SkeletonPlaceholder>
+  //   );
+  // }
 
   return (
     <View style={commonStyles.flex}>

@@ -16,9 +16,13 @@ const SuccessfullySignup = () => {
       <View style={styles.container}>
         <InfoComponent
           title={'Success!'}
-          description={'Your registration has been completed successfully. An email with instructions to activate your membership has been sent to you.'}
+          description={
+            'Your registration has been completed successfully. An email with instructions to activate your membership has been sent to you.'
+          }
           btnText={'Sign into Referralz'}
-          onPress={() => { navigate('Login') }}
+          onPress={() => {
+            navigate('Login');
+          }}
         />
       </View>
     </View>
@@ -31,7 +35,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: wp(16),
     backgroundColor: colors.white,
-  }
+  },
 });
 
 export default SuccessfullySignup;

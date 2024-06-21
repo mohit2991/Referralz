@@ -12,12 +12,12 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { commonStyles } from '../styles/styles';
-import { loginUser } from '../services/apiService';
-import { Button, TextInputComp, ToastAlert } from '../components';
-import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
-import useApiHandler from '../hooks/useApiHandler';
-import messages from '../constants/messages';
+import { commonStyles } from '../../styles/styles';
+import { loginUser } from '../../services/apiService';
+import { Button, TextInputComp, ToastAlert } from '../../components';
+import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
 
 const Login = () => {
   const { navigate } = useNavigation();
@@ -29,7 +29,7 @@ const Login = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const handleClickForSignup = () => {
-    navigate('CreateAccount');
+    navigate('Register');
   };
 
   const handleClickForForgotPassword = () => {
@@ -55,8 +55,6 @@ const Login = () => {
     // Login API Call
     handleApiCall(
       () => loginUser(userPayload), // Call API
-      messages.loginSuccess, // Success message
-      messages.loginError, // Error message
       async (response) => {
         // Callback respose after success
         const { access_token } = response.data;
@@ -65,6 +63,8 @@ const Login = () => {
           navigate('BottomTabs');
         }
       },
+      messages.loginSuccess, // Success message
+      messages.loginError, // Error message
     );
   };
 
