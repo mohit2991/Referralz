@@ -1,12 +1,11 @@
-// src/api/apiService.js
 import { api, authApi } from './api';
+import useApi from './constants';
+
+const apiEndpoints = useApi();
 
 export const loginUser = async (userPayload) => {
   try {
-    const response = await authApi.post(
-      '/realms/referralz/protocol/openid-connect/token',
-      userPayload,
-    );
+    const response = await authApi.post(apiEndpoints.login, userPayload);
     return response;
   } catch (error) {
     return handleError(error);
@@ -15,7 +14,7 @@ export const loginUser = async (userPayload) => {
 
 export const createUser = async (userData) => {
   try {
-    const response = await api.post('/user', userData);
+    const response = await api.post(apiEndpoints.registerUser, userData);
     return response;
   } catch (error) {
     return handleError(error);
@@ -24,7 +23,7 @@ export const createUser = async (userData) => {
 
 export const forgotPassword = async (email) => {
   try {
-    const response = await api.put(`/user/forget-password/${email}?validation=false`);
+    const response = await api.put(apiEndpoints.forgotPassword(email));
     return response;
   } catch (error) {
     return handleError(error);
@@ -33,7 +32,7 @@ export const forgotPassword = async (email) => {
 
 export const getUserDetails = async () => {
   try {
-    const response = await api.get('/user');
+    const response = await api.get(apiEndpoints.getUserDetails);
     return response;
   } catch (error) {
     return handleError(error);
@@ -42,7 +41,7 @@ export const getUserDetails = async () => {
 
 export const updateUserDetails = async (userPayload) => {
   try {
-    const response = await api.put('/user', userPayload);
+    const response = await api.put(apiEndpoints.updateUser, userPayload);
     return response;
   } catch (error) {
     return handleError(error);
@@ -51,7 +50,7 @@ export const updateUserDetails = async (userPayload) => {
 
 export const deleteUser = async () => {
   try {
-    const response = await api.delete('/user');
+    const response = await api.delete(apiEndpoints.deleteUser);
     return response;
   } catch (error) {
     return handleError(error);
@@ -60,7 +59,7 @@ export const deleteUser = async () => {
 
 export const logoutUser = async () => {
   try {
-    const response = await api.post('/user/logout');
+    const response = await api.post(apiEndpoints.logoutUser);
     return response;
   } catch (error) {
     return handleError(error);
@@ -69,7 +68,7 @@ export const logoutUser = async () => {
 
 export const profileImageUpdate = async () => {
   try {
-    const response = await api.put('/user/img-upload-success');
+    const response = await api.put(apiEndpoints.profileImageUpdate);
     return response;
   } catch (error) {
     return handleError(error);
@@ -78,7 +77,7 @@ export const profileImageUpdate = async () => {
 
 export const changePassword = async (userPayload) => {
   try {
-    const response = await api.post('/user/change-password', userPayload);
+    const response = await api.post(apiEndpoints.changePassword, userPayload);
     return response;
   } catch (error) {
     return handleError(error);
@@ -87,7 +86,7 @@ export const changePassword = async (userPayload) => {
 
 export const dashboardDetails = async (userPayload) => {
   try {
-    const response = await api.post('/dashboard/', userPayload);
+    const response = await api.post(apiEndpoints.dashboardDetails, userPayload);
     return response;
   } catch (error) {
     return handleError(error);
@@ -96,7 +95,7 @@ export const dashboardDetails = async (userPayload) => {
 
 export const contactVerification = async (contact) => {
   try {
-    const response = await api.put(`/user/contact-verification?contact-no=${contact}`);
+    const response = await api.put(apiEndpoints.contactVerification(contact));
     return response;
   } catch (error) {
     return handleError(error);
@@ -105,7 +104,7 @@ export const contactVerification = async (contact) => {
 
 export const contactVerificationOtp = async (otp) => {
   try {
-    const response = await api.put(`/user/contact-verification?otp=${otp}`);
+    const response = await api.put(apiEndpoints.contactVerificationOtp(otp));
     return response;
   } catch (error) {
     return handleError(error);
