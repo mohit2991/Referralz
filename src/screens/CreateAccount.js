@@ -15,6 +15,7 @@ import { createUser } from '../services/apiService';
 import { commonStyles } from '../styles/styles';
 import { Button, TextInputComp, ToastAlert } from '../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
+import useApiHandler from '../hooks/useApiHandler';
 
 export const RadioSelector = ({ text, value, onPress }) => {
   return (
@@ -33,6 +34,7 @@ export const RadioSelector = ({ text, value, onPress }) => {
 };
 
 const CreateAccount = () => {
+  const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
 
   const [email, setEmail] = useState('');
@@ -106,23 +108,20 @@ const CreateAccount = () => {
       contact_no: null,
     };
 
-    try {
-      const response = await createUser(userPayload);
-      if (response.status == 201) {
-        navigate('SuccessfullySignup');
-        resetState();
-      } else {
-        ToastAlert.show({
-          type: 'error',
-          description: response.status === 400 ? response.data : response.error,
-        });
-      }
-    } catch (error) {
-      ToastAlert.show({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Register API Call
+    handleApiCall(
+      () => createUser(userPayload), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          navigate('SuccessfullySignup');
+
+          // reset the state
+          resetState();
+        }
+      },
+      null, // Success message
+    );
   };
 
   const resetState = () => {
@@ -190,7 +189,7 @@ const CreateAccount = () => {
             borderColor: isPwdErr ? colors.darkRed : colors.grey,
           }}
         />
-        {password !== "" && isPwdErr &&
+        {password !== '' && isPwdErr && (
           <Text
             style={{
               ...styles.errText,
@@ -201,7 +200,7 @@ const CreateAccount = () => {
               'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'
             }
           </Text>
-        }
+        )}
         <TextInputComp
           value={confirmpassword}
           maxLength={16}
@@ -266,11 +265,11 @@ const CreateAccount = () => {
 
         <Text style={[styles.motoText, styles.termsPolicyText]}>
           {`By clicking "Agree and continue", You agree to Referralz's `}
-          <Text onPress={() => { }} style={styles.underLine}>
+          <Text onPress={() => {}} style={styles.underLine}>
             {'Terms of Service'}
           </Text>
           {' and '}
-          <Text onPress={() => { }} style={styles.underLine}>
+          <Text onPress={() => {}} style={styles.underLine}>
             {'Privacy Policy.'}
           </Text>
         </Text>

@@ -6,10 +6,13 @@ import { useNavigation } from '@react-navigation/native';
 import { commonStyles } from '../styles/styles';
 import { colors, fontSize, fonts, hp } from '../utils';
 import { forgotPassword } from '../services/apiService';
+import useApiHandler from '../hooks/useApiHandler';
+import messages from '../constants/messages';
 import { Button, Header, TextInputComp, ToastAlert } from '../components';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
 
   const [email, setEmail] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -23,6 +26,21 @@ const ForgotPassword = () => {
   }, [email]);
 
   const resetLinkPress = async () => {
+    // Forgot Password API Call
+    handleApiCall(
+      () => forgotPassword(email), // Call API
+      async (response) => {
+        // Callback respose after success
+        const { access_token } = response.data;
+        if (access_token) {
+          navigate('InboxCheck', { email });
+          resetState();
+        }
+      },
+      undefined, // Success message
+      undefined, // Error message
+    );
+
     try {
       const response = await forgotPassword(email);
       if (response.status === 200) {
@@ -97,7 +115,7 @@ const styles = StyleSheet.create({
   textInputStyle: {
     marginTop: hp(32),
     marginVertical: hp(32),
-  }
+  },
 });
 
 export default ForgotPassword;

@@ -55,8 +55,6 @@ const Login = () => {
     // Login API Call
     handleApiCall(
       () => loginUser(userPayload), // Call API
-      messages.loginSuccess, // Success message
-      messages.loginError, // Error message
       async (response) => {
         // Callback respose after success
         const { access_token } = response.data;
@@ -65,6 +63,8 @@ const Login = () => {
           navigate('BottomTabs');
         }
       },
+      messages.loginSuccess, // Success message
+      messages.loginError, // Error message
     );
   };
 
