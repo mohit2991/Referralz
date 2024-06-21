@@ -14,11 +14,11 @@ const CustomToast = ({ text1, text2, type }) => {
     type === 'error'
       ? colors.darkRed
       : type === 'success'
-        ? colors.green
+        ? colors.white
         : colors.grey;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: type === 'success' ? colors.green : colors.darkBlack }]}>
       <Image
         source={icon}
         style={[commonStyles.icon24, { tintColor: iconColor }]}
