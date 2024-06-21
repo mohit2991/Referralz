@@ -3,12 +3,12 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { commonStyles } from '../styles/styles';
-import { colors, fontSize, fonts, hp } from '../utils';
-import { forgotPassword } from '../services/apiService';
-import useApiHandler from '../hooks/useApiHandler';
-import messages from '../constants/messages';
-import { Button, Header, TextInputComp, ToastAlert } from '../components';
+import { commonStyles } from '../../styles/styles';
+import { colors, fontSize, fonts, hp } from '../../utils';
+import { forgotPassword } from '../../services/apiService';
+import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
+import { Button, Header, TextInputComp, ToastAlert } from '../../components';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();

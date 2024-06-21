@@ -11,11 +11,11 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { createUser } from '../services/apiService';
-import { commonStyles } from '../styles/styles';
-import { Button, TextInputComp, ToastAlert } from '../components';
-import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
-import useApiHandler from '../hooks/useApiHandler';
+import { createUser } from '../../services/apiService';
+import { commonStyles } from '../../styles/styles';
+import { Button, TextInputComp, ToastAlert } from '../../components';
+import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import useApiHandler from '../../hooks/useApiHandler';
 
 export const RadioSelector = ({ text, value, onPress }) => {
   return (
@@ -33,7 +33,7 @@ export const RadioSelector = ({ text, value, onPress }) => {
   );
 };
 
-const CreateAccount = () => {
+const Register = () => {
   const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
 
@@ -115,7 +115,6 @@ const CreateAccount = () => {
         // Callback respose after success
         if (response) {
           navigate('SuccessfullySignup');
-
           // reset the state
           resetState();
         }
@@ -366,4 +365,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAccount;
+export default Register;

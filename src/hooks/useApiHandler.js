@@ -1,6 +1,4 @@
-// src/hooks/useApiHandler.js
-import { ConfirmationModal, Header, ToastAlert } from '../components';
-import { messages } from '../constants/messages';
+import { ToastAlert } from '../components';
 
 const useApiHandler = () => {
   const handleApiCall = async (
@@ -21,7 +19,6 @@ const useApiHandler = () => {
 
         ToastAlert({
           type: 'success',
-          title: 'Success',
           description: defaultSuccessMessage || response.data,
         });
       } else {
@@ -32,7 +29,6 @@ const useApiHandler = () => {
 
         ToastAlert({
           type: 'error',
-          title: 'Error',
           description: error,
         });
       }
@@ -41,7 +37,6 @@ const useApiHandler = () => {
       const errorMessage = determineErrorMessage(err, null);
       ToastAlert({
         type: 'error',
-        title: 'Error',
         description: errorMessage,
       });
     }
@@ -65,10 +60,7 @@ const useApiHandler = () => {
           'Your session has expired. Please log in again.'
         );
       } else if (response.status === 403) {
-        return (
-          response.data?.error_description ||
-          'Forbidden, You do not have permission to perform this action.'
-        );
+        return 'Forbidden, You do not have permission to perform this action.';
       } else if (response.status === 404) {
         return 'The resource you are looking for could not be found.';
       } else if (response.status === 500) {

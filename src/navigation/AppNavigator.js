@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Splash from '../screens/Splash';
-import CreateAccount from '../screens/CreateAccount';
-import Login from '../screens/Login';
-import ForgotPassword from '../screens/ForgotPassword';
+import Register from '../screens/auth/Register';
+import Login from '../screens/auth/Login';
+import ForgotPassword from '../screens/auth/ForgotPassword';
 import SuccessfullySignup from '../screens/SuccessfullySignup';
 import InboxCheck from '../screens/InboxCheck';
 import ProfileScreen from '../screens/profile/ProfileScreen';
@@ -42,7 +42,7 @@ const AppNavigator = () => {
         screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
       >
         <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
+        <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen
