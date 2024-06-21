@@ -1,4 +1,5 @@
 export const icons = {
+  logo: require('../../assets/icons/logo.png'),
   avatar: require('../../assets/icons/avatar.png'),
   backArrow: require('../../assets/icons/backArrow.png'),
   calendar: require('../../assets/icons/calendar.png'),
@@ -23,4 +24,11 @@ export const icons = {
   starFill: require('../../assets/icons/starFill.png'),
   dropDown: require('../../assets/icons/dropDown.png'),
   dropUp: require('../../assets/icons/dropUp.png'),
+  inbox: require('../../assets/icons/inbox.png'),
+  block: require('../../assets/icons/block.png'),
+  wallet: require('../../assets/icons/wallet.png'),
+  activity: require('../../assets/icons/activity.png'),
+  add: require('../../assets/icons/add.png'),
+  leadsIcon: require('../../assets/icons/leadsIcon.png'),
+  dashboard: require('../../assets/icons/dashboard.png'),
 };

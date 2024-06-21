@@ -10,6 +10,8 @@ import {
 
 import moment from 'moment';
 import axios from 'axios';
+import RNFS from 'react-native-fs';
+import { Buffer } from 'buffer';
 import DatePicker from 'react-native-date-picker';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -17,8 +19,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
-import { BottomButton, Header, TextInputComp } from '../../components';
-import { updateUserDetails, profileImageUpdate } from '../../services/apiService';
+import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
+import { updateUserDetails, profileImageUpdate, contactVerification } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 
 const EditProfileScreen = () => {
@@ -50,38 +52,56 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
+    console.log("okkkkkkk")
     try {
       const response = await profileImageUpdate();
-      if (response.status === 200) {
-        console.log("Image uploaded successfully", response)
+      if (response.status === 201) {
+        const updatedProfileImage = { download_profile_img_url: response?.data?.download_profile_img_url }
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          ...updatedProfileImage,
+        }));
+        ToastAlert({
+          type: 'success',
+          description: response?.data,
+        });
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   }
 
   const uploadProfileImage = async (image) => {
-    const imgData = new FormData();
-    imgData.append('file', {
-      uri: image.uri,
-      type: image.type,
-      name: image.fileName,
-    });
+    const binaryFile = await RNFS.readFile(image.uri, 'base64');
+    const binaryData = Buffer.from(binaryFile, 'base64');
     try {
-      const response = await axios.post(formData.upload_profile_img_url, imgData, {
+      const response = await axios.put(formData.upload_profile_img_url, binaryData, {
         headers: {
           'Content-Type': image.type,
+          'Content-Length': binaryData.length,
         },
       });
       if (response.status === 200) {
         profileImageHandle()
       } else {
-        console.log("aa", response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
@@ -100,30 +120,65 @@ const EditProfileScreen = () => {
       last_name: formData.last_name,
       email_id: formData.email_id,
       contact_no: formData.contact_no,
-      birth_date: moment(formData.birth_date).format('YYYY/MM/DD'),
-      company_unique_code: formData.company_unique_code,
+      birth_date: formData.birth_date ? moment(formData.birth_date).format('YYYY/MM/DD') : null,
+      company_unique_code: formData.company_unique_code ? formData.company_unique_code : null,
       user_unique_code: formData.user_unique_code,
     };
-    try {
-      const response = await updateUserDetails(userPayload);
-      if (response.status === 200) {
-        setHasChanges(false);
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          ...userPayload,
-        }));
-        console.log("Profile updated successfully", response)
-      } else {
-        console.log(response.data);
+    const shouldVerifyContact = userPayload?.contact_no !== userData?.contact_no ? false : !userData?.contact_verification_status ? false : true;
+    if (!shouldVerifyContact) {
+      try {
+        const response = await contactVerification(userPayload?.contact_no);
+        if (response.status === 201) {
+          ToastAlert({
+            type: 'success',
+            description: response?.data,
+          });
+          navigate('EditProfileVerification', { userPayload });
+        } else {
+          ToastAlert({
+            type: 'error',
+            description: response,
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
+        ToastAlert({
+          type: 'error',
+          description: error.message,
+        });
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.log(error.message);
-    } finally {
-      setLoading(false);
+    } else {
+      try {
+        const response = await updateUserDetails(userPayload);
+        if (response.status === 200) {
+          ToastAlert({
+            type: 'success',
+            description: "Your Details has been submitted successfully!",
+          });
+          setHasChanges(false);
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...userPayload,
+          }));
+        } else {
+          ToastAlert({
+            type: 'error',
+            description: response.data,
+          });
+        }
+      } catch (error) {
+        ToastAlert({
+          type: 'error',
+          description: error.message,
+        });
+      } finally {
+        setLoading(false);
+      }
     }
-  };
 
-  console.log("ok", userData?.contact_verification_status)
+  };
 
   return (
     <View style={commonStyles.flex}>
@@ -218,7 +273,7 @@ const EditProfileScreen = () => {
         <DatePicker
           modal
           open={isDatePicker}
-          date={formData.birth_date ?? new Date()}
+          date={formData.birth_date ? new Date(formData.birth_date.replace(/-/g, '/')) : new Date()}
           onConfirm={(date) => {
             setIsDatePicker(false);
             handleChange('birth_date', date);

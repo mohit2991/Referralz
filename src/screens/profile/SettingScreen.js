@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Switch } from 'react-native-paper';
-import { Header } from '../../components';
+import { Header, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
 import { updateUserDetails } from '../../services/apiService';
@@ -37,22 +37,37 @@ const SettingScreen = () => {
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
+        ToastAlert({
+          type: 'success',
+          description: "Your Details has been submitted successfully!",
+        });
         setUserData((prevUserData) => ({
           ...prevUserData,
           ...userPayload,
         }));
-        console.log("update notification settings", response)
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
-  useEffect(() => {
-    updateNotificationSettings({ push_notification_enable: isPushNotificationOn, email_notification_enable: isEmailNotificationOn, });
-  }, [isPushNotificationOn, isEmailNotificationOn]);
+  const pushNotification = () => {
+    setIsPushNotificationOn(!isPushNotificationOn)
+    updateNotificationSettings({ push_notification_enable: !isPushNotificationOn })
+  }
+
+  const emailNotification = () => {
+    setIsEmailNotificationOn(!isEmailNotificationOn)
+    updateNotificationSettings({ email_notification_enable: !isEmailNotificationOn })
+  }
 
   return (
     <View style={commonStyles.flex}>
@@ -62,14 +77,14 @@ const SettingScreen = () => {
           <Text style={styles.titleText}>{'Notifications'}</Text>
           <SettingItem
             title={'Push notification'}
-            switchPress={() => setIsPushNotificationOn(!isPushNotificationOn)}
+            switchPress={pushNotification}
             switchValue={isPushNotificationOn}
             description={'Receive push notifications on activities.'}
           />
           <View style={styles.separator} />
           <SettingItem
             title={'Email notifications'}
-            switchPress={() => setIsEmailNotificationOn(!isEmailNotificationOn)}
+            switchPress={emailNotification}
             switchValue={isEmailNotificationOn}
             description={'Receive email updates on activities.'}
           />

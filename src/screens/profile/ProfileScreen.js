@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { ConfirmationModal, Header } from '../../components';
+import { ConfirmationModal, Header, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { profileItemList1, profileItemList2 } from '../../utils/dataConstants';
@@ -54,15 +54,20 @@ const ProfileScreen = () => {
   const handleDeleteAccount = async () => {
     try {
       const response = await deleteUser();
-      if (response.status === 201) {
-        console.log('delete Account', { response });
+      if (response.status === 204) {
         await AsyncStorage.clear();
         navigate('Login');
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 
@@ -70,14 +75,19 @@ const ProfileScreen = () => {
     try {
       const response = await logoutUser();
       if (response.status === 201) {
-        console.log('logout Account', { response });
         await AsyncStorage.clear();
         navigate('Login');
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 

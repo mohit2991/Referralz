@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { BottomButton, Header, TextInputComp } from '../../components';
+import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
@@ -82,7 +82,8 @@ const PayBilling = () => {
         address: formData?.address?.address,
         name: formData?.address?.name,
         city: formData?.address?.city,
-        postal_code: formData?.address?.postalCode,
+        postal_code: formData?.address?.postal_code,
+        postalcode: formData?.address?.postal_code,
         state: formData?.address?.state,
         country: formData?.address?.country
       },
@@ -92,17 +93,26 @@ const PayBilling = () => {
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
+        ToastAlert({
+          type: 'success',
+          description: "Your Details has been submitted successfully!",
+        });
         setHasChanges(false);
         setUserData((prevUserData) => ({
           ...prevUserData,
           ...userPayload,
         }));
-        console.log("pay billing successfully", response)
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -164,7 +174,7 @@ const PayBilling = () => {
             onRightPress={() => { }}
           />
           <TextInputComp
-            value={formData?.address?.postalCode}
+            value={formData?.address?.postal_code}
             labelText={'Postal code'}
             onChangeText={(text) => handleChange('postal_code', text)}
           />

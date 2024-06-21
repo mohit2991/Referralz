@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 import { commonStyles } from '../../styles/styles';
-import { BottomButton, Header, TextInputComp } from '../../components';
+import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { changePassword } from '../../services/apiService';
 
@@ -92,13 +92,23 @@ const ChangePassword = () => {
     try {
       const response = await changePassword(userPayload);
       if (response.status === 201) {
+        ToastAlert({
+          type: 'success',
+          description: response.data,
+        });
         resetState();
         navigate('ProfileScreen');
       } else {
-        console.log(response.data);
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
     }
   };
 

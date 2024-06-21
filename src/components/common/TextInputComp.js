@@ -27,8 +27,6 @@ const TextInputComp = ({
   contentStyle,
   onFocus,
 }) => {
-
-  console.log({ rightIcon })
   return (
     <View style={[styles.container, additionalContainerStyle]}>
       <TextInput
@@ -100,9 +98,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
   },
   labelBlurStyle: {
-    lineHeight: hp(24),
-    fontSize: fontSize(16),
+    lineHeight: hp(16),
     color: colors.grey,
+    fontSize: fontSize(16),
     fontFamily: fonts.regular,
   },
   contentStyle: {
