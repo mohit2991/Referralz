@@ -124,8 +124,8 @@ const EditProfileScreen = () => {
       company_unique_code: formData.company_unique_code ? formData.company_unique_code : null,
       user_unique_code: formData.user_unique_code,
     };
-    //!userData?.contact_verification_status || 
-    if (userPayload?.contact_no !== userData.contact_no) {
+    const shouldVerifyContact = userPayload?.contact_no !== userData?.contact_no ? false : !userData?.contact_verification_status ? false : true;
+    if (!shouldVerifyContact) {
       try {
         const response = await contactVerification(userPayload?.contact_no);
         if (response.status === 201) {

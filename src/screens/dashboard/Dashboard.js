@@ -365,7 +365,7 @@ const Dashboard = () => {
                   marginBottom: hp(16),
                 }}
               >
-                {'Showing 989 results'}
+                {`Showing ${dashboardData?.lead_details?.length} results`}
               </Text>
               <BarGraph graphData={dashboardData?.leads_stat} />
             </ItemCard>

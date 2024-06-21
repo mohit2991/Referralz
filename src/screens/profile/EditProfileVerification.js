@@ -100,7 +100,7 @@ const EditProfileVerification = () => {
         <Button
           title={'Verify'}
           customBtnStyle={{ marginTop: hp(32) }}
-          disabled={code.length > 5}
+          disabled={code.length < 5}
           onPress={updateProfile}
         />
       </View>
