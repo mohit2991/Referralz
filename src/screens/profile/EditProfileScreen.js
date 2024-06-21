@@ -52,19 +52,20 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
-    console.log("okkkkkkk")
     try {
       const response = await profileImageUpdate();
+      console.log({ response })
       if (response.status === 201) {
         const updatedProfileImage = { download_profile_img_url: response?.data?.download_profile_img_url }
+        ToastAlert({
+          type: 'success',
+          description: "Your profile has been successfully updated!",
+        });
         setUserData((prevUserData) => ({
           ...prevUserData,
           ...updatedProfileImage,
         }));
-        ToastAlert({
-          type: 'success',
-          description: response?.data,
-        });
+
       } else {
         ToastAlert({
           type: 'error',
@@ -82,6 +83,7 @@ const EditProfileScreen = () => {
   const uploadProfileImage = async (image) => {
     const binaryFile = await RNFS.readFile(image.uri, 'base64');
     const binaryData = Buffer.from(binaryFile, 'base64');
+    console.log(formData.upload_profile_img_url)
     try {
       const response = await axios.put(formData.upload_profile_img_url, binaryData, {
         headers: {
@@ -89,6 +91,7 @@ const EditProfileScreen = () => {
           'Content-Length': binaryData.length,
         },
       });
+      console.log("oookkk", { aa: response?.status })
       if (response.status === 200) {
         profileImageHandle()
       } else {
@@ -98,6 +101,7 @@ const EditProfileScreen = () => {
         });
       }
     } catch (error) {
+      console.log({ error })
       ToastAlert({
         type: 'error',
         description: error.message,
@@ -238,7 +242,7 @@ const EditProfileScreen = () => {
             onRightPress={() => { }}
           />
           <TextInputComp
-            value={formData.birth_date ? moment(formData.birth_date)?.format('DD.MM.YYYY') : ""}
+            value={formData.birth_date ? moment(formData.birth_date, 'YYYY/MM/DD').format('DD.MM.YYYY') : ""}
             labelText={'Date of birth'}
             onChangeText={(text) => handleChange('birth_date', text)}
             rightIcon={
@@ -273,7 +277,7 @@ const EditProfileScreen = () => {
         <DatePicker
           modal
           open={isDatePicker}
-          date={formData.birth_date ? new Date(formData.birth_date.replace(/-/g, '/')) : new Date()}
+          date={formData.birth_date ? new Date(moment(formData.birth_date, 'YYYY/MM/DD')) : new Date()}
           onConfirm={(date) => {
             setIsDatePicker(false);
             handleChange('birth_date', date);

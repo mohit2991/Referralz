@@ -89,7 +89,7 @@ const BottomTabs = () => {
       </Tab.Navigator>
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => {}}
+        onPress={() => { }}
         style={[styles.addIconView, { bottom: insets.bottom + 8 }]}
       >
         <Image
