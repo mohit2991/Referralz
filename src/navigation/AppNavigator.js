@@ -5,7 +5,6 @@ import Splash from '../screens/Splash';
 import CreateAccount from '../screens/CreateAccount';
 import Login from '../screens/Login';
 import ForgotPassword from '../screens/ForgotPassword';
-import SuccessfullySignup from '../screens/SuccessfullySignup';
 import InboxCheck from '../screens/InboxCheck';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
@@ -45,10 +44,6 @@ const AppNavigator = () => {
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        <Stack.Screen
-          name="SuccessfullySignup"
-          component={SuccessfullySignup}
-        />
         <Stack.Screen
           options={{ headerShown: false }}
           name="BottomTabs"

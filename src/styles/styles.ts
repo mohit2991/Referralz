@@ -31,6 +31,11 @@ export const commonStyles = StyleSheet.create({
     height: wp(24),
     resizeMode: 'contain',
   },
+  icon20: {
+    width: wp(20),
+    height: wp(20),
+    resizeMode: 'contain',
+  },
   icon16: {
     width: wp(16),
     height: wp(16),

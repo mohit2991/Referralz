@@ -1,36 +1,18 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { createUser } from '../services/apiService';
 import { commonStyles } from '../styles/styles';
-import { Button, TextInputComp, ToastAlert } from '../components';
+import {
+  Button,
+  RadioSelector,
+  TextInputComp,
+  ToastAlert,
+} from '../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
-
-export const RadioSelector = ({ text, value, onPress }) => {
-  return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={onPress}
-      style={commonStyles.flexRowJustify}
-    >
-      <Text style={styles.radioText}>{text}</Text>
-      <Image
-        style={commonStyles.icon24}
-        source={value ? icons.activeRadio : icons.inActiveRadio}
-      />
-    </TouchableOpacity>
-  );
-};
 
 const CreateAccount = () => {
   const { navigate } = useNavigation();
@@ -106,10 +88,18 @@ const CreateAccount = () => {
       contact_no: null,
     };
 
+    const routeData = {
+      title: 'Success!',
+      description:
+        'Your registration has been completed successfully. An email with instructions to activate your membership has been sent to you.',
+      btnText: 'Sign into Referralz',
+      routeName: 'Login',
+    };
+
     try {
       const response = await createUser(userPayload);
       if (response.status == 201) {
-        navigate('SuccessfullySignup');
+        navigate('InboxCheck', routeData);
         resetState();
       } else {
         ToastAlert.show({
@@ -190,7 +180,7 @@ const CreateAccount = () => {
             borderColor: isPwdErr ? colors.darkRed : colors.grey,
           }}
         />
-        {password !== "" && isPwdErr &&
+        {password !== '' && isPwdErr && (
           <Text
             style={{
               ...styles.errText,
@@ -201,7 +191,7 @@ const CreateAccount = () => {
               'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'
             }
           </Text>
-        }
+        )}
         <TextInputComp
           value={confirmpassword}
           maxLength={16}
@@ -266,11 +256,11 @@ const CreateAccount = () => {
 
         <Text style={[styles.motoText, styles.termsPolicyText]}>
           {`By clicking "Agree and continue", You agree to Referralz's `}
-          <Text onPress={() => { }} style={styles.underLine}>
+          <Text onPress={() => {}} style={styles.underLine}>
             {'Terms of Service'}
           </Text>
           {' and '}
-          <Text onPress={() => { }} style={styles.underLine}>
+          <Text onPress={() => {}} style={styles.underLine}>
             {'Privacy Policy.'}
           </Text>
         </Text>
@@ -339,12 +329,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     color: colors.xDarkGrey,
     fontFamily: fonts.semiBold,
-  },
-  radioText: {
-    lineHeight: hp(24),
-    fontSize: fontSize(16),
-    color: colors.xDarkGrey,
-    fontFamily: fonts.regular,
   },
   errText: {
     marginTop: hp(4),

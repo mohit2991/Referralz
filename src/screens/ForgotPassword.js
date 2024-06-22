@@ -23,6 +23,12 @@ const ForgotPassword = () => {
   }, [email]);
 
   const resetLinkPress = async () => {
+    const routeData = {
+      title: 'Check your inbox!',
+      description: `A link to reset your password has been sent to ${email}.`,
+      btnText: 'Open inbox',
+      routeName: '',
+    };
     try {
       const response = await forgotPassword(email);
       if (response.status === 200) {
@@ -30,7 +36,8 @@ const ForgotPassword = () => {
           type: 'success',
           description: response?.data,
         });
-        navigate('InboxCheck', { email });
+
+        navigate('InboxCheck', routeData);
         resetState();
       } else {
         ToastAlert({
