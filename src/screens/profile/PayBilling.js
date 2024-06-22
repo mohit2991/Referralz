@@ -43,10 +43,13 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 
 const PayBilling = () => {
   const { navigate } = useNavigation();
-  const [payoutMethodsList, setPayoutMethodsList] = useState(
-    payoutMethodsListData,
-  );
   const { userData, setUserData } = useUser();
+  const [payoutMethodsList, setPayoutMethodsList] = useState(
+    payoutMethodsListData.map(method => ({
+      ...method,
+      isSelected: method.value === userData.payment_method
+    }))
+  );
   const [formData, setFormData] = useState(userData);
   const [isConditionChecked, setIsConditionChecked] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -83,7 +86,6 @@ const PayBilling = () => {
         name: formData?.address?.name,
         city: formData?.address?.city,
         postal_code: formData?.address?.postal_code,
-        postalcode: formData?.address?.postal_code,
         state: formData?.address?.state,
         country: formData?.address?.country
       },

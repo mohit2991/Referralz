@@ -28,7 +28,8 @@ const ForgotPassword = () => {
       title: 'Check your inbox!',
       description: `A link to reset your password has been sent to ${email}.`,
       btnText: 'Open inbox',
-      routeName: 'Register',
+      routeName: '',
+      email: email,
     };
     handleApiCall(
       () => forgotPassword(email), // Call API
