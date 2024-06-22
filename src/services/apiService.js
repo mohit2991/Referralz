@@ -111,6 +111,42 @@ export const contactVerificationOtp = async (otp) => {
   }
 };
 
+export const getLeadSources = async () => {
+  try {
+    const response = await api.get(apiEndpoints.getLeadSources);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const createLeadImage = async (id) => {
+  try {
+    const response = await api.put(apiEndpoints.createLeadImage(id));
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const getLeadPriorities = async () => {
+  try {
+    const response = await api.get(apiEndpoints.getLeadPriorities);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const createLead = async (userPayload) => {
+  try {
+    const response = await api.post(apiEndpoints.createLead, userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 const handleError = (error) => {
   if (error.response) {
     // The request was made and the server responded with a status code

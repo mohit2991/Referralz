@@ -159,13 +159,13 @@ const PayBilling = () => {
           />
           <TextInputComp
             value={formData?.address?.city}
-            maxLength={20}
+            maxLength={30}
             labelText={'City'}
             onChangeText={(text) => handleChange('city', text)}
           />
           <TextInputComp
             value={formData?.address?.state}
-            maxLength={100}
+            maxLength={30}
             labelText={'State'}
             onChangeText={(text) => handleChange('state', text)}
             rightIcon={
@@ -175,11 +175,13 @@ const PayBilling = () => {
           />
           <TextInputComp
             value={formData?.address?.postal_code}
+            maxLength={8}
             labelText={'Postal code'}
             onChangeText={(text) => handleChange('postal_code', text)}
           />
           <TextInputComp
             value={formData?.address?.country}
+            maxLength={30}
             labelText={'Country'}
             onChangeText={(text) => handleChange('country', text)}
             rightIcon={

@@ -22,93 +22,89 @@ import InfoComponent from '../common/InfoComponent';
 import { Dropdown } from 'react-native-element-dropdown';
 import RadioSelector from '../common/RadioSelector';
 import { launchImageLibrary } from 'react-native-image-picker';
+import useApiHandler from '../../hooks/useApiHandler';
+import { getLeadSources, getLeadPriorities, createLead, createLeadImage, dashboardDetails } from '../../services/apiService';
+import { useUser } from '../../contexts/userContext';
+import RNFS from 'react-native-fs';
+import { Buffer } from 'buffer';
+import axios from 'axios';
+import { ToastAlert } from '../../components';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
+
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const insets = useSafeAreaInsets();
+  const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
   const sourceDDRef = useRef(null);
   const priorityDDRef = useRef(null);
   const oopsProgramDDRef = useRef(null);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [aptSuit, setAptSuit] = useState('');
-  const [city, setCity] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('');
-  const [description, setDescription] = useState('');
+  const { dashboardFilter, setDashboardData } = useUser();
+  const [formState, setFormState] = useState({
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    address: '',
+    aptSuit: '',
+    city: '',
+    postalCode: '',
+    state: '',
+    country: '',
+    description: '',
+    leadSource: 'Select',
+    leadPriority: 'Select',
+    oopsProgram: 'Select',
+  });
 
-  //   const [height, setHeight] = useState(100);
+  const [leadSourceData, setLeadSourceData] = useState([]);
+  const [isSourceFocus, setIsSourceFocus] = useState(false);
+  const [leadPriorityData, setLeadPriorityData] = useState([]);
+  const [isPriorityFocus, setIsPriorityFocus] = useState(false);
+  const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
+  const [successScreen, setSuccessScreen] = useState(false);
+  const [imageData, setImageData] = useState([{ id: 1 }]);
 
-  //   const minHeight = 0;
-  //   const maxHeight = 300;
-
-  //   const panResponder = useRef(
-  //     PanResponder.create({
-  //       onStartShouldSetPanResponder: () => true,
-  //       onPanResponderMove: (e, gestureState) => {
-  //         let newHeight = height + gestureState.dy;
-  //         if (newHeight < minHeight) newHeight = minHeight;
-  //         if (newHeight > maxHeight) newHeight = maxHeight;
-  //         setHeight(newHeight);
-  //       },
-  //       onPanResponderRelease: (e, gestureState) => {
-  //         let newHeight = height + gestureState.dy;
-  //         if (newHeight < minHeight) newHeight = minHeight;
-  //         if (newHeight > maxHeight) newHeight = maxHeight;
-  //         setHeight(newHeight);
-  //       },
-  //     }),
-  //   ).current;
-
-  const snapPoints = useMemo(() => [isIos ? '88%' : '92%'], []);
+  const snapPoints = useMemo(() => [isIos ? '95%' : '98%'], []);
+  const oopsProgramData = [
+    { name: 'Yes', id: 'yes' },
+    { name: 'No', id: 'no' },
+  ];
 
   useEffect(() => {
     if (isOpen) {
       bottomSheetRef.current?.expand();
+      resetState();
+      fetchLeadSourceData()
+      fetchLeadPrioritiesData()
     } else {
       bottomSheetRef.current?.close();
     }
   }, [isOpen]);
 
-  const [leadSource, setLeadSource] = useState('Select');
-  const [isSourceFocus, setIsSourceFocus] = useState(false);
-  const [leadPriority, setLeadPriority] = useState('Normal');
-  const [isPriorityFocus, setIsPriorityFocus] = useState(false);
-  const [oopsProgram, setOopsProgram] = useState('Select');
-  const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
+  const fetchLeadSourceData = async () => {
+    handleApiCall(
+      () => getLeadSources(),
+      async (response) => {
+        if (response) {
+          setLeadSourceData(response.data);
+        }
+      },
+      null, // Success message
+    );
+  };
 
-  const leadSourceData = [
-    { label: 'Label1', value: '1' },
-    { label: 'Label2', value: '2' },
-    { label: 'Label3', value: '3' },
-    { label: 'Label4', value: '4' },
-  ];
-
-  const oopsProgramData = [
-    { label: 'Label1', value: '1' },
-    { label: 'Label2', value: '2' },
-    { label: 'Label3', value: '3' },
-    { label: 'Label4', value: '4' },
-  ];
-
-  const leadPriorityData = [
-    { label: 'Low', value: '1' },
-    { label: 'Normal', value: '2' },
-    { label: 'High', value: '3' },
-    { label: 'Urgent', value: '4' },
-  ];
-
-  const [imageData, setImageData] = useState([
-    {
-      id: 1,
-      imgUri: '',
-    },
-  ]);
+  const fetchLeadPrioritiesData = async () => {
+    handleApiCall(
+      () => getLeadPriorities(),
+      async (response) => {
+        if (response) {
+          setLeadPriorityData(response.data);
+        }
+      },
+      null, // Success message
+    );
+  };
 
   const pickImage = () => {
     let options = {
@@ -126,6 +122,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
         const imgObj = {
           id: imageData?.length + 1,
           imgUri: uri,
+          ...response.assets[0]
         };
         setImageData((prevData) => [...prevData, imgObj]);
       }
@@ -161,10 +158,13 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === leadSource}
+          value={item?.label === formState.leadSource}
           text={item?.label}
           onPress={() => {
-            setLeadSource(item?.label);
+            setFormState((prevState) => ({
+              ...prevState,
+              leadSource: item.label,
+            }));
             setIsSourceFocus(false);
             sourceDDRef.current.close();
           }}
@@ -177,10 +177,13 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === oopsProgram}
+          value={item?.label === formState.oopsProgram}
           text={item?.label}
           onPress={() => {
-            setOopsProgram(item?.label);
+            setFormState((prevState) => ({
+              ...prevState,
+              oopsProgram: item.label,
+            }));
             setIsoopsProgramFocus(false);
             oopsProgramDDRef.current.close();
           }}
@@ -193,16 +196,128 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === leadPriority}
+          value={item?.label === formState.leadPriority}
           text={item?.label}
           onPress={() => {
-            setLeadPriority(item?.label);
+            setFormState((prevState) => ({
+              ...prevState,
+              leadPriority: item.label,
+            }));
             setIsPriorityFocus(false);
             priorityDDRef.current.close();
           }}
         />
       </View>
     );
+  };
+
+  const getDasboardData = async () => {
+    const userPayload = {
+      filter_by_date: dashboardFilter ? dashboardFilter.value : 'ONE_WEEK',
+      isPaginationRequired: false,
+    };
+
+    handleApiCall(() => dashboardDetails(userPayload),
+      async (response) => {
+        if (response) {
+          setDashboardData(response?.data);
+        }
+      },
+      null, // Success message
+    );
+  };
+
+  const createLeadImageHandle = async (id) => {
+    handleApiCall(() => createLeadImage(id));
+  }
+
+  const createLeadImageUpload = async (uploadImage, response) => {
+    for (let i = 0; i < uploadImage.length; i++) {
+      const image = uploadImage[i];
+      const uploadUrl = response?.data?.upload_urls[i];
+      try {
+        const binaryFile = await RNFS.readFile(image.uri, 'base64');
+        const binaryData = Buffer.from(binaryFile, 'base64');
+        await axios.put(uploadUrl, binaryData, {
+          headers: {
+            'Content-Type': image.type,
+            'Content-Length': binaryData.length,
+          }
+        });
+      } catch (error) {
+        ToastAlert({
+          type: 'error',
+          description: `Failed to upload ${image.fileName}:`, error,
+        });
+      }
+    }
+
+  }
+
+  const createLeadHandle = async () => {
+    const uploadImage = imageData.filter(item => item?.fileName).map(item => item)
+    const userPayload = {
+      contact: {
+        email_id: formState.email,
+        first_name: formState.firstName,
+        last_name: formState.lastName,
+        phone_number: formState.phoneNumber,
+      },
+      amount: 0,
+      status: 'REFERRAL_RECEIVED',
+      priority: 1,
+      source: 1,
+      oops_problem: 'yes',
+      description: formState.description,
+      address: {
+        address: formState.address,
+        name: formState.aptSuit,
+        city: formState.city,
+        postal_code: formState.postalCode,
+        state: formState.state,
+        country: formState.country,
+      },
+      file_names: imageData.filter(item => item?.fileName).map(item => item.fileName)
+    };
+
+    handleApiCall(() => createLead(userPayload),
+      async (response) => {
+        if (response) {
+          if (uploadImage?.length) {
+            await createLeadImageUpload(uploadImage, response)
+            await createLeadImageHandle(response?.data?.id)
+          }
+          setSuccessScreen(true)
+          getDasboardData();
+        }
+      },
+      null, // Success message
+    );
+  };
+
+  const resetState = () => {
+    setFormState({
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      email: '',
+      address: '',
+      aptSuit: '',
+      city: '',
+      postalCode: '',
+      state: '',
+      country: '',
+      description: '',
+      leadSource: 'Select',
+      leadPriority: 'Select',
+      oopsProgram: 'Select',
+    });
+    setIsoopsProgramFocus(false);
+    setIsPriorityFocus(false);
+    setIsSourceFocus(false);
+    setSuccessScreen(false);
+    setImageData([{ id: 1 }]);
+
   };
 
   return (
@@ -230,7 +345,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                 <Text style={styles.closeText}>{'Close'}</Text>
               </TouchableOpacity>
             </View>
-            {true ? (
+            {!successScreen ? (
               <View style={{ flex: 1 }}>
                 <KeyboardAwareScrollView
                   scrollEnabled={true}
@@ -242,7 +357,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                   <View>
                     <TextInputComp
                       editable={false}
-                      value={leadSource}
+                      value={formState.leadSource}
                       labelText={'Source'}
                       rightIcon={
                         <Image
@@ -267,22 +382,22 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                       ref={sourceDDRef}
                       style={styles.dropdown}
                       data={leadSourceData}
-                      labelField="label"
-                      valueField="value"
-                      value={leadSource}
+                      labelField="name"
+                      valueField="id"
+                      value={formState.leadSource}
                       onFocus={() => setIsSourceFocus(true)}
                       onBlur={() => setIsSourceFocus(false)}
-                      onChange={(item) => {
-                        setLeadSource(item?.label);
-                        setIsSourceFocus(false);
-                      }}
+                      // onChange={(item) => {
+                      //   setLeadSource(item?.label);
+                      //   setIsSourceFocus(false);
+                      // }}
                       renderItem={renderSourceDDItems}
                     />
                   </View>
                   <View>
                     <TextInputComp
                       editable={false}
-                      value={oopsProgram}
+                      value={formState.oopsProgram}
                       labelText={'Oops program'}
                       rightIcon={
                         <Image
@@ -309,22 +424,22 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                       ref={oopsProgramDDRef}
                       style={styles.dropdown}
                       data={oopsProgramData}
-                      labelField="label"
-                      valueField="value"
-                      value={leadSource}
+                      labelField="name"
+                      valueField="id"
+                      value={formState.oopsProgram}
                       onFocus={() => setIsoopsProgramFocus(true)}
                       onBlur={() => setIsoopsProgramFocus(false)}
-                      onChange={(item) => {
-                        setOopsProgram(item?.label);
-                        setIsoopsProgramFocus(false);
-                      }}
+                      // onChange={(item) => {
+                      //   setOopsProgram(item?.label);
+                      //   setIsoopsProgramFocus(false);
+                      // }}
                       renderItem={renderOopsDDItems}
                     />
                   </View>
                   <View>
                     <TextInputComp
                       editable={false}
-                      value={leadPriority}
+                      value={formState.leadPriority}
                       labelText={'Lead priority'}
                       rightIcon={
                         <Image
@@ -351,15 +466,15 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                       ref={priorityDDRef}
                       style={styles.dropdown}
                       data={leadPriorityData}
-                      labelField="label"
-                      valueField="value"
-                      value={leadPriority}
+                      labelField="name"
+                      valueField="id"
+                      value={formState.leadPriority}
                       onFocus={() => setIsPriorityFocus(true)}
                       onBlur={() => setIsPriorityFocus(false)}
-                      onChange={(item) => {
-                        setLeadPriority(item?.label);
-                        setIsPriorityFocus(false);
-                      }}
+                      // onChange={(item) => {
+                      //   setLeadPriority(item?.label);
+                      //   setIsPriorityFocus(false);
+                      // }}
                       renderItem={renderPriorityDDItems}
                     />
                   </View>
@@ -372,27 +487,47 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                     </Text>
                   </View>
                   <TextInputComp
-                    value={firstName}
+                    value={formState.firstName}
                     maxLength={20}
                     labelText={'First name'}
-                    onChangeText={(text) => setFirstName(text)}
-                  />
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        firstName: text,
+                      }))
+                    } />
                   <TextInputComp
-                    value={lastName}
+                    value={formState.lastName}
                     maxLength={20}
                     labelText={'Last name'}
-                    onChangeText={(text) => setLastName(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        lastName: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={phoneNumber}
-                    //   maxLength={20}
+                    value={formState.phoneNumber}
+                    maxLength={10}
                     labelText={'Phone number'}
-                    onChangeText={(text) => setPhoneNumber(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        phoneNumber: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={email}
+                    value={formState.email}
+                    maxLength={100}
                     labelText={'Email address (Optional)'}
-                    onChangeText={(text) => setEmail(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        email: text,
+                      }))
+                    }
                   />
 
                   <View style={styles.titleView}>
@@ -402,34 +537,70 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                     </Text>
                   </View>
                   <TextInputComp
-                    value={address}
+                    value={formState.address}
+                    maxLength={100}
                     labelText={'Address'}
-                    onChangeText={(text) => setAddress(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        address: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={aptSuit}
+                    value={formState.aptSuit}
+                    maxLength={100}
                     labelText={'Apt, suite, etc...'}
-                    onChangeText={(text) => setAptSuit(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        aptSuit: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={city}
+                    value={formState.city}
+                    maxLength={30}
                     labelText={'City'}
-                    onChangeText={(text) => setCity(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        city: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={postalCode}
+                    value={formState.postalCode}
+                    maxLength={8}
                     labelText={'Postal code'}
-                    onChangeText={(text) => setPostalCode(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        postalCode: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={state}
+                    value={formState.state}
+                    maxLength={30}
                     labelText={'State'}
-                    onChangeText={(text) => setState(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        state: text,
+                      }))
+                    }
                   />
                   <TextInputComp
-                    value={country}
+                    value={formState.country}
+                    maxLength={30}
                     labelText={'Country'}
-                    onChangeText={(text) => setCountry(text)}
+                    onChangeText={(text) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        country: text,
+                      }))
+                    }
                   />
 
                   <View style={styles.titleView}>
@@ -440,11 +611,17 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                   </View>
                   <View style={{ marginTop: hp(16) }}>
                     <TextInput
+                      maxLength={300}
                       textAlignVertical="top"
                       style={[styles.textInput]}
                       multiline={true}
-                      value={description}
-                      onChangeText={(text) => setDescription(text)}
+                      value={formState.description}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          description: text,
+                        }))
+                      }
                     />
                     {/* <View {...panResponder.panHandlers} style={styles.resizeHandle}>
                 <Image source={icons.expander} style={commonStyles.icon24} />
@@ -476,7 +653,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                 <BottomButton
                   title={'Create lead'}
                   disabled={false}
-                  onPress={() => {}}
+                  onPress={createLeadHandle}
                 />
               </View>
             ) : (

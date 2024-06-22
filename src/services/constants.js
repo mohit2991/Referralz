@@ -14,6 +14,10 @@ const useApi = () => {
     contactVerification: (contact) =>
       `/user/contact-verification?contact-no=${contact}`,
     contactVerificationOtp: (otp) => `/user/contact-verification?otp=${otp}`,
+    getLeadSources: '/master/lead-sources',
+    getLeadPriorities: '/master/lead-priorities',
+    createLead: '/user/lead',
+    createLeadImage: (id) => `/user/lead/${id}/success`,
   };
 };
 

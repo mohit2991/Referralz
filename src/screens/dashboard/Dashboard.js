@@ -25,8 +25,7 @@ const Dashboard = () => {
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
-  const [dashboardData, setdashboardData] = useState(null);
-  const { userData, setUserData } = useUser();
+  const { userData, setUserData, dashboardData, setDashboardData, setDashboardFilter } = useUser();
 
   const getUserData = async () => {
     try {
@@ -55,7 +54,7 @@ const Dashboard = () => {
     try {
       const response = await dashboardDetails(userPayload);
       if (response.status === 201) {
-        setdashboardData(response?.data);
+        setDashboardData(response?.data);
       } else {
         ToastAlert({
           type: 'error',
@@ -87,6 +86,7 @@ const Dashboard = () => {
       (method) => method.isSelected,
     );
     getDasboardData(selectedFilter);
+    setDashboardFilter(selectedFilter)
   };
 
   const FilterOption = ({ item }) => {

@@ -90,8 +90,6 @@ const Register = () => {
       routeName: 'Login',
     };
     // Register API Call
-    console.log({ userPayload })
-
     handleApiCall(
       () => createUser(userPayload),
       async (response) => {
