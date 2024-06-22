@@ -25,8 +25,7 @@ const Dashboard = () => {
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
-  const [dashboardData, setdashboardData] = useState(null);
-  const { userData, setUserData } = useUser();
+  const { userData, setUserData, dashboardData, setDashboardData, setDashboardFilter } = useUser();
 
   const getUserData = async () => {
     try {
@@ -55,7 +54,7 @@ const Dashboard = () => {
     try {
       const response = await dashboardDetails(userPayload);
       if (response.status === 201) {
-        setdashboardData(response?.data);
+        setDashboardData(response?.data);
       } else {
         ToastAlert({
           type: 'error',
@@ -87,6 +86,7 @@ const Dashboard = () => {
       (method) => method.isSelected,
     );
     getDasboardData(selectedFilter);
+    setDashboardFilter(selectedFilter)
   };
 
   const FilterOption = ({ item }) => {
@@ -401,8 +401,16 @@ const Dashboard = () => {
           </ScrollView>
         </View>
       ) : (
-        <View>
-          <Text> No Data</Text>
+        <View style={{ paddingHorizontal: wp(16), flex: 1 }}>
+          <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
+            <Image
+              source={icons.chartEmpty}
+              style={{ width: '100%', height: hp(193) }}
+            />
+            <Text style={styles.emptyText}>
+              {'No data for leads in last 24 hours'}
+            </Text>
+          </ItemCard>
         </View>
       )}
     </View>
@@ -509,5 +517,13 @@ const styles = StyleSheet.create({
     width: wp(8),
     borderRadius: wp(8),
     marginRight: wp(4),
+  },
+  emptyText: {
+    fontSize: fontSize(18),
+    lineHeight: hp(28),
+    fontFamily: fonts.semiBold,
+    color: colors.grey,
+    marginTop: hp(16),
+    textAlign: 'center',
   },
 });

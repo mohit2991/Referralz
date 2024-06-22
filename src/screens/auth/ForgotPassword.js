@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
-
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp } from '../../utils';
 import { forgotPassword } from '../../services/apiService';
 import useApiHandler from '../../hooks/useApiHandler';
-import messages from '../../constants/messages';
-import { Button, Header, TextInputComp, ToastAlert } from '../../components';
+import { Button, Header, TextInputComp } from '../../components';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();
@@ -27,41 +24,22 @@ const ForgotPassword = () => {
 
   const resetLinkPress = async () => {
     // Forgot Password API Call
+    const routeData = {
+      title: 'Check your inbox!',
+      description: `A link to reset your password has been sent to ${email}.`,
+      btnText: 'Open inbox',
+      routeName: 'Register',
+    };
     handleApiCall(
       () => forgotPassword(email), // Call API
       async (response) => {
         // Callback respose after success
-        const { access_token } = response.data;
-        if (access_token) {
-          navigate('InboxCheck', { email });
-          resetState();
-        }
+        navigate('InboxCheck', routeData);
+        resetState();
       },
       undefined, // Success message
       undefined, // Error message
     );
-
-    try {
-      const response = await forgotPassword(email);
-      if (response.status === 200) {
-        ToastAlert({
-          type: 'success',
-          description: response?.data,
-        });
-        navigate('InboxCheck', { email });
-        resetState();
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response?.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
   };
 
   const resetState = () => {

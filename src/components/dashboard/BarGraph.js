@@ -1,18 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { BarChart } from 'react-native-gifted-charts';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
+import { screenWidth } from 'react-native-gifted-charts/src/utils';
 
 const BarGraph = ({ graphData }) => {
+  const xAxisLength = screenWidth - screenWidth * 0.26;
 
-  const data = graphData.map(item => ({ value: item.leadsStatusCount }));
-  const xAxisLabelTexts = graphData.map(item => {
-    return item.leadsStatus
+  const data = graphData?.map((item) => ({ value: item?.leadsStatusCount }));
+  const xAxisLabelTexts = graphData?.map((item) => {
+    return item?.leadsStatus
       .toLowerCase()
-      .replace("_", " ")
+      .replace('_', ' ')
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word?.charAt(0).toUpperCase() + word?.slice(1))
       .join(' ');
   });
 
@@ -32,10 +34,10 @@ const BarGraph = ({ graphData }) => {
         xAxisType={'solid'}
         xAxisColor={colors.mediumGrey}
         stepValue={1}
-        maxValue={Math.max(...data.map(item => item.value)) + 1}
+        // maxValue={Math.max(...data?.map((item) => item?.value)) + 1}
         noOfSections={6}
         xAxisLabelTexts={xAxisLabelTexts}
-        xAxisTextNumberOfLines={1}
+        xAxisTextNumberOfLines={2}
         yAxisLabelTexts={['0', '1', '2', '3', '4', '5']}
         yAxisExtraHeight={16}
         labelWidth={42}
@@ -47,8 +49,8 @@ const BarGraph = ({ graphData }) => {
         rulesColor={colors.mediumGrey}
         autoShiftLabels
         barBorderColor={colors.white}
-        xAxisLength={wp(290)}
-        rulesLength={wp(290)}
+        xAxisLength={xAxisLength}
+        rulesLength={xAxisLength}
         isAnimated
       />
     </View>

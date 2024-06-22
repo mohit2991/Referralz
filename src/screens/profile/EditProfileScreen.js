@@ -54,7 +54,6 @@ const EditProfileScreen = () => {
   const profileImageHandle = async () => {
     try {
       const response = await profileImageUpdate();
-      console.log({ response })
       if (response.status === 201) {
         const updatedProfileImage = { download_profile_img_url: response?.data?.download_profile_img_url }
         ToastAlert({
@@ -83,7 +82,6 @@ const EditProfileScreen = () => {
   const uploadProfileImage = async (image) => {
     const binaryFile = await RNFS.readFile(image.uri, 'base64');
     const binaryData = Buffer.from(binaryFile, 'base64');
-    console.log(formData.upload_profile_img_url)
     try {
       const response = await axios.put(formData.upload_profile_img_url, binaryData, {
         headers: {
@@ -231,7 +229,7 @@ const EditProfileScreen = () => {
           />
           <TextInputComp
             value={formData.contact_no}
-            maxLength={11}
+            maxLength={10}
             labelText={'Phone number'}
             onChangeText={(text) => handleChange('contact_no', text)}
             rightIcon={!userData?.contact_verification_status && <Image
