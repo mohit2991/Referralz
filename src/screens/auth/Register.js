@@ -1,42 +1,18 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { createUser } from '../../services/apiService';
 import { commonStyles } from '../../styles/styles';
-import { Button, TextInputComp, ToastAlert } from '../../components';
+import { Button, RadioSelector, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 
-export const RadioSelector = ({ text, value, onPress }) => {
-  return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={onPress}
-      style={commonStyles.flexRowJustify}
-    >
-      <Text style={styles.radioText}>{text}</Text>
-      <Image
-        style={commonStyles.icon24}
-        source={value ? icons.activeRadio : icons.inActiveRadio}
-      />
-    </TouchableOpacity>
-  );
-};
-
 const Register = () => {
-  const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
-
+  const { handleApiCall } = useApiHandler();
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
@@ -57,6 +33,7 @@ const Register = () => {
   const onHomeOwnerPress = () => {
     setIsHomeOver(true);
     setIsReferralPartner(false);
+    setCompanycode('')
   };
 
   const onReferralPartnerPress = () => {
@@ -102,20 +79,24 @@ const Register = () => {
       password: password,
       status: 'CREATED',
       type: isHomeOver ? 'HOME_OWNER' : 'TECHNICIAN',
-      user_unique_code: companycode !== '' ? companycode : null,
-      address: null,
-      birth_date: null,
-      contact_no: null,
+      unique_code: companycode !== '' && !isHomeOver ? companycode : null,
     };
 
+    const routeData = {
+      title: 'Success!',
+      description:
+        'Your registration has been completed successfully. An email with instructions to activate your membership has been sent to you.',
+      btnText: 'Sign into Referralz',
+      routeName: 'Login',
+    };
     // Register API Call
+    console.log({ userPayload })
+
     handleApiCall(
-      () => createUser(userPayload), // Call API
+      () => createUser(userPayload),
       async (response) => {
-        // Callback respose after success
         if (response) {
-          navigate('SuccessfullySignup');
-          // reset the state
+          navigate('InboxCheck', routeData);
           resetState();
         }
       },
@@ -264,11 +245,11 @@ const Register = () => {
 
         <Text style={[styles.motoText, styles.termsPolicyText]}>
           {`By clicking "Agree and continue", You agree to Referralz's `}
-          <Text onPress={() => {}} style={styles.underLine}>
+          <Text onPress={() => { }} style={styles.underLine}>
             {'Terms of Service'}
           </Text>
           {' and '}
-          <Text onPress={() => {}} style={styles.underLine}>
+          <Text onPress={() => { }} style={styles.underLine}>
             {'Privacy Policy.'}
           </Text>
         </Text>
@@ -337,12 +318,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     color: colors.xDarkGrey,
     fontFamily: fonts.semiBold,
-  },
-  radioText: {
-    lineHeight: hp(24),
-    fontSize: fontSize(16),
-    color: colors.xDarkGrey,
-    fontFamily: fonts.regular,
   },
   errText: {
     marginTop: hp(4),

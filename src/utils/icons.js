@@ -31,4 +31,8 @@ export const icons = {
   add: require('../../assets/icons/add.png'),
   leadsIcon: require('../../assets/icons/leadsIcon.png'),
   dashboard: require('../../assets/icons/dashboard.png'),
+  chartEmpty: require('../../assets/icons/chartEmpty.png'),
+  bellEmpty: require('../../assets/icons/bellEmpty.png'),
+  expander: require('../../assets/icons/expander.png'),
+  successIcon: require('../../assets/icons/successIcon.png'),
 };

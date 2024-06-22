@@ -8,19 +8,26 @@ import { commonStyles } from '../styles/styles';
 import { Header, InfoComponent } from '../components';
 
 const InboxCheck = () => {
+  const { params } = useRoute();
   const { navigate } = useNavigation();
-  const route = useRoute();
-  const { email } = route.params;
+
+  const { title, description, btnText, routeName } = params;
 
   return (
     <View style={commonStyles.flex}>
       <Header isBackButton />
       <View style={styles.container}>
         <InfoComponent
-          title={'Check your inbox!'}
-          description={`A link to reset your password has been sent to ${email}.`}
-          btnText={'Open inbox'}
-          onPress={() => { }}
+          title={title}
+          description={description}
+          btnText={btnText}
+          onPress={
+            routeName !== ''
+              ? () => {
+                  navigate(routeName);
+                }
+              : null
+          }
         />
       </View>
     </View>
