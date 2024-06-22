@@ -9,7 +9,6 @@ import {
   View,
 } from 'react-native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import { colors, fontSize, fonts, hp, icons, isIos, wp } from '../../utils';
@@ -30,7 +29,6 @@ import { Buffer } from 'buffer';
 import axios from 'axios';
 import { ToastAlert } from '../../components';
 
-
 const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
@@ -38,7 +36,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const sourceDDRef = useRef(null);
   const priorityDDRef = useRef(null);
   const oopsProgramDDRef = useRef(null);
-
+  const scrollViewRef = useRef(null);
   const { dashboardFilter, setDashboardData } = useUser();
   const [formState, setFormState] = useState({
     firstName: '',
@@ -56,7 +54,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     leadPriority: 'Select',
     oopsProgram: 'Select',
   });
-
   const [leadSourceData, setLeadSourceData] = useState([]);
   const [isSourceFocus, setIsSourceFocus] = useState(false);
   const [leadPriorityData, setLeadPriorityData] = useState([]);
@@ -64,8 +61,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
   const [successScreen, setSuccessScreen] = useState(false);
   const [imageData, setImageData] = useState([{ id: 1 }]);
-
-  const snapPoints = useMemo(() => [isIos ? '95%' : '98%'], []);
+  const snapPoints = useMemo(() => [isIos ? '85%' : '98%'], []);
   const oopsProgramData = [
     { name: 'Yes', id: 'yes' },
     { name: 'No', id: 'no' },
@@ -79,6 +75,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       fetchLeadPrioritiesData()
     } else {
       bottomSheetRef.current?.close();
+      scrollViewRef.current?.scrollToPosition(0, 0);
     }
   }, [isOpen]);
 
@@ -110,15 +107,31 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     let options = {
       mediaType: 'photo',
       quality: 1,
+      multiple: true,
     };
 
     launchImageLibrary(options, (response) => {
+      if (imageData.length >= 10) {
+        ToastAlert({
+          type: 'error',
+          description: 'You can only select up to 10 images.',
+        });
+        return;
+      }
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
         const uri = response.assets[0].uri;
+        const fileSize = response.assets[0].fileSize;
+        if (fileSize > 5 * 1024 * 1024) {
+          ToastAlert({
+            type: 'error',
+            description: 'Image size should be less than 5MB.',
+          });
+          return;
+        }
         const imgObj = {
           id: imageData?.length + 1,
           imgUri: uri,
@@ -251,7 +264,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
         });
       }
     }
-
   }
 
   const createLeadHandle = async () => {
@@ -265,9 +277,9 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       },
       amount: 0,
       status: 'REFERRAL_RECEIVED',
-      priority: 1,
-      source: 1,
-      oops_problem: 'yes',
+      priority: formState.leadPriority,
+      source: formState.leadSource,
+      oops_problem: formState.oopsProgram,
       description: formState.description,
       address: {
         address: formState.address,
@@ -348,6 +360,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
             {!successScreen ? (
               <View style={{ flex: 1 }}>
                 <KeyboardAwareScrollView
+                  ref={scrollViewRef}
                   scrollEnabled={true}
                   enableOnAndroid
                   showsVerticalScrollIndicator={false}
