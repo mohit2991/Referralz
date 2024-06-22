@@ -12,9 +12,9 @@ import { useUser } from '../../contexts/userContext';
 const EditProfileVerification = () => {
   const { navigate } = useNavigation();
   const otpInputRef = useRef(null);
-  const route = useRoute();
-  const { userPayload } = route.params;
-  const { userData, setUserData } = useUser();
+  const { params } = useRoute();
+  const { userPayload } = params;
+  const { setUserData } = useUser();
   const [code, setCode] = useState('');
 
   const handleOtpChange = (code) => {
@@ -40,7 +40,7 @@ const EditProfileVerification = () => {
               ...prevUserData,
               ...userPayload,
             }));
-            navigate('EditProfileScreen');
+            navigate('EditProfileScreen', { fromVerification: true });
           } else {
             ToastAlert({
               type: 'error',
