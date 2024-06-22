@@ -61,7 +61,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
   const [successScreen, setSuccessScreen] = useState(false);
   const [imageData, setImageData] = useState([{ id: 1 }]);
-  const snapPoints = useMemo(() => [isIos ? '85%' : '98%'], []);
+  const snapPoints = useMemo(() => [isIos ? '95%' : '95%'], []);
   const oopsProgramData = [
     { name: 'Yes', id: 'yes' },
     { name: 'No', id: 'no' },
