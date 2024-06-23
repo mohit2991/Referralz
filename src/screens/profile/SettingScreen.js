@@ -6,6 +6,8 @@ import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
 import { updateUserDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
 
 export const SettingItem = ({
   title,
@@ -29,45 +31,45 @@ export const SettingItem = ({
 };
 
 const SettingScreen = () => {
+  const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
-  const [isPushNotificationOn, setIsPushNotificationOn] = useState(userData?.push_notification_enable);
-  const [isEmailNotificationOn, setIsEmailNotificationOn] = useState(userData?.email_notification_enable);
+  const [isPushNotificationOn, setIsPushNotificationOn] = useState(
+    userData?.push_notification_enable,
+  );
+  const [isEmailNotificationOn, setIsEmailNotificationOn] = useState(
+    userData?.email_notification_enable,
+  );
 
   const updateNotificationSettings = async (userPayload) => {
-    try {
-      const response = await updateUserDetails(userPayload);
-      if (response.status === 200) {
-        ToastAlert({
-          type: 'success',
-          description: "Your Details has been submitted successfully!",
-        });
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          ...userPayload,
-        }));
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Update user deatils API Call
+    handleApiCall(
+      () => updateUserDetails(userPayload), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...userPayload,
+          }));
+        }
+      },
+      messages.profileSubmitted,
+    );
   };
 
   const pushNotification = () => {
-    setIsPushNotificationOn(!isPushNotificationOn)
-    updateNotificationSettings({ push_notification_enable: !isPushNotificationOn })
-  }
+    setIsPushNotificationOn(!isPushNotificationOn);
+    updateNotificationSettings({
+      push_notification_enable: !isPushNotificationOn,
+    });
+  };
 
   const emailNotification = () => {
-    setIsEmailNotificationOn(!isEmailNotificationOn)
-    updateNotificationSettings({ email_notification_enable: !isEmailNotificationOn })
-  }
+    setIsEmailNotificationOn(!isEmailNotificationOn);
+    updateNotificationSettings({
+      email_notification_enable: !isEmailNotificationOn,
+    });
+  };
 
   return (
     <View style={commonStyles.flex}>
