@@ -18,7 +18,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { commonStyles } from '../../styles/styles';
-import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import { colors, fontSize, fonts, hp, icons, isIos, wp } from '../../utils';
 import {
   BottomButton,
   Header,
@@ -31,10 +31,12 @@ import {
   contactVerification,
 } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
-
-const EditProfileScreen = () => {
+  
+  const EditProfileScreen = () => {
+  const insets = useSafeAreaInsets();
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
   const route = useRoute();
@@ -315,6 +317,12 @@ const EditProfileScreen = () => {
         disabled={loading || !hasChanges}
         onPress={updateProfile}
       />
+      <View
+        style={{
+          backgroundColor: colors.white,
+          height: isIos ? (insets.bottom === 0 ? hp(12) : 0) : 0,
+        }}
+      />
       <SafeAreaView style={styles.safeAreaViewStyle} />
       {isDatePicker && (
         <DatePicker
@@ -370,7 +378,7 @@ const styles = StyleSheet.create({
     padding: wp(10),
   },
   bottomPadding: {
-    height: hp(30),
+    height: hp(70),
   },
   safeAreaViewStyle: {
     backgroundColor: colors.white,

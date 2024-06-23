@@ -36,4 +36,8 @@ export const icons = {
   expander: require('../../assets/icons/expander.png'),
   successIcon: require('../../assets/icons/successIcon.png'),
   checkShield: require('../../assets/icons/checkShield.png'),
+  leadsEmpty: require('../../assets/icons/leadsEmpty.png'),
+  close: require('../../assets/icons/close.png'),
+  search: require('../../assets/icons/search.png'),
+  filter: require('../../assets/icons/filter.png'),
 };

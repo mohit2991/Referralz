@@ -7,12 +7,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { commonStyles } from '../styles/styles';
+import { CreateLeadBottomSheet } from '../components';
 import Dashboard from '../screens/dashboard/Dashboard';
 import WalletScreen from '../screens/wallet/WalletScreen';
 import LeadsListScreen from '../screens/leads/LeadsListScreen';
 import ActivityScreen from '../screens/activity/ActivityScreen';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
-import { CreateLeadBottomSheet } from '../components';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +25,9 @@ const BottomTabs = () => {
   return (
     <View style={commonStyles.flex}>
       <Tab.Navigator
+        // tabBarOptions={{
+        //   keyboardHidesTabBar: true,
+        // }}
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarIcon: ({ focused }) => {

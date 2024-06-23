@@ -107,6 +107,7 @@ const PayBilling = () => {
             ...prevUserData,
             ...userPayload,
           }));
+          navigate('ProfileScreen');
         }
 
         setLoading(false);
