@@ -148,7 +148,7 @@ export const homeLeadsList = [
     status: 'Referral Paid',
     interest: 'Low',
   },
-]; 
+];
 
 export const todayActivityData = [
   {
@@ -164,35 +164,5 @@ export const todayActivityData = [
     title: 'Inspection completed',
     description: `Good news! Your earnings card has been issued. Keep an eye out for more updates!`,
     time: '4h ago',
-  },
-];
-
-export const thisWeekActivityData = [
-  {
-    id: 1,
-    name: 'Kathy Pacheco',
-    uniqID: 'ID 846474',
-    date: 'Aug 8, 2023',
-    address: '3707 Irving Place, Arnold, MO 63010',
-    status: 'Submitted',
-    interest: 'Low',
-  },
-  {
-    id: 2,
-    name: 'Kathy Pacheco',
-    uniqID: 'ID 846474',
-    date: 'Aug 8, 2023',
-    address: '3707 Irving Place, Arnold, MO 63010',
-    status: 'In progress',
-    interest: 'High',
-  },
-  {
-    id: 3,
-    name: 'John-Maeria 2 Drive-in owner',
-    uniqID: 'ID 846474',
-    date: 'Aug 8, 2023',
-    address: '3707 Irving Place, Arnold, MO 63010',
-    status: 'In progress',
-    interest: 'Low',
   },
 ];
