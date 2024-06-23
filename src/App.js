@@ -12,8 +12,8 @@ const App = () => {
       <UserProvider>
         <PortalProvider>
           <AppNavigator />
-          <Toast config={toastConfig} />
         </PortalProvider>
+        <Toast config={toastConfig} />
       </UserProvider>
     </GestureHandlerRootView>
   );

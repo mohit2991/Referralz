@@ -1,7 +1,7 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
-  PanResponder,
   StyleSheet,
   Text,
   TextInput,
@@ -22,14 +22,20 @@ import { Dropdown } from 'react-native-element-dropdown';
 import RadioSelector from '../common/RadioSelector';
 import { launchImageLibrary } from 'react-native-image-picker';
 import useApiHandler from '../../hooks/useApiHandler';
-import { getLeadSources, getLeadPriorities, createLead, createLeadImage, dashboardDetails } from '../../services/apiService';
+import {
+  getLeadSources,
+  getLeadPriorities,
+  createLead,
+  createLeadImage,
+  dashboardDetails,
+} from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import axios from 'axios';
 import { ToastAlert } from '../../components';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
@@ -60,7 +66,26 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const [isPriorityFocus, setIsPriorityFocus] = useState(false);
   const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
   const [successScreen, setSuccessScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [imageData, setImageData] = useState([{ id: 1 }]);
+
+  const {
+    firstName,
+    lastName,
+    phoneNumber,
+    email,
+    address,
+    aptSuit,
+    city,
+    postalCode,
+    state,
+    country,
+    description,
+    leadPriority,
+    leadSource,
+    oopsProgram,
+  } = formState;
+
   const snapPoints = useMemo(() => [isIos ? '95%' : '95%'], []);
   const oopsProgramData = [
     { name: 'Yes', id: 'yes' },
@@ -71,8 +96,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     if (isOpen) {
       bottomSheetRef.current?.expand();
       resetState();
-      fetchLeadSourceData()
-      fetchLeadPrioritiesData()
+      fetchLeadSourceData();
+      fetchLeadPrioritiesData();
     } else {
       bottomSheetRef.current?.close();
       scrollViewRef.current?.scrollToPosition(0, 0);
@@ -84,7 +109,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       () => getLeadSources(),
       async (response) => {
         if (response) {
-          setLeadSourceData(response.data);
+          setLeadSourceData(response?.data);
         }
       },
       null, // Success message
@@ -111,7 +136,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     };
 
     launchImageLibrary(options, (response) => {
-      if (imageData.length >= 10) {
+      if (imageData.length >= 11) {
         ToastAlert({
           type: 'error',
           description: 'You can only select up to 10 images.',
@@ -135,7 +160,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
         const imgObj = {
           id: imageData?.length + 1,
           imgUri: uri,
-          ...response.assets[0]
+          ...response.assets[0],
         };
         setImageData((prevData) => [...prevData, imgObj]);
       }
@@ -145,7 +170,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const renderImageItems = ({ item, index }) => {
     return (
       <>
-        {index === 0 && imageData?.length <= 10 ? (
+        {index === 0 ? (
           <TouchableOpacity onPress={pickImage} style={styles.addFileView}>
             <>
               <Image
@@ -156,6 +181,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
             </>
           </TouchableOpacity>
         ) : (
+          // ) : index === 0 && imageData?.length === 11 ? null : (
           <TouchableOpacity disabled={true} style={styles.addFileView}>
             <Image
               source={{ uri: item?.imgUri }}
@@ -171,12 +197,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === formState.leadSource}
-          text={item?.label}
+          value={item?.name === formState.leadSource}
+          text={item?.name || item?.name}
           onPress={() => {
             setFormState((prevState) => ({
               ...prevState,
-              leadSource: item.label,
+              leadSource: item.name,
             }));
             setIsSourceFocus(false);
             sourceDDRef.current.close();
@@ -190,12 +216,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === formState.oopsProgram}
-          text={item?.label}
+          value={item?.name === formState.oopsProgram}
+          text={item?.name}
           onPress={() => {
             setFormState((prevState) => ({
               ...prevState,
-              oopsProgram: item.label,
+              oopsProgram: item.name,
             }));
             setIsoopsProgramFocus(false);
             oopsProgramDDRef.current.close();
@@ -209,12 +235,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === formState.leadPriority}
-          text={item?.label}
+          value={item?.name === formState.leadPriority}
+          text={item?.name}
           onPress={() => {
             setFormState((prevState) => ({
               ...prevState,
-              leadPriority: item.label,
+              leadPriority: item.name,
             }));
             setIsPriorityFocus(false);
             priorityDDRef.current.close();
@@ -230,7 +256,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       isPaginationRequired: false,
     };
 
-    handleApiCall(() => dashboardDetails(userPayload),
+    handleApiCall(
+      () => dashboardDetails(userPayload),
       async (response) => {
         if (response) {
           setDashboardData(response?.data);
@@ -242,7 +269,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
 
   const createLeadImageHandle = async (id) => {
     handleApiCall(() => createLeadImage(id));
-  }
+  };
 
   const createLeadImageUpload = async (uploadImage, response) => {
     for (let i = 0; i < uploadImage.length; i++) {
@@ -255,19 +282,22 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
           headers: {
             'Content-Type': image.type,
             'Content-Length': binaryData.length,
-          }
+          },
         });
       } catch (error) {
         ToastAlert({
           type: 'error',
-          description: `Failed to upload ${image.fileName}:`, error,
+          description: `Failed to upload ${image.fileName}:`,
+          error,
         });
       }
     }
-  }
+  };
 
   const createLeadHandle = async () => {
-    const uploadImage = imageData.filter(item => item?.fileName).map(item => item)
+    const uploadImage = imageData
+      .filter((item) => item?.fileName)
+      .map((item) => item);
     const userPayload = {
       contact: {
         email_id: formState.email,
@@ -289,18 +319,24 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
         state: formState.state,
         country: formState.country,
       },
-      file_names: imageData.filter(item => item?.fileName).map(item => item.fileName)
+      file_names: imageData
+        .filter((item) => item?.fileName)
+        .map((item) => item.fileName),
     };
-
-    handleApiCall(() => createLead(userPayload),
+    setIsLoading(true);
+    handleApiCall(
+      () => createLead(userPayload),
       async (response) => {
+        setIsLoading(false);
         if (response) {
           if (uploadImage?.length) {
-            await createLeadImageUpload(uploadImage, response)
-            await createLeadImageHandle(response?.data?.id)
+            await createLeadImageUpload(uploadImage, response);
+            await createLeadImageHandle(response?.data?.id);
           }
-          setSuccessScreen(true)
+          setSuccessScreen(true);
           getDasboardData();
+        } else {
+          setIsLoading(false);
         }
       },
       null, // Success message
@@ -329,7 +365,32 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     setIsSourceFocus(false);
     setSuccessScreen(false);
     setImageData([{ id: 1 }]);
+  };
 
+  const isButtonEnable = () => {
+    if (
+      firstName !== '' &&
+      lastName !== '' &&
+      phoneNumber !== '' &&
+      email !== '' &&
+      address !== '' &&
+      aptSuit !== '' &&
+      city !== '' &&
+      postalCode !== '' &&
+      state !== '' &&
+      country !== '' &&
+      description !== '' &&
+      leadPriority !== '' &&
+      leadPriority !== 'Select' &&
+      leadSource !== '' &&
+      leadSource !== 'Select' &&
+      oopsProgram !== '' &&
+      oopsProgram !== 'Select'
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   return (
@@ -357,8 +418,14 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                 <Text style={styles.closeText}>{'Close'}</Text>
               </TouchableOpacity>
             </View>
+            {isLoading && (
+              <View style={styles.loaderView}>
+                <ActivityIndicator color={colors.black} size={'small'} />
+                <Text style={styles.loadingTextStyle}>{'Loading...'}</Text>
+              </View>
+            )}
             {!successScreen ? (
-              <View style={{ flex: 1 }}>
+              <View style={commonStyles.flex}>
                 <KeyboardAwareScrollView
                   ref={scrollViewRef}
                   scrollEnabled={true}
@@ -508,7 +575,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                         ...prevState,
                         firstName: text,
                       }))
-                    } />
+                    }
+                  />
                   <TextInputComp
                     value={formState.lastName}
                     maxLength={20}
@@ -665,7 +733,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                 </KeyboardAwareScrollView>
                 <BottomButton
                   title={'Create lead'}
-                  disabled={false}
+                  disabled={!isButtonEnable()}
                   onPress={createLeadHandle}
                 />
               </View>
@@ -680,7 +748,15 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                 />
               </View>
             )}
-            <View style={{ height: insets.bottom + 8 }} />
+            <View
+              style={{
+                height: isIos
+                  ? insets.bottom === 0
+                    ? hp(12)
+                    : insets.bottom
+                  : 0,
+              }}
+            />
           </View>
         </View>
       </BottomSheet>
@@ -713,10 +789,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: wp(12),
     borderTopRightRadius: wp(12),
-    zIndex: 1,
+    // zIndex: 1,
   },
   keyboardAwareStyle: {
-    paddingBottom: hp(100),
     paddingHorizontal: wp(16),
   },
   headerText: {
@@ -807,5 +882,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     marginBottom: hp(8),
+  },
+  loadingTextStyle: {
+    lineHeight: hp(24),
+    fontSize: fontSize(16),
+    fontFamily: fonts.regular,
+    color: colors.xDarkGrey,
+    marginTop: hp(10),
+    textAlign: 'center',
+  },
+  loaderView: {
+    position: 'absolute',
+    top: hp(50),
+    bottom: 0,
+    right: 0,
+    left: 0,
+    backgroundColor: colors.white,
+    opacity: 0.7,
+    zIndex: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
