@@ -86,7 +86,7 @@ export const dashboardFilterOptionsList = [
     id: 2,
     title: '30 days',
     isSelected: false,
-    value: "THIRTY_DAYS"
+    value: "ONE_MONTH"
   },
   {
     id: 3,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,7 +13,7 @@ import axios from 'axios';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import DatePicker from 'react-native-date-picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -25,12 +25,19 @@ import { useUser } from '../../contexts/userContext';
 
 const EditProfileScreen = () => {
   const { navigate } = useNavigation();
+  const route = useRoute();
   const { userData, setUserData } = useUser();
   const [imageUri, setImageUri] = useState(null);
   const [formData, setFormData] = useState(userData);
   const [hasChanges, setHasChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDatePicker, setIsDatePicker] = useState(false);
+
+  useEffect(() => {
+    if (route.params?.fromVerification) {
+      setHasChanges(false);
+    }
+  }, [route.params]);
 
   const pickImage = () => {
     let options = {
@@ -52,19 +59,19 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
-    console.log("okkkkkkk")
     try {
       const response = await profileImageUpdate();
       if (response.status === 201) {
         const updatedProfileImage = { download_profile_img_url: response?.data?.download_profile_img_url }
+        ToastAlert({
+          type: 'success',
+          description: "Your profile has been successfully updated!",
+        });
         setUserData((prevUserData) => ({
           ...prevUserData,
           ...updatedProfileImage,
         }));
-        ToastAlert({
-          type: 'success',
-          description: response?.data,
-        });
+
       } else {
         ToastAlert({
           type: 'error',
@@ -89,6 +96,7 @@ const EditProfileScreen = () => {
           'Content-Length': binaryData.length,
         },
       });
+      console.log("oookkk", { aa: response?.status })
       if (response.status === 200) {
         profileImageHandle()
       } else {
@@ -98,6 +106,7 @@ const EditProfileScreen = () => {
         });
       }
     } catch (error) {
+      console.log({ error })
       ToastAlert({
         type: 'error',
         description: error.message,
@@ -120,7 +129,7 @@ const EditProfileScreen = () => {
       last_name: formData.last_name,
       email_id: formData.email_id,
       contact_no: formData.contact_no,
-      birth_date: formData.birth_date ? moment(formData.birth_date).format('YYYY/MM/DD') : null,
+      birth_date: formData.birth_date ? moment(formData.birth_date, 'YYYY/MM/DD').format('YYYY/MM/DD') : null,
       company_unique_code: formData.company_unique_code ? formData.company_unique_code : null,
       user_unique_code: formData.user_unique_code,
     };
@@ -227,7 +236,7 @@ const EditProfileScreen = () => {
           />
           <TextInputComp
             value={formData.contact_no}
-            maxLength={11}
+            maxLength={10}
             labelText={'Phone number'}
             onChangeText={(text) => handleChange('contact_no', text)}
             rightIcon={!userData?.contact_verification_status && <Image
@@ -238,7 +247,7 @@ const EditProfileScreen = () => {
             onRightPress={() => { }}
           />
           <TextInputComp
-            value={formData.birth_date ? moment(formData.birth_date)?.format('DD.MM.YYYY') : ""}
+            value={formData.birth_date ? moment(formData.birth_date, 'YYYY/MM/DD').format('DD.MM.YYYY') : ""}
             labelText={'Date of birth'}
             onChangeText={(text) => handleChange('birth_date', text)}
             rightIcon={
@@ -273,7 +282,7 @@ const EditProfileScreen = () => {
         <DatePicker
           modal
           open={isDatePicker}
-          date={formData.birth_date ? new Date(formData.birth_date.replace(/-/g, '/')) : new Date()}
+          date={formData.birth_date ? new Date(moment(formData.birth_date, 'YYYY/MM/DD')) : new Date()}
           onConfirm={(date) => {
             setIsDatePicker(false);
             handleChange('birth_date', date);

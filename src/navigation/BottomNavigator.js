@@ -1,15 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { colors, fontSize, fonts, hp, icons, isIos, wp } from '../utils';
+
+import { commonStyles } from '../styles/styles';
 import Dashboard from '../screens/dashboard/Dashboard';
+import WalletScreen from '../screens/wallet/WalletScreen';
 import LeadsListScreen from '../screens/leads/LeadsListScreen';
 import ActivityScreen from '../screens/activity/ActivityScreen';
-import WalletScreen from '../screens/wallet/WalletScreen';
-import { commonStyles } from '../styles/styles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
+import { CreateLeadBottomSheet } from '../components';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,6 +20,8 @@ export const Dummy = () => <View />;
 
 const BottomTabs = () => {
   const insets = useSafeAreaInsets();
+  const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
+
   return (
     <View style={commonStyles.flex}>
       <Tab.Navigator
@@ -40,10 +45,8 @@ const BottomTabs = () => {
                 <Image
                   source={iconName}
                   style={{
-                    width: wp(20),
-                    height: wp(20),
+                    ...commonStyles.icon20,
                     tintColor: focused ? colors.primary : colors.grey,
-                    resizeMode: 'contain',
                   }}
                 />
               </View>
@@ -66,19 +69,19 @@ const BottomTabs = () => {
             return (
               <Text
                 style={{
+                  ...styles.labelText,
                   color: focused ? colors.primary : colors.grey,
-                  fontSize: fontSize(12),
-                  lineHeight: hp(16),
-                  fontFamily: fonts.regular,
-                  marginBottom: hp(5),
                 }}
               >
                 {label}
               </Text>
             );
           },
-          //   tabBarStyle: styles.tabBar,
-          tabBarStyle: { ...styles.tabBar, paddingBottom: insets.bottom },
+          tabBarStyle: {
+            ...styles.tabBar,
+            paddingBottom: insets.bottom,
+            height: hp(60) + insets.bottom,
+          },
         })}
       >
         <Tab.Screen name="Dashboard" component={Dashboard} />
@@ -89,14 +92,18 @@ const BottomTabs = () => {
       </Tab.Navigator>
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => {}}
+        onPress={() => setIsCreateLeadVisible(true)}
         style={[styles.addIconView, { bottom: insets.bottom + 8 }]}
       >
         <Image
           source={icons.add}
-          style={{ ...commonStyles.icon16, tintColor: colors.white }}
+          style={{ ...commonStyles.icon24, tintColor: colors.white }}
         />
       </TouchableOpacity>
+      <CreateLeadBottomSheet
+        isOpen={isCreateLeadVisible}
+        onClose={() => setIsCreateLeadVisible(false)}
+      />
     </View>
   );
 };
@@ -106,27 +113,32 @@ export default BottomTabs;
 const styles = StyleSheet.create({
   tabBar: {
     padding: 0,
+    position: 'absolute',
     borderTopWidth: wp(1),
     paddingHorizontal: wp(20),
-    borderTopColor: colors.xLiteGrey,
-    height: isIos ? hp(90) : hp(60),
     backgroundColor: colors.white,
-    position: 'absolute',
+    borderTopColor: colors.xLiteGrey,
   },
   iconContainer: {
-    alignItems: 'center',
     marginTop: hp(4),
+    alignItems: 'center',
   },
   addIconView: {
-    borderRadius: hp(40),
-    position: 'absolute',
-    bottom: hp(0),
-    height: hp(40),
-    width: hp(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
     zIndex: 999,
+    bottom: hp(0),
+    width: hp(40),
+    height: hp(40),
+    alignSelf: 'center',
+    position: 'absolute',
+    alignItems: 'center',
+    borderRadius: hp(40),
+    justifyContent: 'center',
     backgroundColor: colors.primary,
+  },
+  labelText: {
+    lineHeight: hp(16),
+    marginBottom: hp(5),
+    fontSize: fontSize(12),
+    fontFamily: fonts.regular,
   },
 });

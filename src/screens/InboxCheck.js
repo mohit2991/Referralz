@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Linking } from 'react-native';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -8,19 +8,37 @@ import { commonStyles } from '../styles/styles';
 import { Header, InfoComponent } from '../components';
 
 const InboxCheck = () => {
+  const { params } = useRoute();
   const { navigate } = useNavigation();
-  const route = useRoute();
-  const { email } = route.params;
 
+  const { title, description, btnText, routeName, email } = params;
+
+  const handlePress = () => {
+    if (routeName !== '') {
+      navigate(routeName);
+    } else {
+      const sendEmail = `mailto:${email}`;
+      Linking.openURL(sendEmail).catch((err) =>
+        console.error(`Failed to open email ${email} app`, err)
+      );
+    }
+  };
   return (
     <View style={commonStyles.flex}>
       <Header isBackButton />
       <View style={styles.container}>
         <InfoComponent
-          title={'Check your inbox!'}
-          description={`A link to reset your password has been sent to ${email}.`}
-          btnText={'Open inbox'}
-          onPress={() => { }}
+          title={title}
+          description={description}
+          btnText={btnText}
+          onPress={handlePress}
+        // onPress={
+        //   routeName !== ''
+        //     ? () => {
+        //       navigate(routeName);
+        //     }
+        //     : null
+        // }
         />
       </View>
     </View>

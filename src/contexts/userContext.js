@@ -3,8 +3,10 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [userData, setUserData] = useState(null);
+    const [dashboardData, setDashboardData] = useState(null);
+    const [dashboardFilter, setDashboardFilter] = useState('');
     return (
-        <UserContext.Provider value={{ userData, setUserData }}>
+        <UserContext.Provider value={{ userData, setUserData, dashboardData, setDashboardData, dashboardFilter, setDashboardFilter }}>
             {children}
         </UserContext.Provider>
     );
