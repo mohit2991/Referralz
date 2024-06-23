@@ -17,9 +17,11 @@ import { useNavigation } from '@react-navigation/native';
 import { deleteUser, logoutUser } from '../../services/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../../contexts/userContext';
+import useApiHandler from '../../hooks/useApiHandler';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isLogoutModal, setIsLogoutModal] = useState(false);
@@ -52,43 +54,33 @@ const ProfileScreen = () => {
   };
 
   const handleDeleteAccount = async () => {
-    try {
-      const response = await deleteUser();
-      if (response.status === 204) {
-        await AsyncStorage.clear();
-        navigate('Login');
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Delete User API Call
+    handleApiCall(
+      () => deleteUser(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          await AsyncStorage.clear();
+          navigate('Login');
+        }
+      },
+      null,
+    );
   };
 
   const handleLogout = async () => {
-    try {
-      const response = await logoutUser();
-      if (response.status === 201) {
-        await AsyncStorage.clear();
-        navigate('Login');
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Logout User API Call
+    handleApiCall(
+      () => logoutUser(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          await AsyncStorage.clear();
+          navigate('Login');
+        }
+      },
+      null,
+    );
   };
 
   return (

@@ -32,10 +32,13 @@ import {
 } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const EditProfileScreen = () => {
-  const { navigate } = useNavigation();
+import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
+  
+  const EditProfileScreen = () => {
   const insets = useSafeAreaInsets();
+  const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
   const route = useRoute();
   const { userData, setUserData } = useUser();
   const [imageUri, setImageUri] = useState(null);
@@ -70,6 +73,25 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
+    // Update User Deatils API Call
+    handleApiCall(
+      () => profileImageUpdate(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          const updatedProfileImage = {
+            download_profile_img_url: response?.data?.download_profile_img_url,
+          };
+
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...updatedProfileImage,
+          }));
+        }
+      },
+      messages.profileSubmitted,
+    );
+
     try {
       const response = await profileImageUpdate();
       if (response.status === 201) {
@@ -160,56 +182,37 @@ const EditProfileScreen = () => {
           ? false
           : true;
     if (!shouldVerifyContact) {
-      try {
-        const response = await contactVerification(userPayload?.contact_no);
-        if (response.status === 201) {
-          ToastAlert({
-            type: 'success',
-            description: response?.data,
-          });
-          navigate('EditProfileVerification', { userPayload });
-        } else {
-          ToastAlert({
-            type: 'error',
-            description: response,
-          });
-        }
-      } catch (error) {
-        console.log(error.message);
-        ToastAlert({
-          type: 'error',
-          description: error.message,
-        });
-      } finally {
-        setLoading(false);
-      }
+      // Update User Deatils API Call
+      handleApiCall(
+        () => contactVerification(userPayload?.contact_no), // Call API
+        async (response) => {
+          // Callback respose after success
+          if (response) {
+            navigate('EditProfileVerification', { userPayload });
+
+            setLoading(false);
+          }
+        },
+        null,
+      );
     } else {
-      try {
-        const response = await updateUserDetails(userPayload);
-        if (response.status === 200) {
-          ToastAlert({
-            type: 'success',
-            description: 'Your Details has been submitted successfully!',
-          });
-          setHasChanges(false);
-          setUserData((prevUserData) => ({
-            ...prevUserData,
-            ...userPayload,
-          }));
-        } else {
-          ToastAlert({
-            type: 'error',
-            description: response.data,
-          });
-        }
-      } catch (error) {
-        ToastAlert({
-          type: 'error',
-          description: error.message,
-        });
-      } finally {
-        setLoading(false);
-      }
+      // Update User Deatils API Call
+      handleApiCall(
+        () => updateUserDetails(userPayload), // Call API
+        async (response) => {
+          // Callback respose after success
+          if (response) {
+            setHasChanges(false);
+            setUserData((prevUserData) => ({
+              ...prevUserData,
+              ...userPayload,
+            }));
+
+            setLoading(false);
+          }
+        },
+        messages.profileSubmitted,
+      );
     }
   };
 
