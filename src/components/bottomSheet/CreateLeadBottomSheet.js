@@ -1,7 +1,7 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
-  PanResponder,
   StyleSheet,
   Text,
   TextInput,
@@ -66,7 +66,26 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const [isPriorityFocus, setIsPriorityFocus] = useState(false);
   const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
   const [successScreen, setSuccessScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [imageData, setImageData] = useState([{ id: 1 }]);
+
+  const {
+    firstName,
+    lastName,
+    phoneNumber,
+    email,
+    address,
+    aptSuit,
+    city,
+    postalCode,
+    state,
+    country,
+    description,
+    leadPriority,
+    leadSource,
+    oopsProgram,
+  } = formState;
+
   const snapPoints = useMemo(() => [isIos ? '95%' : '95%'], []);
   const oopsProgramData = [
     { name: 'Yes', id: 'yes' },
@@ -90,7 +109,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
       () => getLeadSources(),
       async (response) => {
         if (response) {
-          setLeadSourceData(response.data);
+          setLeadSourceData(response?.data);
         }
       },
       null, // Success message
@@ -117,7 +136,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     };
 
     launchImageLibrary(options, (response) => {
-      if (imageData.length >= 10) {
+      if (imageData.length >= 11) {
         ToastAlert({
           type: 'error',
           description: 'You can only select up to 10 images.',
@@ -151,7 +170,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const renderImageItems = ({ item, index }) => {
     return (
       <>
-        {index === 0 && imageData?.length <= 10 ? (
+        {index === 0 ? (
           <TouchableOpacity onPress={pickImage} style={styles.addFileView}>
             <>
               <Image
@@ -162,6 +181,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
             </>
           </TouchableOpacity>
         ) : (
+          // ) : index === 0 && imageData?.length === 11 ? null : (
           <TouchableOpacity disabled={true} style={styles.addFileView}>
             <Image
               source={{ uri: item?.imgUri }}
@@ -177,12 +197,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === formState.leadSource}
-          text={item?.label}
+          value={item?.name === formState.leadSource}
+          text={item?.name || item?.name}
           onPress={() => {
             setFormState((prevState) => ({
               ...prevState,
-              leadSource: item.label,
+              leadSource: item.name,
             }));
             setIsSourceFocus(false);
             sourceDDRef.current.close();
@@ -196,12 +216,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === formState.oopsProgram}
-          text={item?.label}
+          value={item?.name === formState.oopsProgram}
+          text={item?.name}
           onPress={() => {
             setFormState((prevState) => ({
               ...prevState,
-              oopsProgram: item.label,
+              oopsProgram: item.name,
             }));
             setIsoopsProgramFocus(false);
             oopsProgramDDRef.current.close();
@@ -215,12 +235,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
-          value={item?.label === formState.leadPriority}
-          text={item?.label}
+          value={item?.name === formState.leadPriority}
+          text={item?.name}
           onPress={() => {
             setFormState((prevState) => ({
               ...prevState,
-              leadPriority: item.label,
+              leadPriority: item.name,
             }));
             setIsPriorityFocus(false);
             priorityDDRef.current.close();
@@ -303,10 +323,11 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
         .filter((item) => item?.fileName)
         .map((item) => item.fileName),
     };
-
+    setIsLoading(true);
     handleApiCall(
       () => createLead(userPayload),
       async (response) => {
+        setIsLoading(false);
         if (response) {
           if (uploadImage?.length) {
             await createLeadImageUpload(uploadImage, response);
@@ -314,6 +335,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
           }
           setSuccessScreen(true);
           getDasboardData();
+        } else {
+          setIsLoading(false);
         }
       },
       null, // Success message
@@ -344,6 +367,32 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     setImageData([{ id: 1 }]);
   };
 
+  const isButtonEnable = () => {
+    if (
+      firstName !== '' &&
+      lastName !== '' &&
+      phoneNumber !== '' &&
+      email !== '' &&
+      address !== '' &&
+      aptSuit !== '' &&
+      city !== '' &&
+      postalCode !== '' &&
+      state !== '' &&
+      country !== '' &&
+      description !== '' &&
+      leadPriority !== '' &&
+      leadPriority !== 'Select' &&
+      leadSource !== '' &&
+      leadSource !== 'Select' &&
+      oopsProgram !== '' &&
+      oopsProgram !== 'Select'
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <Portal>
       <BottomSheet
@@ -369,8 +418,14 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                 <Text style={styles.closeText}>{'Close'}</Text>
               </TouchableOpacity>
             </View>
+            {isLoading && (
+              <View style={styles.loaderView}>
+                <ActivityIndicator color={colors.black} size={'small'} />
+                <Text style={styles.loadingTextStyle}>{'Loading...'}</Text>
+              </View>
+            )}
             {!successScreen ? (
-              <View style={{ flex: 1 }}>
+              <View style={commonStyles.flex}>
                 <KeyboardAwareScrollView
                   ref={scrollViewRef}
                   scrollEnabled={true}
@@ -678,7 +733,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                 </KeyboardAwareScrollView>
                 <BottomButton
                   title={'Create lead'}
-                  disabled={false}
+                  disabled={!isButtonEnable()}
                   onPress={createLeadHandle}
                 />
               </View>
@@ -693,7 +748,15 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                 />
               </View>
             )}
-            <View style={{ height: insets.bottom + 8 }} />
+            <View
+              style={{
+                height: isIos
+                  ? insets.bottom === 0
+                    ? hp(12)
+                    : insets.bottom
+                  : 0,
+              }}
+            />
           </View>
         </View>
       </BottomSheet>
@@ -726,10 +789,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: wp(12),
     borderTopRightRadius: wp(12),
-    zIndex: 1,
+    // zIndex: 1,
   },
   keyboardAwareStyle: {
-    paddingBottom: hp(100),
     paddingHorizontal: wp(16),
   },
   headerText: {
@@ -820,5 +882,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     marginBottom: hp(8),
+  },
+  loadingTextStyle: {
+    lineHeight: hp(24),
+    fontSize: fontSize(16),
+    fontFamily: fonts.regular,
+    color: colors.xDarkGrey,
+    marginTop: hp(10),
+    textAlign: 'center',
+  },
+  loaderView: {
+    position: 'absolute',
+    top: hp(50),
+    bottom: 0,
+    right: 0,
+    left: 0,
+    backgroundColor: colors.white,
+    opacity: 0.7,
+    zIndex: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
