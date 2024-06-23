@@ -9,11 +9,12 @@ import {
   SafeAreaView,
 } from 'react-native';
 
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { commonStyles } from '../../styles/styles';
-import { loginUser } from '../../services/apiService';
+import { githubUser } from '../../services/apiService';
 import { Button, TextInputComp, ToastAlert } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
@@ -63,9 +64,17 @@ const Login = () => {
           navigate('BottomTabs');
         }
       },
-      messages.loginSuccess, // Success message
+      null, // Success message
       messages.loginError, // Error message
     );
+
+    // GitHub API Call
+    const respose = axios.get('https://api.github.com/user/1');
+    console.log('>>>> mohit respose', respose.data);
+    ToastAlert({
+      type: 'success',
+      description: response.data,
+    });
   };
 
   return (

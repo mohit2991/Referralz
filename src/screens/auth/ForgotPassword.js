@@ -37,8 +37,7 @@ const ForgotPassword = () => {
           resetState();
         }
       },
-      undefined, // Success message
-      undefined, // Error message
+      null, // Success message
     );
 
     try {
