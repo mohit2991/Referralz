@@ -4,19 +4,15 @@ import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { createUser } from '../services/apiService';
-import { commonStyles } from '../styles/styles';
-import {
-  Button,
-  RadioSelector,
-  TextInputComp,
-  ToastAlert,
-} from '../components';
-import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
+import { createUser } from '../../services/apiService';
+import { commonStyles } from '../../styles/styles';
+import { Button, RadioSelector, TextInputComp } from '../../components';
+import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import useApiHandler from '../../hooks/useApiHandler';
 
-const CreateAccount = () => {
+const Register = () => {
   const { navigate } = useNavigation();
-
+  const { handleApiCall } = useApiHandler();
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
@@ -37,6 +33,7 @@ const CreateAccount = () => {
   const onHomeOwnerPress = () => {
     setIsHomeOver(true);
     setIsReferralPartner(false);
+    setCompanycode('')
   };
 
   const onReferralPartnerPress = () => {
@@ -82,10 +79,7 @@ const CreateAccount = () => {
       password: password,
       status: 'CREATED',
       type: isHomeOver ? 'HOME_OWNER' : 'TECHNICIAN',
-      user_unique_code: companycode !== '' ? companycode : null,
-      address: null,
-      birth_date: null,
-      contact_no: null,
+      unique_code: companycode !== '' && !isHomeOver ? companycode : null,
     };
 
     const routeData = {
@@ -95,24 +89,17 @@ const CreateAccount = () => {
       btnText: 'Sign into Referralz',
       routeName: 'Login',
     };
-
-    try {
-      const response = await createUser(userPayload);
-      if (response.status == 201) {
-        navigate('InboxCheck', routeData);
-        resetState();
-      } else {
-        ToastAlert.show({
-          type: 'error',
-          description: response.status === 400 ? response.data : response.error,
-        });
-      }
-    } catch (error) {
-      ToastAlert.show({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Register API Call
+    handleApiCall(
+      () => createUser(userPayload),
+      async (response) => {
+        if (response) {
+          navigate('InboxCheck', routeData);
+          resetState();
+        }
+      },
+      null, // Success message
+    );
   };
 
   const resetState = () => {
@@ -256,11 +243,11 @@ const CreateAccount = () => {
 
         <Text style={[styles.motoText, styles.termsPolicyText]}>
           {`By clicking "Agree and continue", You agree to Referralz's `}
-          <Text onPress={() => {}} style={styles.underLine}>
+          <Text onPress={() => { }} style={styles.underLine}>
             {'Terms of Service'}
           </Text>
           {' and '}
-          <Text onPress={() => {}} style={styles.underLine}>
+          <Text onPress={() => { }} style={styles.underLine}>
             {'Privacy Policy.'}
           </Text>
         </Text>
@@ -351,4 +338,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAccount;
+export default Register;

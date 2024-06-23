@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
-
-import { commonStyles } from '../styles/styles';
-import { colors, fontSize, fonts, hp } from '../utils';
-import { forgotPassword } from '../services/apiService';
-import { Button, Header, TextInputComp, ToastAlert } from '../components';
+import { commonStyles } from '../../styles/styles';
+import { colors, fontSize, fonts, hp } from '../../utils';
+import { forgotPassword } from '../../services/apiService';
+import useApiHandler from '../../hooks/useApiHandler';
+import { Button, Header, TextInputComp } from '../../components';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
 
   const [email, setEmail] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -23,34 +23,24 @@ const ForgotPassword = () => {
   }, [email]);
 
   const resetLinkPress = async () => {
+    // Forgot Password API Call
     const routeData = {
       title: 'Check your inbox!',
       description: `A link to reset your password has been sent to ${email}.`,
       btnText: 'Open inbox',
       routeName: '',
+      email: email,
     };
-    try {
-      const response = await forgotPassword(email);
-      if (response.status === 200) {
-        ToastAlert({
-          type: 'success',
-          description: response?.data,
-        });
-
+    handleApiCall(
+      () => forgotPassword(email), // Call API
+      async (response) => {
+        // Callback respose after success
         navigate('InboxCheck', routeData);
         resetState();
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response?.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+      },
+      undefined, // Success message
+      undefined, // Error message
+    );
   };
 
   const resetState = () => {
@@ -104,7 +94,7 @@ const styles = StyleSheet.create({
   textInputStyle: {
     marginTop: hp(32),
     marginVertical: hp(32),
-  }
+  },
 });
 
 export default ForgotPassword;

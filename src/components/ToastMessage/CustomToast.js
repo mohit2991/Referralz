@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   container: {
     padding: wp(12),
     borderRadius: wp(8),
-    zIndex: 999,
+    zIndex: 9999999,
     width: '92%',
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Linking } from 'react-native';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -11,8 +11,18 @@ const InboxCheck = () => {
   const { params } = useRoute();
   const { navigate } = useNavigation();
 
-  const { title, description, btnText, routeName } = params;
+  const { title, description, btnText, routeName, email } = params;
 
+  const handlePress = () => {
+    if (routeName !== '') {
+      navigate(routeName);
+    } else {
+      const sendEmail = `mailto:${email}`;
+      Linking.openURL(sendEmail).catch((err) =>
+        console.error(`Failed to open email ${email} app`, err)
+      );
+    }
+  };
   return (
     <View style={commonStyles.flex}>
       <Header isBackButton />
@@ -21,13 +31,14 @@ const InboxCheck = () => {
           title={title}
           description={description}
           btnText={btnText}
-          onPress={
-            routeName !== ''
-              ? () => {
-                  navigate(routeName);
-                }
-              : null
-          }
+          onPress={handlePress}
+        // onPress={
+        //   routeName !== ''
+        //     ? () => {
+        //       navigate(routeName);
+        //     }
+        //     : null
+        // }
         />
       </View>
     </View>
