@@ -22,14 +22,20 @@ import { Dropdown } from 'react-native-element-dropdown';
 import RadioSelector from '../common/RadioSelector';
 import { launchImageLibrary } from 'react-native-image-picker';
 import useApiHandler from '../../hooks/useApiHandler';
-import { getLeadSources, getLeadPriorities, createLead, createLeadImage, dashboardDetails } from '../../services/apiService';
+import {
+  getLeadSources,
+  getLeadPriorities,
+  createLead,
+  createLeadImage,
+  dashboardDetails,
+} from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import axios from 'axios';
 import { ToastAlert } from '../../components';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
@@ -71,8 +77,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     if (isOpen) {
       bottomSheetRef.current?.expand();
       resetState();
-      fetchLeadSourceData()
-      fetchLeadPrioritiesData()
+      fetchLeadSourceData();
+      fetchLeadPrioritiesData();
     } else {
       bottomSheetRef.current?.close();
       scrollViewRef.current?.scrollToPosition(0, 0);
@@ -135,7 +141,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
         const imgObj = {
           id: imageData?.length + 1,
           imgUri: uri,
-          ...response.assets[0]
+          ...response.assets[0],
         };
         setImageData((prevData) => [...prevData, imgObj]);
       }
@@ -230,7 +236,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       isPaginationRequired: false,
     };
 
-    handleApiCall(() => dashboardDetails(userPayload),
+    handleApiCall(
+      () => dashboardDetails(userPayload),
       async (response) => {
         if (response) {
           setDashboardData(response?.data);
@@ -242,7 +249,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
 
   const createLeadImageHandle = async (id) => {
     handleApiCall(() => createLeadImage(id));
-  }
+  };
 
   const createLeadImageUpload = async (uploadImage, response) => {
     for (let i = 0; i < uploadImage.length; i++) {
@@ -255,19 +262,22 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
           headers: {
             'Content-Type': image.type,
             'Content-Length': binaryData.length,
-          }
+          },
         });
       } catch (error) {
         ToastAlert({
           type: 'error',
-          description: `Failed to upload ${image.fileName}:`, error,
+          description: `Failed to upload ${image.fileName}:`,
+          error,
         });
       }
     }
-  }
+  };
 
   const createLeadHandle = async () => {
-    const uploadImage = imageData.filter(item => item?.fileName).map(item => item)
+    const uploadImage = imageData
+      .filter((item) => item?.fileName)
+      .map((item) => item);
     const userPayload = {
       contact: {
         email_id: formState.email,
@@ -289,17 +299,20 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
         state: formState.state,
         country: formState.country,
       },
-      file_names: imageData.filter(item => item?.fileName).map(item => item.fileName)
+      file_names: imageData
+        .filter((item) => item?.fileName)
+        .map((item) => item.fileName),
     };
 
-    handleApiCall(() => createLead(userPayload),
+    handleApiCall(
+      () => createLead(userPayload),
       async (response) => {
         if (response) {
           if (uploadImage?.length) {
-            await createLeadImageUpload(uploadImage, response)
-            await createLeadImageHandle(response?.data?.id)
+            await createLeadImageUpload(uploadImage, response);
+            await createLeadImageHandle(response?.data?.id);
           }
-          setSuccessScreen(true)
+          setSuccessScreen(true);
           getDasboardData();
         }
       },
@@ -329,7 +342,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     setIsSourceFocus(false);
     setSuccessScreen(false);
     setImageData([{ id: 1 }]);
-
   };
 
   return (
@@ -508,7 +520,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                         ...prevState,
                         firstName: text,
                       }))
-                    } />
+                    }
+                  />
                   <TextInputComp
                     value={formState.lastName}
                     maxLength={20}

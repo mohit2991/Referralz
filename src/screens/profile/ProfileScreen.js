@@ -54,23 +54,18 @@ const ProfileScreen = () => {
   };
 
   const handleDeleteAccount = async () => {
-    try {
-      const response = await deleteUser();
-      if (response.status === 204) {
-        await AsyncStorage.clear();
-        navigate('Login');
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Delete User API Call
+    handleApiCall(
+      () => deleteUser(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          await AsyncStorage.clear();
+          navigate('Login');
+        }
+      },
+      null,
+    );
   };
 
   const handleLogout = async () => {

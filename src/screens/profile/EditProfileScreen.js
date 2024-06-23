@@ -153,29 +153,16 @@ const EditProfileScreen = () => {
           ? false
           : true;
     if (!shouldVerifyContact) {
-      try {
-        const response = await contactVerification(userPayload?.contact_no);
-        if (response.status === 201) {
-          ToastAlert({
-            type: 'success',
-            description: response?.data,
-          });
-          navigate('EditProfileVerification', { userPayload });
-        } else {
-          ToastAlert({
-            type: 'error',
-            description: response,
-          });
-        }
-      } catch (error) {
-        console.log(error.message);
-        ToastAlert({
-          type: 'error',
-          description: error.message,
-        });
-      } finally {
-        setLoading(false);
-      }
+      // Contact Verification API Call
+      handleApiCall(
+        () => contactVerification(userPayload?.contact_no), // Call API
+        async (response) => {
+          // Callback respose after success
+          if (response) {
+            navigate('EditProfileVerification', { userPayload });
+          }
+        },
+      );
     } else {
       // Update user deatils API Call
       handleApiCall(

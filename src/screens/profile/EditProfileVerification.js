@@ -12,7 +12,6 @@ import {
 } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
-import messages from '../../constants/messages';
 
 const EditProfileVerification = () => {
   const { navigate } = useNavigation();
@@ -32,16 +31,17 @@ const EditProfileVerification = () => {
   };
 
   const updateProfile = async () => {
-    try {
-      const response = await contactVerificationOtp(code);
-      if (response.status === 201) {
-        try {
-          // Update user deatils API Call
+    // API Call
+    handleApiCall(
+      () => contactVerificationOtp(code), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
           handleApiCall(
             () => updateUserDetails(userPayload), // Call API
-            async (response) => {
+            async (results) => {
               // Callback respose after success
-              if (response) {
+              if (results) {
                 setUserData((prevUserData) => ({
                   ...prevUserData,
                   ...userPayload,
@@ -51,24 +51,10 @@ const EditProfileVerification = () => {
             },
             messages.profileSubmitted,
           );
-        } catch (error) {
-          ToastAlert({
-            type: 'error',
-            description: error.message,
-          });
         }
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+      },
+      messages.profileSubmitted,
+    );
   };
 
   useEffect(() => {
