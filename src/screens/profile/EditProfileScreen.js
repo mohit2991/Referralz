@@ -71,7 +71,7 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
-    // Update Profile Image API Call
+    // Update User Deatils API Call
     handleApiCall(
       () => profileImageUpdate(), // Call API
       async (response) => {
@@ -89,6 +89,33 @@ const EditProfileScreen = () => {
       },
       messages.profileSubmitted,
     );
+
+    try {
+      const response = await profileImageUpdate();
+      if (response.status === 201) {
+        const updatedProfileImage = {
+          download_profile_img_url: response?.data?.download_profile_img_url,
+        };
+        ToastAlert({
+          type: 'success',
+          description: 'Your profile has been successfully updated!',
+        });
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          ...updatedProfileImage,
+        }));
+      } else {
+        ToastAlert({
+          type: 'error',
+          description: response.data,
+        });
+      }
+    } catch (error) {
+      ToastAlert({
+        type: 'error',
+        description: error.message,
+      });
+    }
   };
 
   const uploadProfileImage = async (image) => {
@@ -153,18 +180,21 @@ const EditProfileScreen = () => {
           ? false
           : true;
     if (!shouldVerifyContact) {
-      // Contact Verification API Call
+      // Update User Deatils API Call
       handleApiCall(
         () => contactVerification(userPayload?.contact_no), // Call API
         async (response) => {
           // Callback respose after success
           if (response) {
             navigate('EditProfileVerification', { userPayload });
+
+            setLoading(false);
           }
         },
+        null,
       );
     } else {
-      // Update user deatils API Call
+      // Update User Deatils API Call
       handleApiCall(
         () => updateUserDetails(userPayload), // Call API
         async (response) => {
@@ -175,6 +205,8 @@ const EditProfileScreen = () => {
               ...prevUserData,
               ...userPayload,
             }));
+
+            setLoading(false);
           }
         },
         messages.profileSubmitted,
