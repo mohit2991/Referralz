@@ -158,7 +158,7 @@ export const getLead = async (userPayload) => {
 
 export const getLeadsSearch = async (userPayload, searchValue) => {
   try {
-    const response = await api.post(apiEndpoints.getLeadsSearch, userPayload, searchValue);
+    const response = await api.post(apiEndpoints.getLeadsSearch(searchValue), userPayload);
     return response;
   } catch (error) {
     return handleError(error);
@@ -167,7 +167,7 @@ export const getLeadsSearch = async (userPayload, searchValue) => {
 
 export const getLeadActivity = async (userPayload, id) => {
   try {
-    const response = await api.post(apiEndpoints.getLeadActivity, userPayload, id);
+    const response = await api.post(apiEndpoints.getLeadActivity(id), userPayload);
     return response;
   } catch (error) {
     return handleError(error);
@@ -185,7 +185,7 @@ export const getActivity = async (userPayload) => {
 
 export const activityReadStatus = async (userPayload, activityId) => {
   try {
-    const response = await api.post(apiEndpoints.activityReadStatus, userPayload, activityId);
+    const response = await api.post(apiEndpoints.activityReadStatus(activityId), userPayload);
     return response;
   } catch (error) {
     return handleError(error);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
@@ -8,40 +8,89 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-
 import moment from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 import { commonStyles } from '../../styles/styles';
 import { useUser } from '../../contexts/userContext';
 import { Header, InfoComponent, ItemCard } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
-import {
-  thisWeekActivityData,
-  todayActivityData,
-} from '../../utils/dataConstants';
+import useApiHandler from '../../hooks/useApiHandler';
+import { dashboardDetails, getActivity, activityReadStatus } from '../../services/apiService';
 
 const ActivityScreen = () => {
   const insets = useSafeAreaInsets();
+  const { handleApiCall } = useApiHandler();
   const { userData } = useUser();
+  const [todayActivityData, setTodayActivityData] = useState([]);
+  const [thisWeeActivitykData, setThisWeekActivityData] = useState([]);
+
+  const getDasboardData = async () => {
+    const userPayload = {
+      filter_by_date: 'ONE_WEEK',
+      isPaginationRequired: false,
+    };
+    handleApiCall(
+      () => dashboardDetails(userPayload),
+      async (response) => {
+        if (response) {
+          setThisWeekActivityData(response?.data);
+        }
+      },
+      null,
+      null,
+    );
+  };
+
+  const getActivityData = async () => {
+    const userPayload = {};
+    handleApiCall(
+      () => getActivity(userPayload),
+      async (response) => {
+        if (response) {
+          setTodayActivityData(response?.data);
+        }
+      },
+      null,
+      null,
+    );
+  };
+
+  const updateActivityReadHandle = async (activityId) => {
+    const userPayload = {};
+    handleApiCall(
+      () => activityReadStatus(userPayload, activityId),
+      async (response) => {
+        if (response) {
+          setTodayActivityData(response?.data);
+        }
+      },
+      null,
+      null,
+    );
+  };
+
+  useEffect(() => {
+    getDasboardData();
+    getActivityData();
+  }, []);
 
   const renderTodayItems = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => {}}
         activeOpacity={0.8}
         style={styles.todayItemView}
+        onPress={() => updateActivityReadHandle(item.id)}
       >
         <View style={styles.todayItemIconView}>
           <Image
-            source={item?.icon}
+            source={icons.checkShield}
             style={{ ...commonStyles.icon24, tintColor: colors.white }}
           />
         </View>
         <View style={styles.todayItemTextView}>
           <View style={commonStyles.flexRow}>
-            <Text style={styles.itemTitleText}>{item?.title}</Text>
-            <Text style={styles.itemTimeText}>{item?.time}</Text>
+            <Text style={styles.itemTitleText}>{item?.heading}</Text>
+            <Text style={styles.itemTimeText}>{moment(item?.created_on).fromNow()}</Text>
           </View>
           <Text numberOfLines={2} style={styles.itemDescText}>
             {item?.description}
@@ -64,18 +113,21 @@ const ActivityScreen = () => {
   };
 
   const renderWeekItems = ({ item }) => {
+    const filledStars = Math.floor(item?.rating);
+    const halfStar = item?.rating % 1 !== 0;
+    const unfilledStars = 5 - Math.ceil(item?.rating);
     return (
       <ItemCard
         shadowStyle={{ shadowOpacity: 0 }}
         cardContainerStyle={styles.listCardView}
       >
         <View style={commonStyles.flexRowJustify}>
-          <Text style={styles.referalCardName}>{item?.name}</Text>
+          <Text style={styles.referalCardName}>{item?.customer?.first_name} {item?.customer?.last_name}</Text>
           <View
             style={[
               styles.tagView,
               {
-                backgroundColor: getTagColor(item?.status)?.light,
+                backgroundColor: getTagColor(item?.internal_status)?.light,
               },
             ]}
           >
@@ -83,34 +135,53 @@ const ActivityScreen = () => {
               style={[
                 styles.tagText,
                 {
-                  color: getTagColor(item?.status)?.dark,
+                  color: getTagColor(item?.internal_status)?.dark,
                 },
               ]}
             >
-              {item?.status}
+              {item?.internal_status}
             </Text>
           </View>
         </View>
         <View style={[commonStyles.flexRowCenter, { marginBottom: hp(16) }]}>
-          <Text style={styles.referalCardDate}>{item?.uniqID}</Text>
+          <Text style={[styles.cardTitleText, { marginRight: wp(2) }]}>
+            {item?.rating}
+          </Text>
+          {[...Array(filledStars)].map((_, index) => (
+            <Image
+              key={`filled-${index}`}
+              source={icons.starFill}
+              style={commonStyles.icon16}
+            />
+          ))}
+          {halfStar && (
+            <Image source={icons.star} style={commonStyles.icon16} />
+          )}
+          {[...Array(unfilledStars)].map((_, index) => (
+            <Image
+              key={`filled-${index}`}
+              source={icons.star}
+              style={commonStyles.icon16}
+            />
+          ))}
 
           <View style={styles.verticalDevider} />
-          <Text style={styles.referalCardDate}>
-            {moment(item?.date).format('MMM D, YYYY')}
-          </Text>
+          <Text style={styles.referalCardDate}>{moment(item?.created_on).format('MMM D, YYYY')}</Text>
           <View style={styles.verticalDevider} />
           <View
             style={[
               styles.greenDot,
               {
                 backgroundColor:
-                  item?.interest === 'Low' ? colors.green : colors.liteSaffron,
+                  item?.priority?.name === 'low'
+                    ? colors.green
+                    : colors.liteSaffron,
               },
             ]}
           />
-          <Text style={styles.referalCardInt}>{item?.interest}</Text>
+          <Text style={styles.referalCardInt}>{item?.priority?.name}</Text>
         </View>
-        <Text style={styles.cardTitleText}>{item?.address}</Text>
+        <Text style={styles.cardTitleText}>{item?.address?.address} {item?.address?.name} {item?.address?.city}, {item?.address?.postalCode}</Text>
       </ItemCard>
     );
   };
@@ -122,20 +193,24 @@ const ActivityScreen = () => {
         profileImage={userData?.download_profile_img_url}
         title={'Lead activity'}
       />
-      {true ? (
+      {thisWeeActivitykData?.lead_details?.length ? (
         <ScrollView style={{ backgroundColor: colors.white, flex: 1 }}>
-          <View style={styles.subTitleView}>
-            <Text style={styles.subTitleText}>{'Today'}</Text>
-          </View>
-          <View>
-            <FlatList data={todayActivityData} renderItem={renderTodayItems} />
-          </View>
+          {todayActivityData?.content?.length > 0 && (
+            <View style={styles.subTitleView}>
+              <View>
+                <Text style={styles.subTitleText}>{'Today'}</Text>
+              </View>
+              <View>
+                <FlatList data={todayActivityData?.content} renderItem={renderTodayItems} />
+              </View>
+            </View>
+          )}
           <View style={styles.subTitleView}>
             <Text style={styles.subTitleText}>{'This week'}</Text>
           </View>
           <View>
             <FlatList
-              data={thisWeekActivityData}
+              data={thisWeeActivitykData?.lead_details}
               renderItem={renderWeekItems}
             />
           </View>
