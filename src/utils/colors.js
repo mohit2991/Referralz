@@ -1,5 +1,6 @@
 export const colors = {
   primary: '#6399AE',
+  litePrimary: '#EFF5F7',
   darkBlack: '#1C242B',
   xDarkGrey: '#3B4248',
   white: '#FFFFFF',
@@ -7,7 +8,7 @@ export const colors = {
   xLiteGrey: '#F5F6F6',
   darkGrey: '#707479',
   grey0: '#B5B7BA',
-  grey1:'#555B61',
+  grey1: '#555B61',
   grey: '#9B9EA1',
   mediumGrey: '#ECEDED',
   darkRed: '#C92B2B',
@@ -16,7 +17,7 @@ export const colors = {
   grey300: '#D9D9D9',
   green: '#26B765',
   darkSaffron: '#E16032',
-  lightSaffron:'#F6CFC1',
+  lightSaffron: '#F6CFC1',
   liteSaffron: '#FFB03B',
   red: '#C92B2B',
 };

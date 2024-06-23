@@ -29,14 +29,25 @@ const Header = ({ title, isBackButton, isAvatar, profileImage }) => {
                 <Image source={icons.backArrow} style={commonStyles.icon24} />
               </TouchableOpacity>
             )}
-            {title && <Text style={styles.titleText}>{title}</Text>}
+            {title && (
+              <View style={styles.titleView}>
+                <Text numberOfLines={1} style={styles.titleText}>
+                  {title}
+                </Text>
+              </View>
+            )}
           </View>
           {isAvatar && (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => navigate('ProfileScreen')}
             >
-              <Image source={profileImage !== null ? { uri: profileImage } : icons.avatar} style={styles.avatarStyle} />
+              <Image
+                source={
+                  profileImage !== null ? { uri: profileImage } : icons.avatar
+                }
+                style={styles.avatarStyle}
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -58,18 +69,23 @@ const styles = StyleSheet.create({
   safearea: {
     backgroundColor: colors.white,
   },
+  titleView: {
+    flex: 1,
+    marginRight: wp(12),
+  },
   titleText: {
     lineHeight: hp(30),
     fontSize: fontSize(20),
     fontFamily: fonts.bold,
     color: colors.darkBlack,
-    textTransform: "capitalize",
+    textTransform: 'capitalize',
   },
   backBtnView: {
     padding: wp(8),
     marginRight: wp(8),
   },
   mainView: {
+    flex: 1,
     height: hp(40),
     alignItems: 'center',
     flexDirection: 'row',
