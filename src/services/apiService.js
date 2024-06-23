@@ -147,6 +147,51 @@ export const createLead = async (userPayload) => {
   }
 };
 
+export const getLead = async (userPayload) => {
+  try {
+    const response = await api.post(apiEndpoints.getLead, userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const getLeadsSearch = async (userPayload, searchValue) => {
+  try {
+    const response = await api.post(apiEndpoints.getLeadsSearch(searchValue), userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const getLeadActivity = async (userPayload, id) => {
+  try {
+    const response = await api.post(apiEndpoints.getLeadActivity(id), userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const getActivity = async (userPayload) => {
+  try {
+    const response = await api.post(apiEndpoints.getActivity, userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const activityReadStatus = async (userPayload, activityId) => {
+  try {
+    const response = await api.post(apiEndpoints.activityReadStatus(activityId), userPayload);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 const handleError = (error) => {
   if (error.response) {
     // The request was made and the server responded with a status code

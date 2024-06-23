@@ -29,7 +29,13 @@ const Header = ({ title, isBackButton, isAvatar, profileImage }) => {
                 <Image source={icons.backArrow} style={commonStyles.icon24} />
               </TouchableOpacity>
             )}
-            {title && <Text style={styles.titleText}>{title}</Text>}
+            {title && (
+              <View style={styles.titleView}>
+                <Text numberOfLines={1} style={styles.titleText}>
+                  {title}
+                </Text>
+              </View>
+            )}
           </View>
           {isAvatar && (
             <TouchableOpacity
@@ -73,6 +79,10 @@ const styles = StyleSheet.create({
   safearea: {
     backgroundColor: colors.white,
   },
+  titleView: {
+    flex: 1,
+    marginRight: wp(12),
+  },
   titleText: {
     lineHeight: hp(30),
     fontSize: fontSize(20),
@@ -85,6 +95,7 @@ const styles = StyleSheet.create({
     marginRight: wp(8),
   },
   mainView: {
+    flex: 1,
     height: hp(40),
     alignItems: 'center',
     flexDirection: 'row',
