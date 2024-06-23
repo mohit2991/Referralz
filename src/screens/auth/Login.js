@@ -9,7 +9,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,12 +18,17 @@ import { Button, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
+import {
+  storeCredentials,
+  loadCredentials,
+  deleteCredentials,
+} from '../../auth/KeychainService';
 
 const Login = () => {
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
-  const [email, setEmail] = useState('mohit2991kumar@gmail.com');
-  const [password, setPassword] = useState('Test@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isPwdSecure, setIsPwdSecure] = useState(true);
   const [isRemember, setIsRemember] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -45,6 +49,19 @@ const Login = () => {
     }
   }, [email, password]);
 
+  useEffect(() => {
+    // Load stored credentials if available
+    const loadStoredCredentials = async () => {
+      const credentials = await loadCredentials();
+      if (credentials) {
+        setEmail(credentials.username);
+        setPassword(credentials.password);
+        setIsRemember(true);
+      }
+    };
+    loadStoredCredentials();
+  }, []);
+
   const handleLogin = async () => {
     const userPayload = {
       client_id: 'referralz_mobile',
@@ -61,6 +78,14 @@ const Login = () => {
         const { access_token } = response.data;
         if (access_token) {
           await AsyncStorage.setItem('accessToken', access_token);
+
+          // If login is successful and isRemember is true, store the credentials
+          if (isRemember) {
+            await storeCredentials(email, password);
+          } else {
+            await deleteCredentials();
+          }
+
           navigate('BottomTabs');
         }
       },

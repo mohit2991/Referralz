@@ -31,6 +31,8 @@ const ForgotPassword = () => {
       routeName: '',
       email: email,
     };
+
+    // API Call
     handleApiCall(
       () => forgotPassword(email), // Call API
       async (response) => {
