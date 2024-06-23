@@ -114,6 +114,8 @@ const PayBilling = () => {
             ...userPayload,
           }));
         }
+
+        setLoading(false);
       },
       messages.profileSubmitted,
     );
