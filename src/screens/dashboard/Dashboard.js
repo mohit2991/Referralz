@@ -129,6 +129,8 @@ const Dashboard = () => {
         return { light: '#FAEAEA', dark: '#E16032' };
       case 'Referral Paid':
         return { light: '#E9F8F0', dark: '#54A77B' };
+      default:
+        return { light: '#E9F4FC', dark: '#6399AE' };
     }
   };
 

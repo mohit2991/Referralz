@@ -149,3 +149,50 @@ export const homeLeadsList = [
     interest: 'Low',
   },
 ]; 
+
+export const todayActivityData = [
+  {
+    id: 1,
+    icon: icons.dollars,
+    title: 'Referral paid',
+    description: `Cha-ching! You've earned $XXX from Lead #12345. Keep up the good work`,
+    time: 'Just now',
+  },
+  {
+    id: 2,
+    icon: icons.checkShield,
+    title: 'Inspection completed',
+    description: `Good news! Your earnings card has been issued. Keep an eye out for more updates!`,
+    time: '4h ago',
+  },
+];
+
+export const thisWeekActivityData = [
+  {
+    id: 1,
+    name: 'Kathy Pacheco',
+    uniqID: 'ID 846474',
+    date: 'Aug 8, 2023',
+    address: '3707 Irving Place, Arnold, MO 63010',
+    status: 'Submitted',
+    interest: 'Low',
+  },
+  {
+    id: 2,
+    name: 'Kathy Pacheco',
+    uniqID: 'ID 846474',
+    date: 'Aug 8, 2023',
+    address: '3707 Irving Place, Arnold, MO 63010',
+    status: 'In progress',
+    interest: 'High',
+  },
+  {
+    id: 3,
+    name: 'John-Maeria 2 Drive-in owner',
+    uniqID: 'ID 846474',
+    date: 'Aug 8, 2023',
+    address: '3707 Irving Place, Arnold, MO 63010',
+    status: 'In progress',
+    interest: 'Low',
+  },
+];
