@@ -18,13 +18,24 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { commonStyles } from '../../styles/styles';
-import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
-import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
-import { updateUserDetails, profileImageUpdate, contactVerification } from '../../services/apiService';
+import { colors, fontSize, fonts, hp, icons, isIos, wp } from '../../utils';
+import {
+  BottomButton,
+  Header,
+  TextInputComp,
+  ToastAlert,
+} from '../../components';
+import {
+  updateUserDetails,
+  profileImageUpdate,
+  contactVerification,
+} from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const EditProfileScreen = () => {
   const { navigate } = useNavigation();
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const { userData, setUserData } = useUser();
   const [imageUri, setImageUri] = useState(null);
@@ -62,16 +73,17 @@ const EditProfileScreen = () => {
     try {
       const response = await profileImageUpdate();
       if (response.status === 201) {
-        const updatedProfileImage = { download_profile_img_url: response?.data?.download_profile_img_url }
+        const updatedProfileImage = {
+          download_profile_img_url: response?.data?.download_profile_img_url,
+        };
         ToastAlert({
           type: 'success',
-          description: "Your profile has been successfully updated!",
+          description: 'Your profile has been successfully updated!',
         });
         setUserData((prevUserData) => ({
           ...prevUserData,
           ...updatedProfileImage,
         }));
-
       } else {
         ToastAlert({
           type: 'error',
@@ -84,21 +96,25 @@ const EditProfileScreen = () => {
         description: error.message,
       });
     }
-  }
+  };
 
   const uploadProfileImage = async (image) => {
     const binaryFile = await RNFS.readFile(image.uri, 'base64');
     const binaryData = Buffer.from(binaryFile, 'base64');
     try {
-      const response = await axios.put(formData.upload_profile_img_url, binaryData, {
-        headers: {
-          'Content-Type': image.type,
-          'Content-Length': binaryData.length,
+      const response = await axios.put(
+        formData.upload_profile_img_url,
+        binaryData,
+        {
+          headers: {
+            'Content-Type': image.type,
+            'Content-Length': binaryData.length,
+          },
         },
-      });
-      console.log("oookkk", { aa: response?.status })
+      );
+      console.log('oookkk', { aa: response?.status });
       if (response.status === 200) {
-        profileImageHandle()
+        profileImageHandle();
       } else {
         ToastAlert({
           type: 'error',
@@ -106,7 +122,7 @@ const EditProfileScreen = () => {
         });
       }
     } catch (error) {
-      console.log({ error })
+      console.log({ error });
       ToastAlert({
         type: 'error',
         description: error.message,
@@ -129,11 +145,20 @@ const EditProfileScreen = () => {
       last_name: formData.last_name,
       email_id: formData.email_id,
       contact_no: formData.contact_no,
-      birth_date: formData.birth_date ? moment(formData.birth_date, 'YYYY/MM/DD').format('YYYY/MM/DD') : null,
-      company_unique_code: formData.company_unique_code ? formData.company_unique_code : null,
+      birth_date: formData.birth_date
+        ? moment(formData.birth_date, 'YYYY/MM/DD').format('YYYY/MM/DD')
+        : null,
+      company_unique_code: formData.company_unique_code
+        ? formData.company_unique_code
+        : null,
       user_unique_code: formData.user_unique_code,
     };
-    const shouldVerifyContact = userPayload?.contact_no !== userData?.contact_no ? false : !userData?.contact_verification_status ? false : true;
+    const shouldVerifyContact =
+      userPayload?.contact_no !== userData?.contact_no
+        ? false
+        : !userData?.contact_verification_status
+          ? false
+          : true;
     if (!shouldVerifyContact) {
       try {
         const response = await contactVerification(userPayload?.contact_no);
@@ -164,7 +189,7 @@ const EditProfileScreen = () => {
         if (response.status === 200) {
           ToastAlert({
             type: 'success',
-            description: "Your Details has been submitted successfully!",
+            description: 'Your Details has been submitted successfully!',
           });
           setHasChanges(false);
           setUserData((prevUserData) => ({
@@ -186,7 +211,6 @@ const EditProfileScreen = () => {
         setLoading(false);
       }
     }
-
   };
 
   return (
@@ -201,7 +225,13 @@ const EditProfileScreen = () => {
         >
           <View style={styles.profileContainer}>
             <Image
-              source={imageUri ? { uri: imageUri } : formData?.download_profile_img_url !== null ? { uri: formData.download_profile_img_url } : icons.avatar}
+              source={
+                imageUri
+                  ? { uri: imageUri }
+                  : formData?.download_profile_img_url !== null
+                    ? { uri: formData.download_profile_img_url }
+                    : icons.avatar
+              }
               style={styles.profileImgStyle}
             />
             <TouchableOpacity style={styles.uploadImgBtn} onPress={pickImage}>
@@ -239,15 +269,22 @@ const EditProfileScreen = () => {
             maxLength={10}
             labelText={'Phone number'}
             onChangeText={(text) => handleChange('contact_no', text)}
-            rightIcon={!userData?.contact_verification_status && <Image
-              source={icons.info}
-              style={[commonStyles.icon24, { tintColor: colors.darkRed }]}
-            />
+            rightIcon={
+              !userData?.contact_verification_status && (
+                <Image
+                  source={icons.info}
+                  style={[commonStyles.icon24, { tintColor: colors.darkRed }]}
+                />
+              )
             }
-            onRightPress={() => { }}
+            onRightPress={() => {}}
           />
           <TextInputComp
-            value={formData.birth_date ? moment(formData.birth_date, 'YYYY/MM/DD').format('DD.MM.YYYY') : ""}
+            value={
+              formData.birth_date
+                ? moment(formData.birth_date, 'YYYY/MM/DD').format('DD.MM.YYYY')
+                : ''
+            }
             labelText={'Date of birth'}
             onChangeText={(text) => handleChange('birth_date', text)}
             rightIcon={
@@ -277,12 +314,22 @@ const EditProfileScreen = () => {
         disabled={loading || !hasChanges}
         onPress={updateProfile}
       />
+      <View
+        style={{
+          backgroundColor: colors.white,
+          height: isIos ? (insets.bottom === 0 ? hp(12) : 0) : 0,
+        }}
+      />
       <SafeAreaView style={styles.safeAreaViewStyle} />
       {isDatePicker && (
         <DatePicker
           modal
           open={isDatePicker}
-          date={formData.birth_date ? new Date(moment(formData.birth_date, 'YYYY/MM/DD')) : new Date()}
+          date={
+            formData.birth_date
+              ? new Date(moment(formData.birth_date, 'YYYY/MM/DD'))
+              : new Date()
+          }
           onConfirm={(date) => {
             setIsDatePicker(false);
             handleChange('birth_date', date);

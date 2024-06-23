@@ -97,9 +97,18 @@ const ProfileScreen = () => {
       <View style={styles.container}>
         <ScrollView bounces={false} style={styles.scrollViewStyle}>
           <View style={styles.profileContainer}>
-            <Image source={userData?.download_profile_img_url !== null ? { uri: userData.download_profile_img_url } : icons.avatar} style={styles.profileImgView} />
+            <Image
+              source={
+                userData?.download_profile_img_url !== null
+                  ? { uri: userData.download_profile_img_url }
+                  : icons.avatar
+              }
+              style={styles.profileImgView}
+            />
             <View style={styles.profileNameView}>
-              <Text style={styles.profileNameText}>{userData?.first_name} {userData?.last_name}</Text>
+              <Text numberOfLines={1} style={styles.profileNameText}>
+                {userData?.first_name} {userData?.last_name}
+              </Text>
               <TouchableOpacity onPress={() => navigate('EditProfileScreen')}>
                 <Text style={styles.updateInfoText}>
                   {'Update personal info'}
@@ -132,7 +141,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleDeleteAccount}
-        secondaryBtnPress={() => { }}
+        secondaryBtnPress={() => {}}
         toggleModal={() => setIsDeleteModal(!isDeleteModal)}
         primaryBtnStyle={{ backgroundColor: colors.darkRed }}
         secondaryTextStyle={{ color: colors.darkGrey }}
@@ -146,7 +155,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleLogout}
-        secondaryBtnPress={() => { }}
+        secondaryBtnPress={() => {}}
         primaryBtnStyle={{ marginTop: hp(48) }}
         toggleModal={() => setIsLogoutModal(!isLogoutModal)}
       />
@@ -170,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     color: colors.darkBlack,
     fontFamily: fonts.semiBold,
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
   },
   updateInfoText: {
     lineHeight: hp(20),
@@ -194,6 +203,7 @@ const styles = StyleSheet.create({
   },
   profileNameView: {
     marginLeft: wp(12),
+    flex: 1,
   },
   itemTitleText: {
     marginLeft: wp(8),
