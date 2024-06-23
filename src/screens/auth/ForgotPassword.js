@@ -38,8 +38,7 @@ const ForgotPassword = () => {
         navigate('InboxCheck', routeData);
         resetState();
       },
-      undefined, // Success message
-      undefined, // Error message
+      null, // Success message
     );
   };
 

@@ -9,12 +9,13 @@ import {
   SafeAreaView,
 } from 'react-native';
 
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { commonStyles } from '../../styles/styles';
 import { loginUser } from '../../services/apiService';
-import { Button, TextInputComp, ToastAlert } from '../../components';
+import { Button, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
@@ -22,8 +23,8 @@ import messages from '../../constants/messages';
 const Login = () => {
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('mohit2991kumar@gmail.com');
+  const [password, setPassword] = useState('Test@123');
   const [isPwdSecure, setIsPwdSecure] = useState(true);
   const [isRemember, setIsRemember] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);

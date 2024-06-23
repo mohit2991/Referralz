@@ -7,8 +7,8 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
@@ -42,12 +42,22 @@ const Header = ({ title, isBackButton, isAvatar, profileImage }) => {
               activeOpacity={0.8}
               onPress={() => navigate('ProfileScreen')}
             >
-              <Image
-                source={
-                  profileImage !== null ? { uri: profileImage } : icons.avatar
-                }
-                style={styles.avatarStyle}
-              />
+              {profileImage ? (
+                <Image
+                  source={
+                    profileImage !== null ? { uri: profileImage } : icons.avatar
+                  }
+                  style={styles.avatarStyle}
+                />
+              ) : (
+                <SkeletonPlaceholder>
+                  <SkeletonPlaceholder.Item
+                    width={50}
+                    height={50}
+                    borderRadius={25}
+                  />
+                </SkeletonPlaceholder>
+              )}
             </TouchableOpacity>
           )}
         </View>
