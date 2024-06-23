@@ -17,9 +17,11 @@ import { useNavigation } from '@react-navigation/native';
 import { deleteUser, logoutUser } from '../../services/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../../contexts/userContext';
+import useApiHandler from '../../hooks/useApiHandler';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isLogoutModal, setIsLogoutModal] = useState(false);
@@ -72,23 +74,18 @@ const ProfileScreen = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      const response = await logoutUser();
-      if (response.status === 201) {
-        await AsyncStorage.clear();
-        navigate('Login');
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Logout User API Call
+    handleApiCall(
+      () => logoutUser(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          await AsyncStorage.clear();
+          navigate('Login');
+        }
+      },
+      null,
+    );
   };
 
   return (
@@ -97,9 +94,18 @@ const ProfileScreen = () => {
       <View style={styles.container}>
         <ScrollView bounces={false} style={styles.scrollViewStyle}>
           <View style={styles.profileContainer}>
-            <Image source={userData?.download_profile_img_url !== null ? { uri: userData.download_profile_img_url } : icons.avatar} style={styles.profileImgView} />
+            <Image
+              source={
+                userData?.download_profile_img_url !== null
+                  ? { uri: userData.download_profile_img_url }
+                  : icons.avatar
+              }
+              style={styles.profileImgView}
+            />
             <View style={styles.profileNameView}>
-              <Text style={styles.profileNameText}>{userData?.first_name} {userData?.last_name}</Text>
+              <Text style={styles.profileNameText}>
+                {userData?.first_name} {userData?.last_name}
+              </Text>
               <TouchableOpacity onPress={() => navigate('EditProfileScreen')}>
                 <Text style={styles.updateInfoText}>
                   {'Update personal info'}
@@ -132,7 +138,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleDeleteAccount}
-        secondaryBtnPress={() => { }}
+        secondaryBtnPress={() => {}}
         toggleModal={() => setIsDeleteModal(!isDeleteModal)}
         primaryBtnStyle={{ backgroundColor: colors.darkRed }}
         secondaryTextStyle={{ color: colors.darkGrey }}
@@ -146,7 +152,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleLogout}
-        secondaryBtnPress={() => { }}
+        secondaryBtnPress={() => {}}
         primaryBtnStyle={{ marginTop: hp(48) }}
         toggleModal={() => setIsLogoutModal(!isLogoutModal)}
       />
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     color: colors.darkBlack,
     fontFamily: fonts.semiBold,
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
   },
   updateInfoText: {
     lineHeight: hp(20),
