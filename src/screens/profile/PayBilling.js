@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
@@ -91,7 +91,6 @@ const PayBilling = () => {
       },
       payment_method: selectedPayoutMethod.value
     };
-
     try {
       const response = await updateUserDetails(userPayload);
       if (response.status === 200) {
@@ -176,7 +175,7 @@ const PayBilling = () => {
             onRightPress={() => { }}
           />
           <TextInputComp
-            value={formData?.address?.postal_code}
+            value={formData?.address?.postal_code.toString()}
             maxLength={8}
             labelText={'Postal code'}
             onChangeText={(text) => handleChange('postal_code', text)}

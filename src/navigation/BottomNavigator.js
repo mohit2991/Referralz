@@ -16,7 +16,7 @@ import { CreateLeadBottomSheet } from '../components';
 
 const Tab = createBottomTabNavigator();
 
-export const Dummy = () => <View />;
+export const CreateLead = () => <View />;
 
 const BottomTabs = () => {
   const insets = useSafeAreaInsets();
@@ -33,7 +33,6 @@ const BottomTabs = () => {
               iconName = icons.dashboard;
             } else if (route.name === 'Leads') {
               iconName = icons.leadsIcon;
-            } else if (route.name === 'Dummy') {
             } else if (route.name === 'Activity') {
               iconName = icons.activity;
             } else if (route.name === 'Wallet') {
@@ -58,7 +57,7 @@ const BottomTabs = () => {
               label = 'Dashboard';
             } else if (route.name === 'Leads') {
               label = 'Leads';
-            } else if (route.name === 'Dummy') {
+            } else if (route.name === 'Create Lead') {
               label = '';
             } else if (route.name === 'Activity') {
               label = 'Activity';
@@ -86,7 +85,7 @@ const BottomTabs = () => {
       >
         <Tab.Screen name="Dashboard" component={Dashboard} />
         <Tab.Screen name="Leads" component={LeadsListScreen} />
-        <Tab.Screen name="Dummy" component={Dummy} />
+        <Tab.Screen name="Create Lead" component={CreateLead} />
         <Tab.Screen name="Activity" component={ActivityScreen} />
         <Tab.Screen name="Wallet" component={WalletScreen} />
       </Tab.Navigator>
