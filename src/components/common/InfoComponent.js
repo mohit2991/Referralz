@@ -3,7 +3,15 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils'
 
-const InfoComponent = ({ onPress, title, description, btnText, icon }) => {
+const InfoComponent = ({
+  icon,
+  title,
+  onPress,
+  btnText,
+  btnStyle,
+  description,
+  btnTextStyle,
+}) => {
   return (
     <View style={styles.container}>
       <Image source={icon ? icon : icons.inbox} style={styles.iconStyle} />
@@ -12,10 +20,10 @@ const InfoComponent = ({ onPress, title, description, btnText, icon }) => {
       {onPress && (
         <TouchableOpacity
           activeOpacity={0.8}
-          style={styles.btnStyle}
+          style={[styles.btnStyle, btnStyle]}
           onPress={onPress}
         >
-          <Text style={styles.btnText}>{btnText}</Text>
+          <Text style={[styles.btnText, btnTextStyle]}>{btnText}</Text>
         </TouchableOpacity>
       )}
       <View style={styles.bottomMargin} />

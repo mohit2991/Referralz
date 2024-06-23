@@ -1,13 +1,25 @@
-import { StyleSheet, View } from 'react-native';
 import React from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+
 import Shadow from './Shadow';
 import { colors, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
 
-const ItemCard = ({ children, cardContainerStyle, shadowStyle }) => {
+const ItemCard = ({
+  children,
+  shadowStyle,
+  onItemPress,
+  cardContainerStyle,
+}) => {
   return (
     <Shadow shadowStyle={[commonStyles.flex, shadowStyle]}>
-      <View style={[styles.cardContainer, cardContainerStyle]}>{children}</View>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={onItemPress}
+        style={[styles.cardContainer, cardContainerStyle]}
+      >
+        {children}
+      </TouchableOpacity>
     </Shadow>
   );
 };
