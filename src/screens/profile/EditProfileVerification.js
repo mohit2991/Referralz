@@ -6,11 +6,17 @@ import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
 import { Button, Header, ToastAlert } from '../../components';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import { updateUserDetails, contactVerificationOtp } from '../../services/apiService';
+import {
+  updateUserDetails,
+  contactVerificationOtp,
+} from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
 
 const EditProfileVerification = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
   const otpInputRef = useRef(null);
   const { params } = useRoute();
   const { userPayload } = params;
@@ -30,23 +36,21 @@ const EditProfileVerification = () => {
       const response = await contactVerificationOtp(code);
       if (response.status === 201) {
         try {
-          const response = await updateUserDetails(userPayload);
-          if (response.status === 200) {
-            ToastAlert({
-              type: 'success',
-              description: "Your Details has been submitted successfully!",
-            });
-            setUserData((prevUserData) => ({
-              ...prevUserData,
-              ...userPayload,
-            }));
-            navigate('EditProfileScreen', { fromVerification: true });
-          } else {
-            ToastAlert({
-              type: 'error',
-              description: response.data,
-            });
-          }
+          // Update user deatils API Call
+          handleApiCall(
+            () => updateUserDetails(userPayload), // Call API
+            async (response) => {
+              // Callback respose after success
+              if (response) {
+                setUserData((prevUserData) => ({
+                  ...prevUserData,
+                  ...userPayload,
+                }));
+                navigate('EditProfileScreen', { fromVerification: true });
+              }
+            },
+            messages.profileSubmitted,
+          );
         } catch (error) {
           ToastAlert({
             type: 'error',

@@ -19,30 +19,34 @@ import {
 } from '../../utils/dataConstants';
 import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import useApiHandler from '../../hooks/useApiHandler';
 
 const Dashboard = () => {
+  const { handleApiCall } = useApiHandler();
+
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
-  const { userData, setUserData, dashboardData, setDashboardData, setDashboardFilter } = useUser();
+  const {
+    userData,
+    setUserData,
+    dashboardData,
+    setDashboardData,
+    setDashboardFilter,
+  } = useUser();
 
   const getUserData = async () => {
-    try {
-      const response = await getUserDetails();
-      if (response.status === 200) {
-        setUserData(response.data);
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.error,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Get user deatils API Call
+    handleApiCall(
+      () => getUserDetails(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          setUserData(response?.data);
+        }
+      },
+      null,
+    );
   };
 
   const getDasboardData = async (selectedFilter) => {
@@ -50,22 +54,18 @@ const Dashboard = () => {
       filter_by_date: selectedFilter ? selectedFilter.value : 'ONE_WEEK',
       isPaginationRequired: false,
     };
-    try {
-      const response = await dashboardDetails(userPayload);
-      if (response.status === 201) {
-        setDashboardData(response?.data);
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.error,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+
+    // Get Dashboard Deatils API Call
+    handleApiCall(
+      () => dashboardDetails(userPayload), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          setDashboardData(response?.data);
+        }
+      },
+      null,
+    );
   };
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const Dashboard = () => {
       (method) => method.isSelected,
     );
     getDasboardData(selectedFilter);
-    setDashboardFilter(selectedFilter)
+    setDashboardFilter(selectedFilter);
   };
 
   const FilterOption = ({ item }) => {

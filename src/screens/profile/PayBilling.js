@@ -8,7 +8,12 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
+import {
+  BottomButton,
+  Header,
+  TextInputComp,
+  ToastAlert,
+} from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +21,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { payoutMethodsListData } from '../../utils/dataConstants';
 import { updateUserDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
+import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
 
 export const PaymentMethodItem = ({ item, onPress }) => {
   return (
@@ -43,18 +50,21 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 
 const PayBilling = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
   const [payoutMethodsList, setPayoutMethodsList] = useState(
-    payoutMethodsListData.map(method => ({
+    payoutMethodsListData.map((method) => ({
       ...method,
-      isSelected: method.value === userData.payment_method
-    }))
+      isSelected: method.value === userData.payment_method,
+    })),
   );
   const [formData, setFormData] = useState(userData);
   const [isConditionChecked, setIsConditionChecked] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [loading, setLoading] = useState(false);
-  const selectedPayoutMethod = payoutMethodsList.find(method => method.isSelected);
+  const selectedPayoutMethod = payoutMethodsList.find(
+    (method) => method.isSelected,
+  );
 
   const onSelectPayoutMethod = (item) => {
     let updateMethodList = payoutMethodsList?.map((obj) => {
@@ -87,37 +97,26 @@ const PayBilling = () => {
         city: formData?.address?.city,
         postal_code: formData?.address?.postal_code,
         state: formData?.address?.state,
-        country: formData?.address?.country
+        country: formData?.address?.country,
       },
-      payment_method: selectedPayoutMethod.value
+      payment_method: selectedPayoutMethod.value,
     };
 
-    try {
-      const response = await updateUserDetails(userPayload);
-      if (response.status === 200) {
-        ToastAlert({
-          type: 'success',
-          description: "Your Details has been submitted successfully!",
-        });
-        setHasChanges(false);
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          ...userPayload,
-        }));
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Update user deatils API Call
+    handleApiCall(
+      () => updateUserDetails(userPayload), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          setHasChanges(false);
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...userPayload,
+          }));
+        }
+      },
+      messages.profileSubmitted,
+    );
   };
 
   return (
@@ -173,7 +172,7 @@ const PayBilling = () => {
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => { }}
+            onRightPress={() => {}}
           />
           <TextInputComp
             value={formData?.address?.postal_code}
@@ -189,7 +188,7 @@ const PayBilling = () => {
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => { }}
+            onRightPress={() => {}}
           />
           <Pressable
             onPress={() => setIsConditionChecked(!isConditionChecked)}
