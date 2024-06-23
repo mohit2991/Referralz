@@ -71,32 +71,24 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
-    try {
-      const response = await profileImageUpdate();
-      if (response.status === 201) {
-        const updatedProfileImage = {
-          download_profile_img_url: response?.data?.download_profile_img_url,
-        };
-        ToastAlert({
-          type: 'success',
-          description: 'Your profile has been successfully updated!',
-        });
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          ...updatedProfileImage,
-        }));
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    // Update Profile Image API Call
+    handleApiCall(
+      () => profileImageUpdate(), // Call API
+      async (response) => {
+        // Callback respose after success
+        if (response) {
+          const updatedProfileImage = {
+            download_profile_img_url: response?.data?.download_profile_img_url,
+          };
+
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...updatedProfileImage,
+          }));
+        }
+      },
+      messages.profileSubmitted,
+    );
   };
 
   const uploadProfileImage = async (image) => {
