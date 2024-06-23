@@ -19,7 +19,6 @@ import {
 } from '../../utils/dataConstants';
 import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
-import SkeletonLoader from '../../components/SkeletonLoader';
 
 const Dashboard = () => {
   const [filterOptions, setFilterOptions] = useState(
