@@ -260,26 +260,29 @@ const Dashboard = () => {
                     }
                     style={commonStyles.icon24}
                   />
-                  <Text
-                    style={[
-                      styles.cardDiffText,
-                      dashboardData?.leads_created_stats
-                        ?.leads_created_count_difference < 0 && {
-                        color: colors.darkRed,
-                      },
-                    ]}
-                  >
-                    {Math.abs(
-                      dashboardData?.leads_created_stats
-                        ?.leads_created_count_difference,
-                    ).toFixed(2)}{' '}
-                    (
-                    {Math.abs(
-                      dashboardData?.leads_created_stats
-                        ?.leads_created_count_percent_difference,
-                    ).toFixed(2)}
-                    %)
-                  </Text>
+                  <View style={commonStyles.flex}>
+                    <Text
+                      numberOfLines={2}
+                      style={[
+                        styles.cardDiffText,
+                        dashboardData?.leads_created_stats
+                          ?.leads_created_count_difference < 0 && {
+                          color: colors.darkRed,
+                        },
+                      ]}
+                    >
+                      {Math.abs(
+                        dashboardData?.leads_created_stats
+                          ?.leads_created_count_difference,
+                      ).toFixed(2)}{' '}
+                      (
+                      {Math.abs(
+                        dashboardData?.leads_created_stats
+                          ?.leads_created_count_percent_difference,
+                      ).toFixed(2)}
+                      %)
+                    </Text>
+                  </View>
                 </View>
               </ItemCard>
               <View style={{ width: wp(16) }} />
@@ -298,26 +301,29 @@ const Dashboard = () => {
                     }
                     style={commonStyles.icon24}
                   />
-                  <Text
-                    style={[
-                      styles.cardDiffText,
-                      dashboardData?.jobs_sold_stats
-                        ?.jobs_sold_count_difference < 0 && {
-                        color: colors.darkRed,
-                      },
-                    ]}
-                  >
-                    {Math.abs(
-                      dashboardData?.jobs_sold_stats
-                        ?.jobs_sold_count_difference,
-                    ).toFixed(2)}{' '}
-                    (
-                    {Math.abs(
-                      dashboardData?.jobs_sold_stats
-                        ?.jobs_sold_count_percent_difference,
-                    ).toFixed(2)}
-                    %)
-                  </Text>
+                  <View style={commonStyles.flex}>
+                    <Text
+                      numberOfLines={2}
+                      style={[
+                        styles.cardDiffText,
+                        dashboardData?.jobs_sold_stats
+                          ?.jobs_sold_count_difference < 0 && {
+                          color: colors.darkRed,
+                        },
+                      ]}
+                    >
+                      {Math.abs(
+                        dashboardData?.jobs_sold_stats
+                          ?.jobs_sold_count_difference,
+                      ).toFixed(2)}{' '}
+                      (
+                      {Math.abs(
+                        dashboardData?.jobs_sold_stats
+                          ?.jobs_sold_count_percent_difference,
+                      ).toFixed(2)}
+                      %)
+                    </Text>
+                  </View>
                 </View>
               </ItemCard>
             </View>
@@ -339,26 +345,29 @@ const Dashboard = () => {
                   }
                   style={commonStyles.icon24}
                 />
-                <Text
-                  style={[
-                    styles.cardDiffText,
-                    dashboardData?.conversion_rate_stats
-                      ?.conversion_rate_difference < 0 && {
-                      color: colors.darkRed,
-                    },
-                  ]}
-                >
-                  {Math.abs(
-                    dashboardData?.conversion_rate_stats
-                      ?.conversion_rate_difference,
-                  ).toFixed(2)}{' '}
-                  (
-                  {Math.abs(
-                    dashboardData?.conversion_rate_stats
-                      ?.conversion_rate_percent_difference,
-                  ).toFixed(2)}
-                  %)
-                </Text>
+                <View style={commonStyles.flex}>
+                  <Text
+                    numberOfLines={2}
+                    style={[
+                      styles.cardDiffText,
+                      dashboardData?.conversion_rate_stats
+                        ?.conversion_rate_difference < 0 && {
+                        color: colors.darkRed,
+                      },
+                    ]}
+                  >
+                    {Math.abs(
+                      dashboardData?.conversion_rate_stats
+                        ?.conversion_rate_difference,
+                    ).toFixed(2)}{' '}
+                    (
+                    {Math.abs(
+                      dashboardData?.conversion_rate_stats
+                        ?.conversion_rate_percent_difference,
+                    ).toFixed(2)}
+                    %)
+                  </Text>
+                </View>
               </View>
             </ItemCard>
             <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>

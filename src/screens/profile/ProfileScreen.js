@@ -199,7 +199,9 @@ const styles = StyleSheet.create({
     width: wp(56),
     height: wp(56),
     borderRadius: wp(56),
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    borderWidth: wp(1),
+    borderColor: colors.xLiteGrey,
   },
   profileNameView: {
     marginLeft: wp(12),

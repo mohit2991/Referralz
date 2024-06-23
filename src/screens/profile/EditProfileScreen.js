@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     padding: wp(10),
   },
   bottomPadding: {
-    height: hp(30),
+    height: hp(70),
   },
   safeAreaViewStyle: {
     backgroundColor: colors.white,
