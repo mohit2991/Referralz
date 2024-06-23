@@ -15,7 +15,11 @@ import { useUser } from '../../contexts/userContext';
 import { Header, InfoComponent, ItemCard } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
-import { dashboardDetails, getActivity, activityReadStatus } from '../../services/apiService';
+import {
+  dashboardDetails,
+  getActivity,
+  activityReadStatus,
+} from '../../services/apiService';
 
 const ActivityScreen = () => {
   const insets = useSafeAreaInsets();
@@ -90,7 +94,9 @@ const ActivityScreen = () => {
         <View style={styles.todayItemTextView}>
           <View style={commonStyles.flexRow}>
             <Text style={styles.itemTitleText}>{item?.heading}</Text>
-            <Text style={styles.itemTimeText}>{moment(item?.created_on).fromNow()}</Text>
+            <Text style={styles.itemTimeText}>
+              {moment(item?.created_on).fromNow()}
+            </Text>
           </View>
           <Text numberOfLines={2} style={styles.itemDescText}>
             {item?.description}
@@ -122,7 +128,9 @@ const ActivityScreen = () => {
         cardContainerStyle={styles.listCardView}
       >
         <View style={commonStyles.flexRowJustify}>
-          <Text style={styles.referalCardName}>{item?.customer?.first_name} {item?.customer?.last_name}</Text>
+          <Text style={styles.referalCardName}>
+            {item?.customer?.first_name} {item?.customer?.last_name}
+          </Text>
           <View
             style={[
               styles.tagView,
@@ -166,7 +174,9 @@ const ActivityScreen = () => {
           ))}
 
           <View style={styles.verticalDevider} />
-          <Text style={styles.referalCardDate}>{moment(item?.created_on).format('MMM D, YYYY')}</Text>
+          <Text style={styles.referalCardDate}>
+            {moment(item?.created_on).format('MMM D, YYYY')}
+          </Text>
           <View style={styles.verticalDevider} />
           <View
             style={[
@@ -181,7 +191,10 @@ const ActivityScreen = () => {
           />
           <Text style={styles.referalCardInt}>{item?.priority?.name}</Text>
         </View>
-        <Text style={styles.cardTitleText}>{item?.address?.address} {item?.address?.name} {item?.address?.city}, {item?.address?.postalCode}</Text>
+        <Text style={styles.cardTitleText}>
+          {item?.address?.address} {item?.address?.name} {item?.address?.city},{' '}
+          {item?.address?.postalCode}
+        </Text>
       </ItemCard>
     );
   };
@@ -201,7 +214,10 @@ const ActivityScreen = () => {
                 <Text style={styles.subTitleText}>{'Today'}</Text>
               </View>
               <View>
-                <FlatList data={todayActivityData?.content} renderItem={renderTodayItems} />
+                <FlatList
+                  data={todayActivityData?.content}
+                  renderItem={renderTodayItems}
+                />
               </View>
             </View>
           )}

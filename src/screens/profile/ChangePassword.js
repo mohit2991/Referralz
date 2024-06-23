@@ -11,9 +11,15 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 import { commonStyles } from '../../styles/styles';
-import { BottomButton, Header, TextInputComp, ToastAlert } from '../../components';
+import {
+  BottomButton,
+  Header,
+  TextInputComp,
+  ToastAlert,
+} from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { changePassword } from '../../services/apiService';
+import useApiHandler from '../../hooks/useApiHandler';
 
 export const CheckItem = ({ condition, value }) => {
   return (
@@ -32,6 +38,7 @@ export const CheckItem = ({ condition, value }) => {
 
 const ChangePassword = () => {
   const { navigate } = useNavigation();
+  const { handleApiCall } = useApiHandler();
 
   const [currentPwd, setCurrentPwd] = useState('');
   const [newPwd, setNewPwd] = useState('');
@@ -89,27 +96,16 @@ const ChangePassword = () => {
       new_password: newPwd,
       confirm_password: confirmPwd,
     };
-    try {
-      const response = await changePassword(userPayload);
-      if (response.status === 201) {
-        ToastAlert({
-          type: 'success',
-          description: response.data,
-        });
+
+    // Get Dashboard Deatils API Call
+    handleApiCall(
+      () => changePassword(userPayload), // Call API
+      async (response) => {
+        // Callback respose after success
         resetState();
         navigate('ProfileScreen');
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+      },
+    );
   };
 
   return (
@@ -176,7 +172,7 @@ const ChangePassword = () => {
             }
             onRightPress={() => setConfirmSecure(!confirmSecure)}
           />
-          {newPwd !== confirmPwd && confirmPwd !== "" && (
+          {newPwd !== confirmPwd && confirmPwd !== '' && (
             <Text style={styles.errorText}>
               Password and Confirm Password do not match.
             </Text>
