@@ -6,34 +6,12 @@ import moment from 'moment';
 import ItemCard from '../common/ItemCard';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import { getTagColor } from '../../utils/globalFunctions';
 
 const LeadsItemCard = ({ item, onItemPress }) => {
   const filledStars = Math.floor(item?.rating);
   const halfStar = item?.rating % 1 !== 0;
   const unfilledStars = 5 - Math.ceil(item?.rating);
-
-  const getTagColor = (status) => {
-    switch (status) {
-      case 'Received':
-        return { light: '#E9F4FC', dark: '#6399AE' };
-      case 'Scheduled':
-        return { light: '#FFF0E9', dark: '#FFB03B' };
-      case 'Inspection':
-        return { light: '#E9F4FC', dark: '#4FD2D2' };
-      case 'Job Sold':
-        return { light: '#FAEAEA', dark: '#E16032' };
-      case 'Job Closed':
-        return { light: '#FAEAEA', dark: '#E16032' };
-      case 'Referral Paid':
-        return { light: '#E9F8F0', dark: '#54A77B' };
-      case 'Submitted':
-        return { light: '#E9F4FC', dark: '#6399AE' };
-      case 'In progress':
-        return { light: '#FFF0E9', dark: '#FFB03B' };
-      default:
-        return { light: '#E9F4FC', dark: '#6399AE' };
-    }
-  };
 
   return (
     <ItemCard

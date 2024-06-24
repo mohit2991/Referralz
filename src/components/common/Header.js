@@ -14,7 +14,7 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 
-const Header = ({ title, isBackButton, isAvatar, profileImage }) => {
+const Header = ({ title, isBackButton, isAvatar, leftIcon, profileImage }) => {
   const { goBack, navigate } = useNavigation();
   return (
     <>
@@ -27,7 +27,10 @@ const Header = ({ title, isBackButton, isAvatar, profileImage }) => {
                 style={styles.backBtnView}
                 onPress={() => goBack()}
               >
-                <Image source={icons.backArrow} style={commonStyles.icon24} />
+                <Image
+                  source={leftIcon || icons.backArrow}
+                  style={commonStyles.icon24}
+                />
               </TouchableOpacity>
             )}
             {title && (

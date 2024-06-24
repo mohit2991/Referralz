@@ -19,6 +19,7 @@ const SearchBar = forwardRef(
       onBlur,
       onFocus,
       isFocus,
+      editable,
       isFiltered,
       placeholder,
       keyboardType,
@@ -47,6 +48,7 @@ const SearchBar = forwardRef(
             <TextInput
               ref={ref}
               value={value}
+              editable={editable}
               onBlur={onBlur}
               onFocus={onFocus}
               autoCorrect={false}

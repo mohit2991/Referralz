@@ -149,3 +149,43 @@ export const homeLeadsList = [
     interest: 'Low',
   },
 ];
+
+export const leadsActivityList = [
+  {
+    id: 1,
+    heading: 'Payout: Virtual Card',
+    created_on: '',
+    description: 'Check No. 735373 | $2,000',
+  },
+  {
+    id: 2,
+    heading: 'Referral paid',
+    created_on: '30min ago',
+    description: 'Job sold description about pending homeowner approval',
+  },
+  {
+    id: 3,
+    heading: 'Job sold',
+    created_on: '8h ago',
+    description: 'Job sold description about pending homeowner approval',
+  },
+  {
+    id: 4,
+    heading: 'Inspection completed',
+    created_on: '3d ago',
+    description:
+      'Inspection completed description about pending homeowner approval',
+  },
+  {
+    id: 5,
+    heading: 'Inspection scheduled',
+    created_on: '1wk ago',
+    description: 'Inspection scheduled description placeholder text goes here',
+  },
+  {
+    id: 6,
+    heading: 'Referral received',
+    created_on: '3d ago',
+    description: 'Lead submitted successfully! Stay tuned for its progress',
+  },
+];
