@@ -8,18 +8,15 @@ import {
   View,
 } from 'react-native';
 import moment from 'moment';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import React, { useState, useEffect } from 'react';
 import { BarGraph, Header, ItemCard, ToastAlert } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
-import {
-  dashboardFilterOptionsList,
-  homeLeadsList,
-} from '../../utils/dataConstants';
+import { dashboardFilterOptionsList } from '../../utils/dataConstants';
 import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const Dashboard = () => {
   const { handleApiCall } = useApiHandler();
@@ -27,6 +24,7 @@ const Dashboard = () => {
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
+  const [loading, setLoading] = useState(true);
   const {
     userData,
     setUserData,
@@ -37,7 +35,7 @@ const Dashboard = () => {
 
   const getUserData = async () => {
     // Get user deatils API Call
-    handleApiCall(
+    await handleApiCall(
       () => getUserDetails(), // Call API
       async (response) => {
         // Callback respose after success
@@ -56,7 +54,7 @@ const Dashboard = () => {
     };
 
     // Get Dashboard Deatils API Call
-    handleApiCall(
+    await handleApiCall(
       () => dashboardDetails(userPayload), // Call API
       async (response) => {
         // Callback respose after success
@@ -72,6 +70,17 @@ const Dashboard = () => {
     getUserData();
     getDasboardData();
   }, []);
+
+  useEffect(() => {
+    if (userData !== null && dashboardData !== null) {
+      setLoading(false);
+    }
+    // console.log(
+    //   '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',
+    //   userData,
+    //   dashboardData,
+    // );
+  }, [userData, dashboardData]);
 
   const onFilterPress = (item) => {
     let updateFilterOptions = filterOptions?.map((obj) => {
@@ -216,7 +225,9 @@ const Dashboard = () => {
     );
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       <Header
         isAvatar

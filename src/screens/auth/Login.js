@@ -18,6 +18,7 @@ import { Button, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 import {
   storeCredentials,
   loadCredentials,
@@ -32,6 +33,7 @@ const Login = () => {
   const [isPwdSecure, setIsPwdSecure] = useState(true);
   const [isRemember, setIsRemember] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleClickForSignup = () => {
     navigate('Register');
@@ -70,8 +72,10 @@ const Login = () => {
       password,
     };
 
+    setLoading(true); // Set loading to true before API call
+
     // Login API Call
-    handleApiCall(
+    const respose = await handleApiCall(
       () => loginUser(userPayload), // Call API
       async (response) => {
         // Callback respose after success
@@ -92,10 +96,13 @@ const Login = () => {
       messages.loginSuccess, // Success message
       messages.loginError, // Error message
     );
+
+    setLoading(false);
   };
 
   return (
     <View style={styles.root}>
+      <LoadingSpinner visible={loading} />
       <SafeAreaView />
       <Text style={styles.welcomeText}>{'Welcome to Referralz!'}</Text>
       <Text style={styles.motoText}>{'Refer, track, and earn with ease.'}</Text>

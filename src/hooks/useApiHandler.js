@@ -3,14 +3,14 @@ import { ToastAlert } from '../components';
 const useApiHandler = () => {
   const handleApiCall = async (
     apiCall,
-    successCallback,
+    resposeCallback,
     defaultSuccessMessage,
     defaultErrorMessage,
   ) => {
     try {
       const response = await apiCall(); // API Call
       if (response.status >= 200 && response.status < 300) {
-        successCallback(response); // Call callBack function after success
+        resposeCallback(response); // Call callBack function after success
 
         // Alert after success
         if (defaultSuccessMessage === null) {
@@ -22,7 +22,7 @@ const useApiHandler = () => {
           description: defaultSuccessMessage || response.data,
         });
       } else {
-        // Alert after faild/error
+        // Handle API errors
         let error = defaultErrorMessage
           ? defaultErrorMessage
           : determineErrorMessage(null, response);
@@ -31,18 +31,24 @@ const useApiHandler = () => {
           type: 'error',
           description: error,
         });
+
+        return { error }; // Return error for further processing
       }
     } catch (err) {
-      // Alert api faild
+      // Handle catch block errors
       const errorMessage = determineErrorMessage(err, null);
       ToastAlert({
         type: 'error',
         description: errorMessage,
       });
+
+      return { error: errorMessage }; // Return error for further processing
     }
   };
 
   const determineErrorMessage = (error, response) => {
+    resposeCallback('Error');
+
     if (error) {
       return error.message;
     }

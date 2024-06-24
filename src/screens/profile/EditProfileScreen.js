@@ -33,6 +33,7 @@ import {
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const EditProfileScreen = () => {
   const { navigate } = useNavigation();
@@ -71,8 +72,10 @@ const EditProfileScreen = () => {
   };
 
   const profileImageHandle = async () => {
+    setLoading(true);
+
     // Update User Deatils API Call
-    handleApiCall(
+    await handleApiCall(
       () => profileImageUpdate(), // Call API
       async (response) => {
         // Callback respose after success
@@ -90,32 +93,7 @@ const EditProfileScreen = () => {
       messages.profileSubmitted,
     );
 
-    try {
-      const response = await profileImageUpdate();
-      if (response.status === 201) {
-        const updatedProfileImage = {
-          download_profile_img_url: response?.data?.download_profile_img_url,
-        };
-        ToastAlert({
-          type: 'success',
-          description: 'Your profile has been successfully updated!',
-        });
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          ...updatedProfileImage,
-        }));
-      } else {
-        ToastAlert({
-          type: 'error',
-          description: response.data,
-        });
-      }
-    } catch (error) {
-      ToastAlert({
-        type: 'error',
-        description: error.message,
-      });
-    }
+    setLoading(false);
   };
 
   const uploadProfileImage = async (image) => {
@@ -132,7 +110,7 @@ const EditProfileScreen = () => {
           },
         },
       );
-      console.log('oookkk', { aa: response?.status });
+
       if (response.status === 200) {
         profileImageHandle();
       } else {
@@ -160,6 +138,7 @@ const EditProfileScreen = () => {
 
   const updateProfile = async () => {
     setLoading(true);
+
     const userPayload = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -173,29 +152,31 @@ const EditProfileScreen = () => {
         : null,
       user_unique_code: formData.user_unique_code,
     };
+
     const shouldVerifyContact =
       userPayload?.contact_no !== userData?.contact_no
         ? false
         : !userData?.contact_verification_status
           ? false
           : true;
+
     if (!shouldVerifyContact) {
       // Update User Deatils API Call
-      handleApiCall(
+      await handleApiCall(
         () => contactVerification(userPayload?.contact_no), // Call API
         async (response) => {
           // Callback respose after success
           if (response) {
             navigate('EditProfileVerification', { userPayload });
-
-            setLoading(false);
           }
         },
         null,
       );
+
+      setLoading(false);
     } else {
       // Update User Deatils API Call
-      handleApiCall(
+      await handleApiCall(
         () => updateUserDetails(userPayload), // Call API
         async (response) => {
           // Callback respose after success
@@ -205,17 +186,18 @@ const EditProfileScreen = () => {
               ...prevUserData,
               ...userPayload,
             }));
-
-            setLoading(false);
           }
         },
         messages.profileSubmitted,
       );
+
+      setLoading(false);
     }
   };
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Edit profile'} />
       <View style={commonStyles.container}>
         <KeyboardAwareScrollView
@@ -230,7 +212,7 @@ const EditProfileScreen = () => {
                 imageUri
                   ? { uri: imageUri }
                   : formData?.download_profile_img_url !== null
-                    ? { uri: formData.download_profile_img_url }
+                    ? { uri: formData?.download_profile_img_url }
                     : icons.avatar
               }
               style={styles.profileImgStyle}

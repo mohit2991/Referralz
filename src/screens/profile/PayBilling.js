@@ -8,12 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import {
-  BottomButton,
-  Header,
-  TextInputComp,
-  ToastAlert,
-} from '../../components';
+import { BottomButton, Header, TextInputComp } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +18,7 @@ import { updateUserDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export const PaymentMethodItem = ({ item, onPress }) => {
   return (
@@ -49,7 +45,6 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 };
 
 const PayBilling = () => {
-  const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
   const [payoutMethodsList, setPayoutMethodsList] = useState(
@@ -90,6 +85,7 @@ const PayBilling = () => {
 
   const payBilling = async () => {
     setLoading(true);
+
     const userPayload = {
       address: {
         address: formData?.address?.address,
@@ -103,7 +99,7 @@ const PayBilling = () => {
     };
 
     // Update user deatils API Call
-    handleApiCall(
+    await handleApiCall(
       () => updateUserDetails(userPayload), // Call API
       async (response) => {
         // Callback respose after success
@@ -114,15 +110,16 @@ const PayBilling = () => {
             ...userPayload,
           }));
         }
-
-        setLoading(false);
       },
       messages.profileSubmitted,
     );
+
+    setLoading(false);
   };
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Payout and billing '} />
       <View style={commonStyles.container}>
         <KeyboardAwareScrollView
