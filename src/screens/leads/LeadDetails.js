@@ -39,7 +39,7 @@ const LeadDetails = () => {
         <View style={styles.todayItemIconView}>
           <Image
             source={icons.checkShield}
-            style={{ ...commonStyles.icon24, tintColor: colors.white }}
+            style={{ ...commonStyles.icon24, tintColor: colors.black }}
           />
         </View>
         <View style={styles.todayItemTextView}>
@@ -434,7 +434,8 @@ const styles = StyleSheet.create({
     padding: wp(8),
     borderRadius: wp(8),
     alignSelf: 'flex-start',
-    backgroundColor: colors.primary,
+    backgroundColor: '#E9F8F0',
+    // backgroundColor: colors.litePrimary,
   },
   todayItemTextView: {
     flex: 1,
