@@ -24,7 +24,7 @@ const BarGraph = ({ graphData }) => {
         data={data}
         width={wp(280)}
         barWidth={wp(42)}
-        initialSpacing={7}
+        initialSpacing={15}
         spacing={wp(36)}
         barBorderRadius={4}
         showGradient
@@ -34,7 +34,8 @@ const BarGraph = ({ graphData }) => {
         xAxisType={'solid'}
         xAxisColor={colors.mediumGrey}
         stepValue={1}
-        // maxValue={Math.max(...data?.map((item) => item?.value)) + 1}
+        yAxisLabelPrefix={'$'}
+        maxValue={Math.max(...data?.map((item) => item?.value)) + 2}
         noOfSections={6}
         xAxisLabelTexts={xAxisLabelTexts}
         xAxisTextNumberOfLines={2}
@@ -47,7 +48,7 @@ const BarGraph = ({ graphData }) => {
         horizontalRulesStyle={{}}
         rulesType="solid"
         rulesColor={colors.mediumGrey}
-        autoShiftLabels
+        // autoShiftLabels
         barBorderColor={colors.white}
         xAxisLength={xAxisLength}
         rulesLength={xAxisLength}

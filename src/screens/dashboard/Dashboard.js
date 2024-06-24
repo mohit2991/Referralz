@@ -9,7 +9,13 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
-import { BarGraph, Header, ItemCard, ToastAlert } from '../../components';
+import {
+  BarGraph,
+  Header,
+  ItemCard,
+  LeadsItemCard,
+  ToastAlert,
+} from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { dashboardFilterOptionsList } from '../../utils/dataConstants';
@@ -57,7 +63,6 @@ const Dashboard = () => {
     await handleApiCall(
       () => dashboardDetails(userPayload), // Call API
       async (response) => {
-        // Callback respose after success
         if (response) {
           setDashboardData(response?.data);
         }
@@ -125,104 +130,8 @@ const Dashboard = () => {
     );
   };
 
-  const getTagColor = (status) => {
-    switch (status) {
-      case 'Received':
-        return { light: '#E9F4FC', dark: '#6399AE' };
-      case 'Scheduled':
-        return { light: '#FFF0E9', dark: '#FFB03B' };
-      case 'Inspection':
-        return { light: '#E9F4FC', dark: '#4FD2D2' };
-      case 'Job Sold':
-        return { light: '#FAEAEA', dark: '#E16032' };
-      case 'Job Closed':
-        return { light: '#FAEAEA', dark: '#E16032' };
-      case 'Referral Paid':
-        return { light: '#E9F8F0', dark: '#54A77B' };
-      default:
-        return { light: '#E9F4FC', dark: '#6399AE' };
-    }
-  };
-
   const renderLeadsByReferrals = ({ item }) => {
-    const filledStars = Math.floor(item?.rating);
-    const halfStar = item?.rating % 1 !== 0;
-    const unfilledStars = 5 - Math.ceil(item?.rating);
-
-    return (
-      <ItemCard
-        shadowStyle={{ shadowOpacity: 0 }}
-        cardContainerStyle={styles.listCardView}
-      >
-        <View style={commonStyles.flexRowJustify}>
-          <Text style={styles.referalCardName}>
-            {item?.customer?.first_name} {item?.customer?.last_name}
-          </Text>
-          <View
-            style={[
-              styles.tagView,
-              {
-                backgroundColor: getTagColor(item?.internal_status)?.light,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.tagText,
-                {
-                  color: getTagColor(item?.internal_status)?.dark,
-                },
-              ]}
-            >
-              {item?.internal_status}
-            </Text>
-          </View>
-        </View>
-        <View style={[commonStyles.flexRowCenter, { marginBottom: hp(16) }]}>
-          <Text style={[styles.cardTitleText, { marginRight: wp(2) }]}>
-            {item?.rating}
-          </Text>
-          {[...Array(filledStars)].map((_, index) => (
-            <Image
-              key={`filled-${index}`}
-              source={icons.starFill}
-              style={commonStyles.icon16}
-            />
-          ))}
-          {halfStar && (
-            <Image source={icons.star} style={commonStyles.icon16} />
-          )}
-          {[...Array(unfilledStars)].map((_, index) => (
-            <Image
-              key={`filled-${index}`}
-              source={icons.star}
-              style={commonStyles.icon16}
-            />
-          ))}
-          <View style={styles.verticalDevider} />
-          <Text style={styles.referalCardDate}>
-            {moment(item?.created_on).format('MMM D, YYYY')}
-          </Text>
-          <View style={styles.verticalDevider} />
-          <View
-            style={[
-              styles.greenDot,
-              {
-                backgroundColor:
-                  item?.priority?.name === 'low'
-                    ? colors.green
-                    : colors.liteSaffron,
-              },
-            ]}
-          />
-          <Text style={styles.referalCardInt}>{item?.priority?.name}</Text>
-        </View>
-        <Text style={styles.cardTitleText}>
-          {item?.address?.address} {item?.address?.name} {item?.address?.city},{' '}
-          {item?.address?.postalCode}
-        </Text>
-      </ItemCard>
-    );
+    return <LeadsItemCard item={item} />;
   };
 
   return loading ? (
@@ -271,26 +180,29 @@ const Dashboard = () => {
                     }
                     style={commonStyles.icon24}
                   />
-                  <Text
-                    style={[
-                      styles.cardDiffText,
-                      dashboardData?.leads_created_stats
-                        ?.leads_created_count_difference < 0 && {
-                        color: colors.darkRed,
-                      },
-                    ]}
-                  >
-                    {Math.abs(
-                      dashboardData?.leads_created_stats
-                        ?.leads_created_count_difference,
-                    ).toFixed(2)}{' '}
-                    (
-                    {Math.abs(
-                      dashboardData?.leads_created_stats
-                        ?.leads_created_count_percent_difference,
-                    ).toFixed(2)}
-                    %)
-                  </Text>
+                  <View style={commonStyles.flex}>
+                    <Text
+                      numberOfLines={2}
+                      style={[
+                        styles.cardDiffText,
+                        dashboardData?.leads_created_stats
+                          ?.leads_created_count_difference < 0 && {
+                          color: colors.darkRed,
+                        },
+                      ]}
+                    >
+                      {Math.abs(
+                        dashboardData?.leads_created_stats
+                          ?.leads_created_count_difference,
+                      ).toFixed(2)}{' '}
+                      (
+                      {Math.abs(
+                        dashboardData?.leads_created_stats
+                          ?.leads_created_count_percent_difference,
+                      ).toFixed(2)}
+                      %)
+                    </Text>
+                  </View>
                 </View>
               </ItemCard>
               <View style={{ width: wp(16) }} />
@@ -309,26 +221,29 @@ const Dashboard = () => {
                     }
                     style={commonStyles.icon24}
                   />
-                  <Text
-                    style={[
-                      styles.cardDiffText,
-                      dashboardData?.jobs_sold_stats
-                        ?.jobs_sold_count_difference < 0 && {
-                        color: colors.darkRed,
-                      },
-                    ]}
-                  >
-                    {Math.abs(
-                      dashboardData?.jobs_sold_stats
-                        ?.jobs_sold_count_difference,
-                    ).toFixed(2)}{' '}
-                    (
-                    {Math.abs(
-                      dashboardData?.jobs_sold_stats
-                        ?.jobs_sold_count_percent_difference,
-                    ).toFixed(2)}
-                    %)
-                  </Text>
+                  <View style={commonStyles.flex}>
+                    <Text
+                      numberOfLines={2}
+                      style={[
+                        styles.cardDiffText,
+                        dashboardData?.jobs_sold_stats
+                          ?.jobs_sold_count_difference < 0 && {
+                          color: colors.darkRed,
+                        },
+                      ]}
+                    >
+                      {Math.abs(
+                        dashboardData?.jobs_sold_stats
+                          ?.jobs_sold_count_difference,
+                      ).toFixed(2)}{' '}
+                      (
+                      {Math.abs(
+                        dashboardData?.jobs_sold_stats
+                          ?.jobs_sold_count_percent_difference,
+                      ).toFixed(2)}
+                      %)
+                    </Text>
+                  </View>
                 </View>
               </ItemCard>
             </View>
@@ -350,26 +265,29 @@ const Dashboard = () => {
                   }
                   style={commonStyles.icon24}
                 />
-                <Text
-                  style={[
-                    styles.cardDiffText,
-                    dashboardData?.conversion_rate_stats
-                      ?.conversion_rate_difference < 0 && {
-                      color: colors.darkRed,
-                    },
-                  ]}
-                >
-                  {Math.abs(
-                    dashboardData?.conversion_rate_stats
-                      ?.conversion_rate_difference,
-                  ).toFixed(2)}{' '}
-                  (
-                  {Math.abs(
-                    dashboardData?.conversion_rate_stats
-                      ?.conversion_rate_percent_difference,
-                  ).toFixed(2)}
-                  %)
-                </Text>
+                <View style={commonStyles.flex}>
+                  <Text
+                    numberOfLines={2}
+                    style={[
+                      styles.cardDiffText,
+                      dashboardData?.conversion_rate_stats
+                        ?.conversion_rate_difference < 0 && {
+                        color: colors.darkRed,
+                      },
+                    ]}
+                  >
+                    {Math.abs(
+                      dashboardData?.conversion_rate_stats
+                        ?.conversion_rate_difference,
+                    ).toFixed(2)}{' '}
+                    (
+                    {Math.abs(
+                      dashboardData?.conversion_rate_stats
+                        ?.conversion_rate_percent_difference,
+                    ).toFixed(2)}
+                    %)
+                  </Text>
+                </View>
               </View>
             </ItemCard>
             <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>

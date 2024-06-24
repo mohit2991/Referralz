@@ -109,7 +109,7 @@ const ProfileScreen = () => {
               style={styles.profileImgView}
             />
             <View style={styles.profileNameView}>
-              <Text style={styles.profileNameText}>
+              <Text numberOfLines={1} style={styles.profileNameText}>
                 {userData?.first_name} {userData?.last_name}
               </Text>
               <TouchableOpacity onPress={() => navigate('EditProfileScreen')}>
@@ -202,10 +202,13 @@ const styles = StyleSheet.create({
     width: wp(56),
     height: wp(56),
     borderRadius: wp(56),
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    borderWidth: wp(1),
+    borderColor: colors.xLiteGrey,
   },
   profileNameView: {
     marginLeft: wp(12),
+    flex: 1,
   },
   itemTitleText: {
     marginLeft: wp(8),

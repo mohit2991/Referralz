@@ -97,7 +97,6 @@ const PayBilling = () => {
       },
       payment_method: selectedPayoutMethod.value,
     };
-
     // Update user deatils API Call
     await handleApiCall(
       () => updateUserDetails(userPayload), // Call API
@@ -109,6 +108,7 @@ const PayBilling = () => {
             ...prevUserData,
             ...userPayload,
           }));
+          navigate('ProfileScreen');
         }
       },
       messages.profileSubmitted,
@@ -171,10 +171,10 @@ const PayBilling = () => {
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <TextInputComp
-            value={formData?.address?.postal_code}
+            value={formData?.address?.postal_code.toString()}
             maxLength={8}
             labelText={'Postal code'}
             onChangeText={(text) => handleChange('postal_code', text)}
@@ -187,7 +187,7 @@ const PayBilling = () => {
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <Pressable
             onPress={() => setIsConditionChecked(!isConditionChecked)}

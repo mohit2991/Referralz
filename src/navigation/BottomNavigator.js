@@ -7,16 +7,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { commonStyles } from '../styles/styles';
+import { CreateLeadBottomSheet } from '../components';
 import Dashboard from '../screens/dashboard/Dashboard';
 import WalletScreen from '../screens/wallet/WalletScreen';
 import LeadsListScreen from '../screens/leads/LeadsListScreen';
 import ActivityScreen from '../screens/activity/ActivityScreen';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
-import { CreateLeadBottomSheet } from '../components';
 
 const Tab = createBottomTabNavigator();
 
-export const Dummy = () => <View />;
+export const CreateLead = () => <View />;
 
 const BottomTabs = () => {
   const insets = useSafeAreaInsets();
@@ -25,6 +25,9 @@ const BottomTabs = () => {
   return (
     <View style={commonStyles.flex}>
       <Tab.Navigator
+        // tabBarOptions={{
+        //   keyboardHidesTabBar: true,
+        // }}
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarIcon: ({ focused }) => {
@@ -33,7 +36,6 @@ const BottomTabs = () => {
               iconName = icons.dashboard;
             } else if (route.name === 'Leads') {
               iconName = icons.leadsIcon;
-            } else if (route.name === 'Dummy') {
             } else if (route.name === 'Activity') {
               iconName = icons.activity;
             } else if (route.name === 'Wallet') {
@@ -58,7 +60,7 @@ const BottomTabs = () => {
               label = 'Dashboard';
             } else if (route.name === 'Leads') {
               label = 'Leads';
-            } else if (route.name === 'Dummy') {
+            } else if (route.name === 'Create Lead') {
               label = '';
             } else if (route.name === 'Activity') {
               label = 'Activity';
@@ -86,7 +88,7 @@ const BottomTabs = () => {
       >
         <Tab.Screen name="Dashboard" component={Dashboard} />
         <Tab.Screen name="Leads" component={LeadsListScreen} />
-        <Tab.Screen name="Dummy" component={Dummy} />
+        <Tab.Screen name="Create Lead" component={CreateLead} />
         <Tab.Screen name="Activity" component={ActivityScreen} />
         <Tab.Screen name="Wallet" component={WalletScreen} />
       </Tab.Navigator>

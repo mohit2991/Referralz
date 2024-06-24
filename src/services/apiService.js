@@ -156,7 +156,7 @@ export const getLead = async (userPayload) => {
   }
 };
 
-export const getLeadsSearch = async (userPayload, searchValue) => {
+export const getLeadSearch = async (userPayload, searchValue) => {
   try {
     const response = await api.post(apiEndpoints.getLeadsSearch(searchValue), userPayload);
     return response;
