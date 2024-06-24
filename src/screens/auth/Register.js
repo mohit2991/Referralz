@@ -9,6 +9,7 @@ import { commonStyles } from '../../styles/styles';
 import { Button, RadioSelector, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const Register = () => {
   const { navigate } = useNavigation();
@@ -25,6 +26,7 @@ const Register = () => {
   const [isReferralPartner, setIsReferralPartner] = useState(false);
   const [haveCompanyCode, setHaveCompanyCode] = useState(true);
   const [isPwdErr, setIsPwdErr] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSignInPress = () => {
     navigate('Login');
@@ -33,7 +35,7 @@ const Register = () => {
   const onHomeOwnerPress = () => {
     setIsHomeOver(true);
     setIsReferralPartner(false);
-    setCompanycode('')
+    setCompanycode('');
   };
 
   const onReferralPartnerPress = () => {
@@ -89,8 +91,11 @@ const Register = () => {
       btnText: 'Sign into Referralz',
       routeName: 'Login',
     };
+
+    setLoading(true);
+
     // Register API Call
-    handleApiCall(
+    await handleApiCall(
       () => createUser(userPayload),
       async (response) => {
         if (response) {
@@ -100,6 +105,8 @@ const Register = () => {
       },
       null, // Success message
     );
+
+    setLoading(false);
   };
 
   const resetState = () => {
@@ -119,6 +126,7 @@ const Register = () => {
 
   return (
     <View style={styles.root}>
+      <LoadingSpinner visible={loading} />
       <SafeAreaView />
       <KeyboardAwareScrollView
         bounces={false}
@@ -243,11 +251,11 @@ const Register = () => {
 
         <Text style={[styles.motoText, styles.termsPolicyText]}>
           {`By clicking "Agree and continue", You agree to Referralz's `}
-          <Text onPress={() => { }} style={styles.underLine}>
+          <Text onPress={() => {}} style={styles.underLine}>
             {'Terms of Service'}
           </Text>
           {' and '}
-          <Text onPress={() => { }} style={styles.underLine}>
+          <Text onPress={() => {}} style={styles.underLine}>
             {'Privacy Policy.'}
           </Text>
         </Text>

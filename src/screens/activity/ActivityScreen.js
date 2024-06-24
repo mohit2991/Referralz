@@ -24,19 +24,23 @@ import {
   getActivity,
   activityReadStatus,
 } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const ActivityScreen = () => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const { userData } = useUser();
-  const [todayActivityData, setTodayActivityData] = useState([]);
-  const [thisWeeActivitykData, setThisWeekActivityData] = useState([]);
+  const [todayActivityData, setTodayActivityData] = useState(null);
+  const [thisWeeActivitykData, setThisWeekActivityData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const getDasboardData = async () => {
     const userPayload = {
       filter_by_date: 'ONE_WEEK',
       isPaginationRequired: false,
     };
+
+    // API Call
     handleApiCall(
       () => dashboardDetails(userPayload),
       async (response) => {
@@ -82,6 +86,13 @@ const ActivityScreen = () => {
     getActivityData();
   }, []);
 
+  // Loader hide
+  useEffect(() => {
+    if (todayActivityData !== null && thisWeeActivitykData !== null) {
+      setLoading(false);
+    }
+  }, [todayActivityData, thisWeeActivitykData]);
+
   const renderTodayItems = ({ item }) => {
     return (
       <TouchableOpacity
@@ -115,7 +126,9 @@ const ActivityScreen = () => {
     return <LeadsItemCard item={item} />;
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       <Header
         isAvatar

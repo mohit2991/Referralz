@@ -11,15 +11,11 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 import { commonStyles } from '../../styles/styles';
-import {
-  BottomButton,
-  Header,
-  TextInputComp,
-  ToastAlert,
-} from '../../components';
+import { BottomButton, Header, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { changePassword } from '../../services/apiService';
 import useApiHandler from '../../hooks/useApiHandler';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export const CheckItem = ({ condition, value }) => {
   return (
@@ -51,6 +47,7 @@ const ChangePassword = () => {
   const [checkPwdLength, setCheckPwdLength] = useState(false);
   const [checkSpecialChar, setCheckSpecialChar] = useState(false);
   const [checkNumber, setCheckNumber] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setCheckUpperCase(/[A-Z]/.test(newPwd));
@@ -97,8 +94,10 @@ const ChangePassword = () => {
       confirm_password: confirmPwd,
     };
 
+    setLoading(true);
+
     // Get Dashboard Deatils API Call
-    handleApiCall(
+    await handleApiCall(
       () => changePassword(userPayload), // Call API
       async (response) => {
         // Callback respose after success
@@ -106,10 +105,13 @@ const ChangePassword = () => {
         navigate('ProfileScreen');
       },
     );
+
+    setLoading(false);
   };
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Change password'} />
       <View style={commonStyles.container}>
         <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
