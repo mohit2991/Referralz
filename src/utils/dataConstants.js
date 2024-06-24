@@ -71,7 +71,7 @@ export const payoutMethodsListData = [
     title: 'Virtual card',
     desc: 'Description',
     isSelected: false,
-    value: "VIRTUAL_CARD",
+    value: "VIRTUAL_VISA",
   },
 ];
 
@@ -147,22 +147,5 @@ export const homeLeadsList = [
     address: '970 Ersel Street, Carrollton, TX 75006',
     status: 'Referral Paid',
     interest: 'Low',
-  },
-];
-
-export const todayActivityData = [
-  {
-    id: 1,
-    icon: icons.dollars,
-    title: 'Referral paid',
-    description: `Cha-ching! You've earned $XXX from Lead #12345. Keep up the good work`,
-    time: 'Just now',
-  },
-  {
-    id: 2,
-    icon: icons.checkShield,
-    title: 'Inspection completed',
-    description: `Good news! Your earnings card has been issued. Keep an eye out for more updates!`,
-    time: '4h ago',
   },
 ];

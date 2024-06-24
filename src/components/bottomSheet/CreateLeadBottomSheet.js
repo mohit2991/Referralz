@@ -4,12 +4,19 @@ import {
   Image,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetTextInput,
+} from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import { colors, fontSize, fonts, hp, icons, isIos, wp } from '../../utils';
 import TextInputComp from '../common/TextInputComp';
@@ -691,18 +698,20 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                     </Text>
                   </View>
                   <View style={{ marginTop: hp(16) }}>
-                    <TextInput
-                      maxLength={300}
-                      textAlignVertical="top"
-                      style={[styles.textInput]}
+                    <BottomSheetTextInput
+                      placeholder="Type Here..."
                       multiline={true}
-                      value={formState.description}
-                      onChangeText={(text) =>
+                      textAlignVertical="top"
+                      onChangeText={(text)=>{
                         setFormState((prevState) => ({
                           ...prevState,
                           description: text,
-                        }))
-                      }
+                        }));
+                      }}
+                      style={styles.textInput}
+                      maxLength={300}
+                      autoCorrect={false}
+                      autoCapitalize={'sentences'}
                     />
                     {/* <View {...panResponder.panHandlers} style={styles.resizeHandle}>
                 <Image source={icons.expander} style={commonStyles.icon24} />

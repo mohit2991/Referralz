@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
@@ -103,7 +104,9 @@ const styles = StyleSheet.create({
   avatarStyle: {
     width: wp(40),
     height: wp(40),
+    borderWidth: wp(1),
+    resizeMode: 'cover',
     borderRadius: wp(40),
-    resizeMode: 'contain',
+    borderColor: colors.xLiteGrey,
   },
 });
