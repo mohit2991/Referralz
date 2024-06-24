@@ -145,16 +145,19 @@ const LeadsListScreen = () => {
                 </View>
               </Shadow>
               <Text style={styles.searchTipText}>
-                {'Search by Lead Id, Name, Address'}
+                {'Search by Lead Id, Name'}
               </Text>
             </View>
           ) : (
-            <FlatList
-              data={searchLeadData}
-              keyExtractor={(item) => item?.id?.toString()}
-              renderItem={renderLeadsByReferrals}
-              style={styles.flatListStyle}
-            />
+            <View>
+              <Text style={styles.searchResultText}>{'Result'}</Text>
+              <FlatList
+                data={searchLeadData}
+                keyExtractor={(item) => item?.id?.toString()}
+                renderItem={renderLeadsByReferrals}
+                style={styles.flatListStyle}
+              />
+            </View>
           )}
         </View>
       ) : (
@@ -214,4 +217,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: hp(130),
   },
+  searchResultText: {
+    fontSize: fontSize(18),
+    lineHeight: hp(28),
+    fontFamily: fonts.semiBold,
+    marginTop: hp(22),
+  }
 });
