@@ -18,6 +18,7 @@ import { deleteUser, logoutUser } from '../../services/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
@@ -25,6 +26,7 @@ const ProfileScreen = () => {
   const { userData, setUserData } = useUser();
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isLogoutModal, setIsLogoutModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const renderProfileListItem = ({ item }) => {
     return (
@@ -54,8 +56,10 @@ const ProfileScreen = () => {
   };
 
   const handleDeleteAccount = async () => {
+    setLoading(true);
+
     // Delete User API Call
-    handleApiCall(
+    await handleApiCall(
       () => deleteUser(), // Call API
       async (response) => {
         // Callback respose after success
@@ -66,11 +70,15 @@ const ProfileScreen = () => {
       },
       null,
     );
+
+    setLoading(false);
   };
 
   const handleLogout = async () => {
+    setLoading(true);
+
     // Logout User API Call
-    handleApiCall(
+    await handleApiCall(
       () => logoutUser(), // Call API
       async (response) => {
         // Callback respose after success
@@ -81,10 +89,13 @@ const ProfileScreen = () => {
       },
       null,
     );
+
+    setLoading(false);
   };
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Profile'} />
       <View style={styles.container}>
         <ScrollView bounces={false} style={styles.scrollViewStyle}>
@@ -92,7 +103,7 @@ const ProfileScreen = () => {
             <Image
               source={
                 userData?.download_profile_img_url !== null
-                  ? { uri: userData.download_profile_img_url }
+                  ? { uri: userData?.download_profile_img_url }
                   : icons.avatar
               }
               style={styles.profileImgView}

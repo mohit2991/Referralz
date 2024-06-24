@@ -8,6 +8,7 @@ import { updateUserDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export const SettingItem = ({
   title,
@@ -39,10 +40,13 @@ const SettingScreen = () => {
   const [isEmailNotificationOn, setIsEmailNotificationOn] = useState(
     userData?.email_notification_enable,
   );
+  const [loading, setLoading] = useState(false);
 
   const updateNotificationSettings = async (userPayload) => {
     // Update user deatils API Call
-    handleApiCall(
+    setLoading(true);
+
+    await handleApiCall(
       () => updateUserDetails(userPayload), // Call API
       async (response) => {
         // Callback respose after success
@@ -55,6 +59,8 @@ const SettingScreen = () => {
       },
       messages.profileSubmitted,
     );
+
+    setLoading(false);
   };
 
   const pushNotification = () => {
@@ -73,6 +79,7 @@ const SettingScreen = () => {
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Settings'} />
       <View style={commonStyles.container}>
         <ScrollView style={styles.contentContainer} bounces={false}>
