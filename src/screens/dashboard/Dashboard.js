@@ -60,12 +60,9 @@ const Dashboard = () => {
       filter_by_date: selectedFilter ? selectedFilter.value : 'ONE_WEEK',
       isPaginationRequired: false,
     };
-
-    // Get Dashboard Deatils API Call
     handleApiCall(
-      () => dashboardDetails(userPayload), // Call API
+      () => dashboardDetails(userPayload),
       async (response) => {
-        // Callback respose after success
         if (response) {
           setDashboardData(response?.data);
         }
