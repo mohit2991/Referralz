@@ -21,6 +21,7 @@ const EditProfileVerification = () => {
   const { userPayload } = params;
   const { setUserData } = useUser();
   const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleOtpChange = (code) => {
     setCode(code);
@@ -31,13 +32,15 @@ const EditProfileVerification = () => {
   };
 
   const updateProfile = async () => {
+    setLoading(true);
+
     // API Call
-    handleApiCall(
+    await handleApiCall(
       () => contactVerificationOtp(code), // Call API
       async (response) => {
         // Callback respose after success
         if (response) {
-          handleApiCall(
+          await handleApiCall(
             () => updateUserDetails(userPayload), // Call API
             async (results) => {
               // Callback respose after success
@@ -55,6 +58,8 @@ const EditProfileVerification = () => {
       },
       messages.profileSubmitted,
     );
+
+    setLoading(false);
   };
 
   useEffect(() => {

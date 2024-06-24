@@ -6,6 +6,7 @@ import { colors, fontSize, fonts, hp } from '../../utils';
 import { forgotPassword } from '../../services/apiService';
 import useApiHandler from '../../hooks/useApiHandler';
 import { Button, Header, TextInputComp } from '../../components';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();
@@ -13,6 +14,7 @@ const ForgotPassword = () => {
 
   const [email, setEmail] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (email !== '') {
@@ -32,8 +34,10 @@ const ForgotPassword = () => {
       email: email,
     };
 
+    setLoading(true);
+
     // API Call
-    handleApiCall(
+    await handleApiCall(
       () => forgotPassword(email), // Call API
       async (response) => {
         // Callback respose after success
@@ -42,6 +46,8 @@ const ForgotPassword = () => {
       },
       null, // Success message
     );
+
+    setLoading(false);
   };
 
   const resetState = () => {
@@ -50,6 +56,7 @@ const ForgotPassword = () => {
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton />
       <ScrollView style={commonStyles.container}>
         <Text style={styles.headerText}>{'Forgot password?'}</Text>

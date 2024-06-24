@@ -18,6 +18,7 @@ import { updateUserDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export const PaymentMethodItem = ({ item, onPress }) => {
   return (
@@ -44,7 +45,6 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 };
 
 const PayBilling = () => {
-  const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
   const [payoutMethodsList, setPayoutMethodsList] = useState(
@@ -85,6 +85,7 @@ const PayBilling = () => {
 
   const payBilling = async () => {
     setLoading(true);
+
     const userPayload = {
       address: {
         address: formData?.address?.address,
@@ -97,7 +98,7 @@ const PayBilling = () => {
       payment_method: selectedPayoutMethod.value,
     };
     // Update user deatils API Call
-    handleApiCall(
+    await handleApiCall(
       () => updateUserDetails(userPayload), // Call API
       async (response) => {
         // Callback respose after success
@@ -109,15 +110,16 @@ const PayBilling = () => {
           }));
           navigate('ProfileScreen');
         }
-
-        setLoading(false);
       },
       messages.profileSubmitted,
     );
+
+    setLoading(false);
   };
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Payout and billing '} />
       <View style={commonStyles.container}>
         <KeyboardAwareScrollView
