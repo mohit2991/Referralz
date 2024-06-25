@@ -16,7 +16,6 @@ import DatePicker from 'react-native-date-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, isIos, wp } from '../../utils';
 import {
@@ -188,6 +187,7 @@ const EditProfileScreen = () => {
               ...prevUserData,
               ...userPayload,
             }));
+            navigate('ProfileScreen');
           }
         },
         messages.profileSubmitted,
@@ -262,7 +262,7 @@ const EditProfileScreen = () => {
                 />
               )
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <TextInputComp
             value={

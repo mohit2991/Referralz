@@ -20,4 +20,5 @@ export const colors = {
   lightSaffron: '#F6CFC1',
   liteSaffron: '#FFB03B',
   red: '#C92B2B',
+  blue: '#248DDE',
 };

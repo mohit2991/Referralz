@@ -41,4 +41,6 @@ export const icons = {
   close: require('../../assets/icons/close.png'),
   search: require('../../assets/icons/search.png'),
   filter: require('../../assets/icons/filter.png'),
+  contactUs: require('../../assets/icons/contactUs.png'),
+  closeLine: require('../../assets/icons/closeLine.png'),
 };
