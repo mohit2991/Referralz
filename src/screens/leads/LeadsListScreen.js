@@ -51,7 +51,6 @@ const LeadsListScreen = () => {
     handleApiCall(
       () => getLead(userPayload),
       async (response) => {
-        console.log({ getLead: response?.data });
         if (response) {
           setLeadData(response?.data);
         }
@@ -68,7 +67,6 @@ const LeadsListScreen = () => {
       () => getLeadSearch(userPayload, searchValue),
       async (response) => {
         if (response) {
-          console.log({ searchValue: response?.data });
           setSearchLeadData(response?.data);
         }
       },
