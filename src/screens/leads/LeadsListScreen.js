@@ -17,6 +17,7 @@ import {
   LeadsItemCard,
   SearchBar,
   Shadow,
+  TransactionFilter,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
 import {
@@ -43,6 +44,7 @@ const LeadsListScreen = () => {
   const [searchLeadData, setSearchLeadData] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const getLeadData = async () => {
     const userPayload = {
@@ -80,7 +82,10 @@ const LeadsListScreen = () => {
 
   const renderLeadsByReferrals = ({ item }) => {
     return (
-      <LeadsItemCard item={item} onItemPress={() => navigate('LeadDetails', { item })} />
+      <LeadsItemCard
+        item={item}
+        onItemPress={() => navigate('LeadDetails', { item })}
+      />
     );
   };
 
@@ -129,7 +134,9 @@ const LeadsListScreen = () => {
           setIsSearchFocused(false);
           handleBlurTextInput();
         }}
-        onFilterPress={() => { }}
+        onFilterPress={() => {
+          setIsFilterOpen(true);
+        }}
         onClosePress={handleSearchClose}
         onFocus={() => setIsSearchFocused(true)}
         onBlur={() => setIsSearchFocused(false)}
@@ -187,9 +194,16 @@ const LeadsListScreen = () => {
             btnText={'Create lead'}
             btnStyle={{ borderColor: colors.darkBlack }}
             btnTextStyle={{ color: colors.xDarkGrey }}
-            onPress={() => { }}
+            onPress={() => {}}
           />
         </KeyboardAvoidingView>
+      )}
+      {isFilterOpen && (
+        <TransactionFilter
+          isLeadsFilter
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+        />
       )}
     </View>
   );

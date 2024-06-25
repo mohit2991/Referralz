@@ -149,3 +149,77 @@ export const homeLeadsList = [
     interest: 'Low',
   },
 ];
+
+
+export const transactionList = [
+  {
+    id: 1,
+    title: 'Payout: Virtual Card',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 2,
+    title: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 3,
+    title: 'Payout: Venmo',
+    checkNumber: 'Check No. 735373',
+    amount: '5000',
+    isCard: true,
+  },
+  {
+    id: 4,
+    title: 'Payout: Virtual Card',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 5,
+    title: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 6,
+    title: 'Payout: Virtual Card',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 7,
+    title: 'Payout: Venmo',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 8,
+    title: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 9,
+    title: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 10,
+    title: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+];
