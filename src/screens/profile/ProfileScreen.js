@@ -23,7 +23,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
-  const { userData, setUserData } = useUser();
+  const { userData, setUserData, setDashboardData } = useUser();
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isLogoutModal, setIsLogoutModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -83,6 +83,8 @@ const ProfileScreen = () => {
       async (response) => {
         // Callback respose after success
         if (response) {
+          setUserData(null);
+          setDashboardData(null);
           await AsyncStorage.clear();
           navigate('Login');
         }
