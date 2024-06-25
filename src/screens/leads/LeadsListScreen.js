@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
@@ -19,12 +20,8 @@ import {
   Shadow,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
-import {
-  getLead,
-  getLeadSearch,
-  getLeadActivity,
-} from '../../services/apiService';
-import { useNavigation } from '@react-navigation/native';
+import { getLead, getLeadSearch } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const debounce = (func, delay) => {
   let timer;
@@ -43,12 +40,14 @@ const LeadsListScreen = () => {
   const [searchLeadData, setSearchLeadData] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getLeadData = async () => {
     const userPayload = {
       isPaginationRequired: false,
     };
-    handleApiCall(
+
+    await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
         if (response) {
@@ -63,7 +62,8 @@ const LeadsListScreen = () => {
     const userPayload = {
       isPaginationRequired: false,
     };
-    handleApiCall(
+
+    await handleApiCall(
       () => getLeadSearch(userPayload, searchValue),
       async (response) => {
         if (response) {
@@ -78,9 +78,18 @@ const LeadsListScreen = () => {
     getLeadData();
   }, []);
 
+  useEffect(() => {
+    if (leadData && searchLeadData) {
+      setLoading(false);
+    }
+  }, [leadData, searchLeadData]);
+
   const renderLeadsByReferrals = ({ item }) => {
     return (
-      <LeadsItemCard item={item} onItemPress={() => navigate('LeadDetails', { item })} />
+      <LeadsItemCard
+        item={item}
+        onItemPress={() => navigate('LeadDetails', { item })}
+      />
     );
   };
 
@@ -112,6 +121,7 @@ const LeadsListScreen = () => {
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       {!isSearchFocused && (
         <Header
           isAvatar
@@ -129,7 +139,7 @@ const LeadsListScreen = () => {
           setIsSearchFocused(false);
           handleBlurTextInput();
         }}
-        onFilterPress={() => { }}
+        onFilterPress={() => {}}
         onClosePress={handleSearchClose}
         onFocus={() => setIsSearchFocused(true)}
         onBlur={() => setIsSearchFocused(false)}
@@ -187,7 +197,7 @@ const LeadsListScreen = () => {
             btnText={'Create lead'}
             btnStyle={{ borderColor: colors.darkBlack }}
             btnTextStyle={{ color: colors.xDarkGrey }}
-            onPress={() => { }}
+            onPress={() => {}}
           />
         </KeyboardAvoidingView>
       )}
@@ -238,5 +248,5 @@ const styles = StyleSheet.create({
     lineHeight: hp(28),
     fontFamily: fonts.semiBold,
     marginTop: hp(22),
-  }
+  },
 });

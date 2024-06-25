@@ -12,11 +12,7 @@ import moment from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { commonStyles } from '../../styles/styles';
 import { useUser } from '../../contexts/userContext';
-import {
-  Header,
-  InfoComponent,
-  LeadsItemCard,
-} from '../../components';
+import { Header, InfoComponent, LeadsItemCard } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import {
@@ -41,7 +37,7 @@ const ActivityScreen = () => {
     };
 
     // API Call
-    handleApiCall(
+    await handleApiCall(
       () => dashboardDetails(userPayload),
       async (response) => {
         if (response) {
@@ -55,7 +51,7 @@ const ActivityScreen = () => {
 
   const getActivityData = async () => {
     const userPayload = {};
-    handleApiCall(
+    await handleApiCall(
       () => getActivity(userPayload),
       async (response) => {
         if (response) {
@@ -69,7 +65,7 @@ const ActivityScreen = () => {
 
   const updateActivityReadHandle = async (activityId) => {
     const userPayload = {};
-    handleApiCall(
+    await handleApiCall(
       () => activityReadStatus(userPayload, activityId),
       async (response) => {
         if (response) {
@@ -151,7 +147,9 @@ const ActivityScreen = () => {
             </View>
           )}
           <View style={styles.subTitleView}>
-            <Text style={[styles.subTitleText, styles.thisWeekText]}>{'This week'}</Text>
+            <Text style={[styles.subTitleText, styles.thisWeekText]}>
+              {'This week'}
+            </Text>
           </View>
           <View>
             <FlatList
