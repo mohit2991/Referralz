@@ -7,12 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
@@ -111,8 +106,14 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     }
   }, [isOpen]);
 
+  // useEffect(() => {
+  //   if (leadSourceData && leadPriorityData && dashboardFilter) {
+  //     setIsLoading(false);
+  //   }
+  // }, [leadSourceData, leadPriorityData, dashboardFilter]);
+
   const fetchLeadSourceData = async () => {
-    handleApiCall(
+    await handleApiCall(
       () => getLeadSources(),
       async (response) => {
         if (response) {
@@ -124,7 +125,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   };
 
   const fetchLeadPrioritiesData = async () => {
-    handleApiCall(
+    await handleApiCall(
       () => getLeadPriorities(),
       async (response) => {
         if (response) {
@@ -263,7 +264,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
       isPaginationRequired: false,
     };
 
-    handleApiCall(
+    await handleApiCall(
       () => dashboardDetails(userPayload),
       async (response) => {
         if (response) {
@@ -275,7 +276,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   };
 
   const createLeadImageHandle = async (id) => {
-    handleApiCall(() => createLeadImage(id));
+    await handleApiCall(() => createLeadImage(id));
   };
 
   const createLeadImageUpload = async (uploadImage, response) => {
@@ -330,11 +331,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
         .filter((item) => item?.fileName)
         .map((item) => item.fileName),
     };
+
     setIsLoading(true);
-    handleApiCall(
+
+    await handleApiCall(
       () => createLead(userPayload),
       async (response) => {
-        setIsLoading(false);
         if (response) {
           if (uploadImage?.length) {
             await createLeadImageUpload(uploadImage, response);
@@ -342,12 +344,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
           }
           setSuccessScreen(true);
           getDasboardData();
-        } else {
-          setIsLoading(false);
         }
       },
       null, // Success message
     );
+
+    setIsLoading(false);
   };
 
   const resetState = () => {
@@ -702,7 +704,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                       placeholder="Type Here..."
                       multiline={true}
                       textAlignVertical="top"
-                      onChangeText={(text)=>{
+                      onChangeText={(text) => {
                         setFormState((prevState) => ({
                           ...prevState,
                           description: text,
