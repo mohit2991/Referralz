@@ -15,6 +15,8 @@ import SettingScreen from '../screens/profile/SettingScreen';
 import ChangePassword from '../screens/profile/ChangePassword';
 import PayBilling from '../screens/profile/PayBilling';
 import BottomTabs from './BottomNavigator';
+import LeadDetails from '../screens/leads/LeadDetails';
+import ContactUsScreen from '../screens/leads/ContactUsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,8 +52,14 @@ const AppNavigator = () => {
           component={BottomTabs}
         />
         <Stack.Screen name="InboxCheck" component={InboxCheck} />
+        <Stack.Screen name="LeadDetails" component={LeadDetails} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+        <Stack.Screen
+          name="ContactUsScreen"
+          component={ContactUsScreen}
+          options={{ presentation: 'modal' }}
+        />
         <Stack.Screen
           name="EditProfileVerification"
           component={EditProfileVerification}

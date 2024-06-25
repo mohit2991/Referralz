@@ -151,7 +151,7 @@ const ActivityScreen = () => {
             </View>
           )}
           <View style={styles.subTitleView}>
-            <Text style={styles.subTitleText}>{'This week'}</Text>
+            <Text style={[styles.subTitleText, styles.thisWeekText]}>{'This week'}</Text>
           </View>
           <View>
             <FlatList
@@ -193,6 +193,9 @@ const styles = StyleSheet.create({
     color: colors.xDarkGrey,
     paddingHorizontal: wp(16),
     fontFamily: fonts.semiBold,
+  },
+  thisWeekText: {
+    marginTop: wp(12),
   },
   itemTitleText: {
     lineHeight: hp(24),

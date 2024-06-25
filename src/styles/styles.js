@@ -20,6 +20,7 @@ export const commonStyles = StyleSheet.create({
   flexRowCenter: {
     alignItems: 'center',
     flexDirection: 'row',
+    marginTop: hp(5),
   },
   flexRowJustify: {
     alignItems: 'center',
@@ -40,5 +41,8 @@ export const commonStyles = StyleSheet.create({
     width: wp(16),
     height: wp(16),
     resizeMode: 'contain',
+  },
+  safeAreaView: {
+    backgroundColor: colors.white,
   },
 });
