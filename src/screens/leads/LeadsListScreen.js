@@ -36,8 +36,8 @@ const LeadsListScreen = () => {
   const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
   const { userData } = useUser();
-  const [leadData, setLeadData] = useState([]);
-  const [searchLeadData, setSearchLeadData] = useState([]);
+  const [leadData, setLeadData] = useState(null);
+  const [searchLeadData, setSearchLeadData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -67,7 +67,9 @@ const LeadsListScreen = () => {
       () => getLeadSearch(userPayload, searchValue),
       async (response) => {
         if (response) {
-          setSearchLeadData(response?.data);
+          setSearchLeadData(response?.data === null ? [] : response?.data);
+        } else {
+          setSearchLeadData([]);
         }
       },
       null,
@@ -79,7 +81,7 @@ const LeadsListScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (leadData && searchLeadData) {
+    if (leadData !== null || searchLeadData !== null) {
       setLoading(false);
     }
   }, [leadData, searchLeadData]);
@@ -119,9 +121,10 @@ const LeadsListScreen = () => {
     setSearchLeadData([]);
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
-      <LoadingSpinner visible={loading} />
       {!isSearchFocused && (
         <Header
           isAvatar
