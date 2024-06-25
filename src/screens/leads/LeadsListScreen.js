@@ -1,5 +1,12 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
@@ -12,7 +19,12 @@ import {
   Shadow,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
-import { getLead, getLeadSearch, getLeadActivity } from '../../services/apiService';
+import {
+  getLead,
+  getLeadSearch,
+  getLeadActivity,
+} from '../../services/apiService';
+import { useNavigation } from '@react-navigation/native';
 
 const debounce = (func, delay) => {
   let timer;
@@ -24,6 +36,7 @@ const debounce = (func, delay) => {
 
 const LeadsListScreen = () => {
   const { handleApiCall } = useApiHandler();
+  const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
   const { userData } = useUser();
   const [leadData, setLeadData] = useState([]);
@@ -38,7 +51,6 @@ const LeadsListScreen = () => {
     handleApiCall(
       () => getLead(userPayload),
       async (response) => {
-        console.log({ getLead: response?.data })
         if (response) {
           setLeadData(response?.data);
         }
@@ -55,7 +67,6 @@ const LeadsListScreen = () => {
       () => getLeadSearch(userPayload, searchValue),
       async (response) => {
         if (response) {
-          console.log({ searchValue: response?.data })
           setSearchLeadData(response?.data);
         }
       },
@@ -68,7 +79,9 @@ const LeadsListScreen = () => {
   }, []);
 
   const renderLeadsByReferrals = ({ item }) => {
-    return <LeadsItemCard item={item} onItemPress={() => { }} />;
+    return (
+      <LeadsItemCard item={item} onItemPress={() => navigate('LeadDetails', { item })} />
+    );
   };
 
   const handleBlurTextInput = () => {
@@ -85,7 +98,7 @@ const LeadsListScreen = () => {
         getLeadSearchHandle(text);
       }
     }, 300),
-    []
+    [],
   );
 
   const handleSearchTextChange = (text) => {
@@ -110,6 +123,7 @@ const LeadsListScreen = () => {
         ref={searchInputRef}
         value={searchText}
         isFiltered={false}
+        editable={leadData?.length > 0}
         isFocus={isSearchFocused}
         onCancelPress={() => {
           setIsSearchFocused(false);
@@ -130,6 +144,7 @@ const LeadsListScreen = () => {
               keyExtractor={(item) => item?.id?.toString()}
               renderItem={renderLeadsByReferrals}
               style={styles.flatListStyle}
+              showsVerticalScrollIndicator={false}
             />
           ) : !searchLeadData?.length ? (
             <View style={styles.searchTipView}>
@@ -145,20 +160,24 @@ const LeadsListScreen = () => {
                 </View>
               </Shadow>
               <Text style={styles.searchTipText}>
-                {'Search by Lead Id, Name, Address'}
+                {'Search by Lead Id, Name'}
               </Text>
             </View>
           ) : (
-            <FlatList
-              data={searchLeadData}
-              keyExtractor={(item) => item?.id?.toString()}
-              renderItem={renderLeadsByReferrals}
-              style={styles.flatListStyle}
-            />
+            <View>
+              <Text style={styles.searchResultText}>{'Result'}</Text>
+              <FlatList
+                data={searchLeadData}
+                keyExtractor={(item) => item?.id?.toString()}
+                renderItem={renderLeadsByReferrals}
+                style={styles.flatListStyle}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
           )}
         </View>
       ) : (
-        <View style={styles.emptyContainer}>
+        <KeyboardAvoidingView style={styles.emptyContainer}>
           <InfoComponent
             icon={icons.leadsEmpty}
             title={'No leads yet'}
@@ -170,7 +189,7 @@ const LeadsListScreen = () => {
             btnTextStyle={{ color: colors.xDarkGrey }}
             onPress={() => { }}
           />
-        </View>
+        </KeyboardAvoidingView>
       )}
     </View>
   );
@@ -214,4 +233,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: hp(130),
   },
+  searchResultText: {
+    fontSize: fontSize(18),
+    lineHeight: hp(28),
+    fontFamily: fonts.semiBold,
+    marginTop: hp(22),
+  }
 });

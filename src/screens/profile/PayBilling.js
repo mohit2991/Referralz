@@ -8,10 +8,10 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { BottomButton, Header, TextInputComp } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
-import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { payoutMethodsListData } from '../../utils/dataConstants';
 import { updateUserDetails } from '../../services/apiService';
@@ -45,6 +45,7 @@ export const PaymentMethodItem = ({ item, onPress }) => {
 };
 
 const PayBilling = () => {
+  const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
   const { userData, setUserData } = useUser();
   const [payoutMethodsList, setPayoutMethodsList] = useState(

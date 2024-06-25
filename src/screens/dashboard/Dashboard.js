@@ -80,11 +80,6 @@ const Dashboard = () => {
     if (userData !== null && dashboardData !== null) {
       setLoading(false);
     }
-    // console.log(
-    //   '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',
-    //   userData,
-    //   dashboardData,
-    // );
   }, [userData, dashboardData]);
 
   const onFilterPress = (item) => {
