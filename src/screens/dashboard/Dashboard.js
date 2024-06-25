@@ -7,15 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import moment from 'moment';
 import React, { useState, useEffect } from 'react';
-import {
-  BarGraph,
-  Header,
-  ItemCard,
-  LeadsItemCard,
-  ToastAlert,
-} from '../../components';
+import { BarGraph, Header, ItemCard, LeadsItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { dashboardFilterOptionsList } from '../../utils/dataConstants';
@@ -46,7 +39,7 @@ const Dashboard = () => {
       async (response) => {
         // Callback respose after success
         if (response) {
-          setUserData(response?.data);
+          await setUserData(response?.data);
         }
       },
       null,
@@ -64,7 +57,7 @@ const Dashboard = () => {
       () => dashboardDetails(userPayload), // Call API
       async (response) => {
         if (response) {
-          setDashboardData(response?.data);
+          await setDashboardData(response?.data);
         }
       },
       null,
@@ -89,10 +82,12 @@ const Dashboard = () => {
       }
       return { ...obj, isSelected: false };
     });
+
     setFilterOptions(updateFilterOptions);
     const selectedFilter = updateFilterOptions.find(
       (method) => method.isSelected,
     );
+
     getDasboardData(selectedFilter);
     setDashboardFilter(selectedFilter);
   };

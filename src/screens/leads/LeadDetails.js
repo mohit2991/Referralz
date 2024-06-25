@@ -18,6 +18,7 @@ import { useUser } from '../../contexts/userContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useApiHandler from '../../hooks/useApiHandler';
 import { getLeadActivity } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const LeadDetails = () => {
   const { navigate, goBack } = useNavigation();
@@ -28,12 +29,16 @@ const LeadDetails = () => {
   const [isDetailShow, setIsDetailShow] = useState(true);
   const [isDescOpen, setIsDescOpen] = useState(false);
   const [leadActivityData, setLeadActivityData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const getLeadActivityData = async () => {
     const userPayload = {
       isPaginationRequired: false,
     };
-    handleApiCall(
+
+    setLoading(true);
+
+    await handleApiCall(
       () => getLeadActivity(userPayload, item?.id),
       async (response) => {
         if (response) {
@@ -42,6 +47,8 @@ const LeadDetails = () => {
       },
       null,
     );
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -83,6 +90,7 @@ const LeadDetails = () => {
 
   return (
     <View style={commonStyles.flex}>
+      <LoadingSpinner visible={loading} />
       <SafeAreaView style={commonStyles.safeAreaView} />
       <View style={styles.headerContainer}>
         <View style={commonStyles.flexRowJustify}>
@@ -230,9 +238,15 @@ const LeadDetails = () => {
               {'Contact information'}
             </Text>
             <View style={styles.height24} />
-            <DetailItemView title={'Full name'} detail={`${item?.customer?.first_name} ${item?.customer?.last_name}`} />
+            <DetailItemView
+              title={'Full name'}
+              detail={`${item?.customer?.first_name} ${item?.customer?.last_name}`}
+            />
             <View style={styles.height16} />
-            <DetailItemView title={'Phone number'} detail={item?.customer?.phone_number} />
+            <DetailItemView
+              title={'Phone number'}
+              detail={item?.customer?.phone_number}
+            />
             <View style={styles.height16} />
             <DetailItemView
               title={'Email address'}
@@ -271,9 +285,7 @@ const LeadDetails = () => {
             </View>
             {isDescOpen && (
               <View style={{ marginTop: hp(24) }}>
-                <DetailItemView
-                  detail={item?.description}
-                />
+                <DetailItemView detail={item?.description} />
               </View>
             )}
           </ItemCard>

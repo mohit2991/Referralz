@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
@@ -20,12 +21,8 @@ import {
   TransactionFilter,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
-import {
-  getLead,
-  getLeadSearch,
-  getLeadActivity,
-} from '../../services/apiService';
-import { useNavigation } from '@react-navigation/native';
+import { getLead, getLeadSearch } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const debounce = (func, delay) => {
   let timer;
@@ -40,17 +37,19 @@ const LeadsListScreen = () => {
   const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
   const { userData } = useUser();
-  const [leadData, setLeadData] = useState([]);
-  const [searchLeadData, setSearchLeadData] = useState([]);
+  const [leadData, setLeadData] = useState(null);
+  const [searchLeadData, setSearchLeadData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getLeadData = async () => {
     const userPayload = {
       isPaginationRequired: false,
     };
-    handleApiCall(
+
+    await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
         if (response) {
@@ -65,11 +64,14 @@ const LeadsListScreen = () => {
     const userPayload = {
       isPaginationRequired: false,
     };
-    handleApiCall(
+
+    await handleApiCall(
       () => getLeadSearch(userPayload, searchValue),
       async (response) => {
         if (response) {
-          setSearchLeadData(response?.data);
+          setSearchLeadData(response?.data === null ? [] : response?.data);
+        } else {
+          setSearchLeadData([]);
         }
       },
       null,
@@ -79,6 +81,12 @@ const LeadsListScreen = () => {
   useEffect(() => {
     getLeadData();
   }, []);
+
+  useEffect(() => {
+    if (leadData !== null || searchLeadData !== null) {
+      setLoading(false);
+    }
+  }, [leadData, searchLeadData]);
 
   const renderLeadsByReferrals = ({ item }) => {
     return (
@@ -115,7 +123,9 @@ const LeadsListScreen = () => {
     setSearchLeadData([]);
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       {!isSearchFocused && (
         <Header
@@ -252,5 +262,5 @@ const styles = StyleSheet.create({
     lineHeight: hp(28),
     fontFamily: fonts.semiBold,
     marginTop: hp(22),
-  }
+  },
 });
