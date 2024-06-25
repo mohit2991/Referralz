@@ -68,7 +68,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const [isPriorityFocus, setIsPriorityFocus] = useState(false);
   const [isOopsProgramFocus, setIsoopsProgramFocus] = useState(false);
   const [successScreen, setSuccessScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [imageData, setImageData] = useState([{ id: 1 }]);
 
   const {
@@ -106,11 +106,11 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (leadSourceData && leadPriorityData && dashboardFilter) {
-      setIsLoading(false);
-    }
-  }, [leadSourceData, leadPriorityData, dashboardFilter]);
+  // useEffect(() => {
+  //   if (leadSourceData && leadPriorityData && dashboardFilter) {
+  //     setIsLoading(false);
+  //   }
+  // }, [leadSourceData, leadPriorityData, dashboardFilter]);
 
   const fetchLeadSourceData = async () => {
     await handleApiCall(
@@ -337,8 +337,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     await handleApiCall(
       () => createLead(userPayload),
       async (response) => {
-        setIsLoading(false);
-
         if (response) {
           if (uploadImage?.length) {
             await createLeadImageUpload(uploadImage, response);
@@ -346,12 +344,12 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
           }
           setSuccessScreen(true);
           getDasboardData();
-        } else {
-          setIsLoading(false);
         }
       },
       null, // Success message
     );
+
+    setIsLoading(false);
   };
 
   const resetState = () => {

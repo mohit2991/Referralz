@@ -7,14 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import {
   BarGraph,
   Header,
   ItemCard,
   LeadsItemCard,
-  ToastAlert,
 } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
