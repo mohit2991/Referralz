@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, FlatList } from 'react-native';
 import React from 'react';
 import { Header, ItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
@@ -7,6 +7,8 @@ import { useUser } from '../../contexts/userContext';
 
 const ContactUsScreen = () => {
   const { userData } = useUser();
+
+  console.log({ aaa: userData?.contact_us })
 
   const DetailItemView = ({ title, detail, detailTextColor }) => {
     return (
@@ -18,6 +20,26 @@ const ContactUsScreen = () => {
       </View>
     );
   };
+
+  const renderContactDetails = ({ item }) => {
+    return (
+      <ItemCard
+        shadowStyle={{ shadowOpacity: 0 }}
+        cardContainerStyle={styles.listCardView}
+      >
+        <Text style={styles.cardTitleTextStyle}>{item?.type == 'ADMIN' ? 'Project manager' : 'Business developer'}</Text>
+        <View style={styles.height24} />
+        <DetailItemView title={'Full name'} detail={`${item?.first_name} ${item?.last_name}`} />
+        <View style={styles.height16} />
+        <DetailItemView
+          title={'Phone number'}
+          detail={item?.contact_no}
+          detailTextColor={colors.blue}
+        />
+      </ItemCard>
+    );
+  };
+
   return (
     <View style={commonStyles.flex}>
       <Header leftIcon={icons.closeLine} isBackButton title={'Contact us'} />
@@ -25,21 +47,17 @@ const ContactUsScreen = () => {
         style={styles.scollViewStyle}
         showsVerticalScrollIndicator={false}
       >
-        <ItemCard
-          shadowStyle={{ shadowOpacity: 0 }}
-          cardContainerStyle={styles.listCardView}
-        >
-          <Text style={styles.cardTitleTextStyle}>{'Project manager'}</Text>
-          <View style={styles.height24} />
-          <DetailItemView title={'Full name'} detail={'Kathy Pacheco'} />
-          <View style={styles.height16} />
-          <DetailItemView
-            title={'Phone number'}
-            detail={'(917) 339-6416'}
-            detailTextColor={colors.blue}
-          />
-        </ItemCard>
-        <ItemCard
+
+        <FlatList
+          data={userData?.contact_us}
+          renderItem={renderContactDetails}
+        // ItemSeparatorComponent={() => (
+        //   <View
+        //     style={{ height: hp(1), backgroundColor: colors.xLiteGrey }}
+        //   />
+        // )}
+        />
+        {/* <ItemCard
           shadowStyle={{ shadowOpacity: 0 }}
           cardContainerStyle={styles.listCardView}
         >
@@ -52,7 +70,7 @@ const ContactUsScreen = () => {
             detail={'(414) 758-0031'}
             detailTextColor={colors.blue}
           />
-        </ItemCard>
+        </ItemCard> */}
       </ScrollView>
     </View>
   );
