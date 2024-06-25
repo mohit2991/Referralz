@@ -8,12 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import {
-  BarGraph,
-  Header,
-  ItemCard,
-  LeadsItemCard,
-} from '../../components';
+import { BarGraph, Header, ItemCard, LeadsItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { dashboardFilterOptionsList } from '../../utils/dataConstants';
@@ -87,10 +82,12 @@ const Dashboard = () => {
       }
       return { ...obj, isSelected: false };
     });
+
     setFilterOptions(updateFilterOptions);
     const selectedFilter = updateFilterOptions.find(
       (method) => method.isSelected,
     );
+
     getDasboardData(selectedFilter);
     setDashboardFilter(selectedFilter);
   };
