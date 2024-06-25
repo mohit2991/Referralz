@@ -13,6 +13,7 @@ import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
 import { useUser } from '../../contexts/userContext';
 import {
+  CreateLeadBottomSheet,
   Header,
   InfoComponent,
   LeadsItemCard,
@@ -43,6 +44,7 @@ const LeadsListScreen = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
 
   const getLeadData = async () => {
     const userPayload = {
@@ -177,7 +179,7 @@ const LeadsListScreen = () => {
                 </View>
               </Shadow>
               <Text style={styles.searchTipText}>
-                {'Search by Lead Id, Name'}
+                {'Search by Lead Id, Name, Address'}
               </Text>
             </View>
           ) : (
@@ -204,7 +206,9 @@ const LeadsListScreen = () => {
             btnText={'Create lead'}
             btnStyle={{ borderColor: colors.darkBlack }}
             btnTextStyle={{ color: colors.xDarkGrey }}
-            onPress={() => {}}
+            onPress={() => {
+              setIsCreateLeadVisible(true);
+            }}
           />
         </KeyboardAvoidingView>
       )}
@@ -213,6 +217,12 @@ const LeadsListScreen = () => {
           isLeadsFilter
           isOpen={isFilterOpen}
           onClose={() => setIsFilterOpen(false)}
+        />
+      )}
+      {isCreateLeadVisible && (
+        <CreateLeadBottomSheet
+          isOpen={isCreateLeadVisible}
+          onClose={() => setIsCreateLeadVisible(false)}
         />
       )}
     </View>
@@ -255,7 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: hp(130),
+    marginTop: hp(150),
   },
   searchResultText: {
     fontSize: fontSize(18),

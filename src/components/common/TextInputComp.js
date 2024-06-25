@@ -43,8 +43,8 @@ const TextInputComp = forwardRef(
           placeholder={placeholder}
           disabled={!editable}
           mode="flat"
-          underlineColor={colors.grey}
-          activeUnderlineColor={colors.grey}
+          underlineColor={colors.transparent}
+          activeUnderlineColor={colors.transparent}
           label={<Text style={styles.labelBlurStyle}>{labelText}</Text>}
           onSubmitEditing={onSubmitEditing}
           defaultValue={defaultValue}
@@ -72,6 +72,7 @@ const TextInputComp = forwardRef(
           cursorColor={colors.primary}
           textColor={colors.darkBlack}
           onFocus={onFocus}
+          selectionColor={colors.primary}
         />
       </View>
     );
