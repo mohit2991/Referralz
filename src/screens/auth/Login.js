@@ -90,6 +90,8 @@ const Login = () => {
             await deleteCredentials();
           }
 
+          setLoading(false);
+
           navigate('BottomTabs');
         }
       },
@@ -97,7 +99,9 @@ const Login = () => {
       messages.loginError, // Error message
     );
 
-    setLoading(false);
+    if (respose.error) {
+      setLoading(false);
+    }
   };
 
   return (
