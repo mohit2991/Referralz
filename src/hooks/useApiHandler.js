@@ -47,8 +47,6 @@ const useApiHandler = () => {
   };
 
   const determineErrorMessage = (error, response) => {
-    resposeCallback('Error');
-
     if (error) {
       return error.message;
     }

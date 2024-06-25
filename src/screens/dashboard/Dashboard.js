@@ -46,7 +46,7 @@ const Dashboard = () => {
       async (response) => {
         // Callback respose after success
         if (response) {
-          setUserData(response?.data);
+          await setUserData(response?.data);
         }
       },
       null,
@@ -64,7 +64,7 @@ const Dashboard = () => {
       () => dashboardDetails(userPayload), // Call API
       async (response) => {
         if (response) {
-          setDashboardData(response?.data);
+          await setDashboardData(response?.data);
         }
       },
       null,

@@ -10,6 +10,7 @@ import { Button, RadioSelector, TextInputComp } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import messages from '../../constants/messages';
 
 const Register = () => {
   const { navigate } = useNavigation();
@@ -86,8 +87,7 @@ const Register = () => {
 
     const routeData = {
       title: 'Success!',
-      description:
-        'Your registration has been completed successfully. An email with instructions to activate your membership has been sent to you.',
+      description: messages.registerSuccess,
       btnText: 'Sign into Referralz',
       routeName: 'Login',
     };
