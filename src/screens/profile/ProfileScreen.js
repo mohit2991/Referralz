@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { ConfirmationModal, Header, ToastAlert } from '../../components';
+import { ConfirmationModal, Header } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { profileItemList1, profileItemList2 } from '../../utils/dataConstants';
@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import messages from '../../constants/messages';
 
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
@@ -71,6 +72,8 @@ const ProfileScreen = () => {
       null,
     );
 
+    setIsDeleteModal(false);
+
     setLoading(false);
   };
 
@@ -91,6 +94,8 @@ const ProfileScreen = () => {
       },
       null,
     );
+
+    setIsLogoutModal(false);
 
     setLoading(false);
   };
@@ -139,10 +144,8 @@ const ProfileScreen = () => {
       </View>
       <ConfirmationModal
         isVisible={isDeleteModal}
-        title={'Are you sure you want to delete your account?'}
-        description={
-          'Once deleted, you would lose access to this account along with the saved details on Referralz'
-        }
+        title={messages.deleteConfirmation}
+        description={messages.deleteConfirmation}
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleDeleteAccount}
@@ -154,9 +157,7 @@ const ProfileScreen = () => {
       <ConfirmationModal
         isVisible={isLogoutModal}
         title={'Log out'}
-        description={
-          'Do you really want to end your session? Please confirm if you wish to log out now.'
-        }
+        description={messages.logoutConfirmation}
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleLogout}
