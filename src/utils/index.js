@@ -3,6 +3,7 @@ import { profileItemList } from './dataConstants';
 import { fonts } from './fonts';
 import { fontSize, hp, wp, isIos, deviceType } from './globalConstants';
 import { icons } from './icons';
+import { encryptString, decryptString } from './crypto';
 
 export {
   icons,
@@ -14,4 +15,6 @@ export {
   isIos,
   deviceType,
   profileItemList,
+  encryptString,
+  decryptString,
 };
