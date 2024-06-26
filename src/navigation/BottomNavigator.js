@@ -29,6 +29,7 @@ const BottomTabs = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
   const [hasJustLoggedIn, setHasJustLoggedIn] = useState(false);
+  const [renderComponent, setRenderComponent] = useState(true);
 
   useEffect(() => {
     setNavigationRef(navigationRef.current);
@@ -137,7 +138,7 @@ const BottomTabs = ({ navigation }) => {
         ref={navigationRef}
       >
         <Tab.Screen name="Dashboard" component={Dashboard} />
-        <Tab.Screen name="Leads" component={LeadsListScreen} />
+        <Tab.Screen name="Leads" component={LeadsListScreen} initialParams={{ renderComponent: true }} />
         <Tab.Screen name="Create Lead" component={CreateLead} />
         <Tab.Screen name="Activity" component={ActivityScreen} />
         <Tab.Screen name="Wallet" component={WalletScreen} />
