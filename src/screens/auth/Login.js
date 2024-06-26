@@ -92,7 +92,7 @@ const Login = () => {
 
           setLoading(false);
 
-          navigate('BottomTabs');
+          navigate('Dashboard');
         }
       },
       messages.loginSuccess, // Success message

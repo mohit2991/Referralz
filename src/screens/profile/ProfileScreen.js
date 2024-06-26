@@ -65,6 +65,8 @@ const ProfileScreen = () => {
       async (response) => {
         // Callback respose after success
         if (response) {
+          await setUserData(null);
+          await setDashboardData(null);
           await AsyncStorage.clear();
           navigate('Login');
         }
@@ -86,9 +88,11 @@ const ProfileScreen = () => {
       async (response) => {
         // Callback respose after success
         if (response) {
-          setUserData(null);
-          setDashboardData(null);
+          await setUserData(null);
+          await setDashboardData(null);
           await AsyncStorage.clear();
+
+          setIsLogoutModal(false);
           navigate('Login');
         }
       },

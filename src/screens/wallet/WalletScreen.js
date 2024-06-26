@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import useApiHandler from '../../hooks/useApiHandler';
 import { getWallet } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const WalletScreen = () => {
   const { handleApiCall } = useApiHandler();
@@ -23,10 +24,11 @@ const WalletScreen = () => {
   const insets = useSafeAreaInsets();
   const { userData } = useUser();
   const [walletData, setWalletData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const getWalletData = async () => {
     const userPayload = {
-      filter_by_date: "ONE_WEEK",
+      filter_by_date: 'ONE_WEEK',
     };
 
     await handleApiCall(
@@ -44,11 +46,19 @@ const WalletScreen = () => {
     getWalletData();
   }, []);
 
+  useEffect(() => {
+    if (walletData) {
+      setLoading(false);
+    }
+  }, [walletData]);
+
   const renderTransactionList = ({ item }) => {
     return <WalletItem item={item} />;
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       <Header
         isAvatar
@@ -64,7 +74,9 @@ const WalletScreen = () => {
             style={styles.gradientView}
           >
             <Text style={styles.cardTitleText}>{'Lifetime commission'}</Text>
-            <Text style={styles.cardAmountText}>{`$${walletData?.left_time_commission}`}</Text>
+            <Text
+              style={styles.cardAmountText}
+            >{`$${walletData?.left_time_commission <= 0 ? 0 : walletData?.left_time_commission}`}</Text>
           </LinearGradient>
         </Shadow>
         {walletData?.transactions?.length ? (
