@@ -18,7 +18,9 @@ import moment from 'moment';
 
 const TransactionFilter = ({
   isOpen = false,
-  onClose = () => {},
+  applyFilters,
+  resetFiltersHandle,
+  onClose = () => { },
   isLeadsFilter,
 }) => {
   const insets = useSafeAreaInsets();
@@ -117,6 +119,46 @@ const TransactionFilter = ({
     setCurrentPicker(picker);
     setDatePickerOpen(true);
   };
+
+  const resetFilters = () => {
+    setPeriodFilterList({
+      allTime: true,
+      last7days: false,
+      last30days: false,
+      last90days: false,
+      custom: false,
+    });
+    setTransactionTypeFilterList({
+      check: true,
+      virtualCard: false,
+      ach: false,
+      venmo: false,
+    });
+    setLeadStatusFilter({
+      submitted: false,
+      pendingApproval: false,
+      inProgress: false,
+      workCompleted: false,
+      paid: false,
+      dismissed: false,
+      canceled: false,
+    });
+    setFromDate(new Date());
+    setToDate(new Date());
+    resetFiltersHandle()
+  };
+
+  const getSelectedFilters = () => {
+    const selectedFilters = {
+      period: periodFilterList,
+      fromDate,
+      toDate,
+      transactionType: transactionTypeFilterList,
+      leadStatus: leadStatusFilter,
+    };
+    applyFilters(selectedFilters);
+  };
+
 
   return (
     <Portal>
@@ -339,11 +381,11 @@ const TransactionFilter = ({
               </View>
             </ScrollView>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.resetBtn} onPress={() => {}}>
+              <TouchableOpacity style={styles.resetBtn} onPress={resetFilters}>
                 <Text style={styles.btnText}>{'Reset'}</Text>
               </TouchableOpacity>
               <View style={{ width: wp(8) }} />
-              <TouchableOpacity style={styles.resultBtn} onPress={() => {}}>
+              <TouchableOpacity style={styles.resultBtn} onPress={getSelectedFilters}>
                 <Text style={{ ...styles.btnText, color: colors.white }}>
                   {'See result'}
                 </Text>

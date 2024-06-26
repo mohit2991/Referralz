@@ -171,7 +171,6 @@ const EditProfileScreen = () => {
             navigate('EditProfileVerification', { userPayload });
           }
         },
-        null,
       );
 
       setLoading(false);

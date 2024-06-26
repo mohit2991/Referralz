@@ -14,9 +14,9 @@ const WalletItem = ({ item }) => {
         />
       </View>
       <View style={styles.textView}>
-        <Text style={styles.titleText}>{item?.title}</Text>
+        <Text style={styles.titleText}>{`Payout: ${item?.payment_method}`}</Text>
         <View style={commonStyles.flexRow}>
-          <Text style={styles.amountText}>{item?.checkNumber}</Text>
+          <Text style={styles.amountText}>{`Check No. ${item?.id}`}</Text>
           <View style={styles.vericalDevider} />
           <Text style={styles.amountText}>{`$${item?.amount}`}</Text>
         </View>
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     height: hp(12),
     marginHorizontal: wp(8),
     backgroundColor: colors.grey0,
+    marginTop: hp(5)
   },
   titleText: {
     lineHeight: hp(22),
