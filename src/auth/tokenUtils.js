@@ -49,18 +49,13 @@ export const isTokenExpiringSoon = (token) => {
 export const regenerateToken = async () => {
   const { handleApiCall } = useApiHandler();
 
-  const credentials = await loadCredentials();
-  if (credentials) {
-    setEmail(credentials.username);
-    setPassword(credentials.password);
-    setIsRemember(true);
-  }
+  const { username, password } = await loadCredentials();
 
   // API Call TO Genrate Token
   const payload = {
     client_id: 'referralz_mobile',
     grant_type: 'password',
-    username: email,
+    username,
     password,
   };
 
