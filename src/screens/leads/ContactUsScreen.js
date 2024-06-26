@@ -7,9 +7,6 @@ import { useUser } from '../../contexts/userContext';
 
 const ContactUsScreen = () => {
   const { userData } = useUser();
-
-  console.log({ aaa: userData?.contact_us })
-
   const DetailItemView = ({ title, detail, detailTextColor }) => {
     return (
       <View>

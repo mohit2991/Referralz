@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { FlatList, StyleSheet, View, Image, Text } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
@@ -11,7 +12,7 @@ import {
   Shadow,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
-import { getWallet, getWalletSearch } from '../../services/apiService';
+import { getWallet } from '../../services/apiService';
 
 const debounce = (func, delay) => {
   let timer;
@@ -21,18 +22,17 @@ const debounce = (func, delay) => {
   };
 };
 
-
 const TransactionList = () => {
   const { handleApiCall } = useApiHandler();
   const insets = useSafeAreaInsets();
   const searchInputRef = useRef(null);
   const [walletData, setWalletData] = useState(null);
-  const [walletFilterData, setWalletFilterData] = useState(null);
   const [searchWalletData, setSearchWalletData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFiltered, setisFiltered] = useState(false);
+  const [isFilterList, setIsFilterList] = useState({});
 
   const getWalletData = async (userPayload = {}, filterStatus) => {
     await handleApiCall(
@@ -40,7 +40,7 @@ const TransactionList = () => {
       async (response) => {
         if (response) {
           if (filterStatus) {
-            setWalletFilterData(response?.data);
+            setSearchWalletData(response?.data);
             setisFiltered(true)
           } else {
             setWalletData(response?.data);
@@ -52,64 +52,28 @@ const TransactionList = () => {
     );
   };
 
-  const getWalletSearchHandle = async (searchValue) => {
-    const userPayload = {};
-    await handleApiCall(
-      () => getWalletSearch(userPayload, searchValue),
-      async (response) => {
-        if (response) {
-          setSearchWalletData(response?.data === null ? [] : response?.data);
-        } else {
-          setSearchWalletData([]);
-        }
-      },
-      null,
-    );
-  };
-
-  useEffect(() => {
-    getWalletData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const payload = {
+        isPaginationRequired: false,
+      };
+      getWalletData(payload);
+    }, []),
+  );
 
   const renderTransactionList = ({ item }) => {
     return <WalletItem item={item} />;
   };
 
-  const handleBlurTextInput = () => {
-    if (searchInputRef.current) {
-      searchInputRef.current.blur();
-    }
-  };
-
-  const debouncedSearch = useCallback(
-    debounce((text) => {
-      if (text === '') {
-        setSearchWalletData([]);
-      } else {
-        getWalletSearchHandle(text);
-      }
-    }, 300),
-    [],
-  );
-
-  const handleSearchTextChange = (text) => {
-    setSearchText(text);
-    debouncedSearch(text);
-  };
-  const handleSearchClose = (text) => {
-    setSearchText('');
-    setSearchWalletData([]);
-  };
-
-  const applyFilters = (selectedFilters) => {
-    const { fromDate, toDate, leadStatus, period, transactionType } = selectedFilters;
+  const filterMapping = (filterDataList) => {
+    const { fromDate, toDate, transactionType, period, searchText } = filterDataList;
 
     const periodMapping = {
-      allTime: "ALL_TIME",
-      custom: "CUSTOM",
-      last30days: "ONE_MONTH",
-      last7days: "ONE_WEEK",
-      last90days: "THREE_MONTHS",
+      allTime: 'ALL_TIME',
+      custom: 'CUSTOM',
+      last30days: 'ONE_MONTH',
+      last7days: 'ONE_WEEK',
+      last90days: 'THREE_MONTHS',
     };
 
     const transactionTypeMapping = {
@@ -124,22 +88,81 @@ const TransactionList = () => {
       .filter((key) => transactionType[key])
       .map((key) => transactionTypeMapping[key]);
 
-    const payload = {
-      startDate: selectedPeriod === 'custom' ? fromDate.toISOString().split('T')[0] : null,
-      endDate: selectedPeriod === 'custom' ? toDate.toISOString().split('T')[0] : null,
-      payment_method: selectedTransactionTypes,
+    const formatDate = (date) => {
+      return new Date(date).toLocaleDateString('en-CA').replace(/-/g, '/');
     };
-    if (periodMapping[selectedPeriod] !== "ALL_TIME") {
+    const payload = {
+      startDate: selectedPeriod === 'custom' ? formatDate(fromDate) : null,
+      endDate: selectedPeriod === 'custom' ? formatDate(toDate) : null,
+      payment_method: selectedTransactionTypes,
+      searchText: searchText ?? "",
+      isPaginationRequired: false,
+    };
+    if (periodMapping[selectedPeriod] !== 'ALL_TIME') {
       payload.filter_by_date = periodMapping[selectedPeriod];
     }
+    return payload;
+  }
+
+  const handleBlurTextInput = () => {
+    if (searchInputRef.current) {
+      searchInputRef.current.blur();
+    }
+  };
+
+  const debouncedSearch = useCallback(
+    debounce((payload) => {
+      if (payload?.payment_method?.length > 0) {
+        getWalletData(payload, true);
+      } else if (payload?.searchText !== '') {
+        getWalletData(payload, true);
+      } else {
+        setSearchWalletData([]);
+        setisFiltered(false);
+      }
+    }, 300),
+    [],
+  );
+
+  const handleSearchTextChange = (text) => {
+    setSearchText(text);
+    let payload = {};
+    if (Object.keys(isFilterList).length > 0) {
+      payload = filterMapping({ ...isFilterList, searchText: text });
+    } else {
+      payload = { searchText: text };
+    }
+    debouncedSearch(payload);
+  };
+
+  const handleSearchClose = (text) => {
+    setSearchText('');
+    if (Object.keys(isFilterList).length > 0) {
+      payload = filterMapping({ ...isFilterList, searchText: "" });
+      getWalletData(payload, true);
+    } else {
+      setSearchWalletData([])
+      setisFiltered(false);
+    }
+  };
+
+  const applyFilters = (selectedFilters) => {
+    setIsFilterList(selectedFilters)
+    const payload = filterMapping({ ...selectedFilters, searchText: searchText });
     getWalletData(payload, true);
-    setIsFilterOpen(false)
+    setIsFilterOpen(false);
   };
 
   const resetFiltersHandle = () => {
-    setWalletFilterData(null)
-    setisFiltered(false)
-  }
+    setIsFilterList({})
+    setisFiltered(false);
+    if (searchText !== "") {
+      let payload = { searchText: searchText };
+      getWalletData(payload, true);
+    } else {
+      setSearchWalletData([])
+    }
+  };
 
   return (
     <View style={commonStyles.flex}>
@@ -177,7 +200,7 @@ const TransactionList = () => {
             ItemSeparatorComponent={() => <View style={{ height: hp(8) }} />}
             contentContainerStyle={{ paddingBottom: insets.bottom + hp(16) }}
           />
-        ) : !searchWalletData?.length && !isFiltered ? (
+        ) : !searchWalletData?.transactions?.length && !isFiltered ? (
           <View style={styles.searchTipView}>
             <Shadow>
               <View style={styles.searchView}>
@@ -194,43 +217,33 @@ const TransactionList = () => {
               {'Search by Transaction ID'}
             </Text>
           </View>
-        ) : isFiltered ? (
-          walletFilterData?.transactions?.length ? (
-            <FlatList
-              data={walletFilterData?.transactions}
-              showsVerticalScrollIndicator={false}
-              renderItem={renderTransactionList}
-              ItemSeparatorComponent={() => <View style={{ height: hp(8) }} />}
-              contentContainerStyle={{ paddingBottom: insets.bottom + hp(16) }}
-            />
-          ) : (
-            <View style={styles.searchTipView}>
-              <Shadow>
-                <View style={styles.searchView}>
-                  <Image
-                    source={icons.search}
-                    style={{
-                      ...commonStyles.icon24,
-                      tintColor: colors.xDarkGrey,
-                    }}
-                  />
-                </View>
-              </Shadow>
-              <Text style={styles.searchTipText}>
-                {'No Record Found'}
-              </Text>
-            </View>
-          )
-        ) : (
+        ) : searchWalletData?.transactions?.length ? (
           <View>
             <Text style={styles.searchResultText}>{'Result'}</Text>
             <FlatList
-              data={searchWalletData}
+              data={searchWalletData?.transactions}
               showsVerticalScrollIndicator={false}
               renderItem={renderTransactionList}
               ItemSeparatorComponent={() => <View style={{ height: hp(8) }} />}
               contentContainerStyle={{ paddingBottom: insets.bottom + hp(16) }}
             />
+          </View>
+        ) : (
+          <View style={styles.searchTipView}>
+            <Shadow>
+              <View style={styles.searchView}>
+                <Image
+                  source={icons.search}
+                  style={{
+                    ...commonStyles.icon24,
+                    tintColor: colors.xDarkGrey,
+                  }}
+                />
+              </View>
+            </Shadow>
+            <Text style={styles.searchTipText}>
+              {'No Record Found'}
+            </Text>
           </View>
         )}
       </View>
