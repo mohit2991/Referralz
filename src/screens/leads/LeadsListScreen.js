@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
-
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
 import { useUser } from '../../contexts/userContext';
@@ -23,7 +22,7 @@ import {
   TransactionFilter,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
-import { getLead, getLeadSearch } from '../../services/apiService';
+import { getLead } from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const debounce = (func, delay) => {
@@ -41,13 +40,13 @@ const LeadsListScreen = () => {
   const { userData } = useUser();
   const [leadData, setLeadData] = useState(null);
   const [searchLeadData, setSearchLeadData] = useState(null);
-  const [leadFilterData, setLeadFilterData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
   const [isFiltered, setisFiltered] = useState(false);
+  const [isFilterList, setIsFilterList] = useState({});
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
     await handleApiCall(
@@ -55,7 +54,7 @@ const LeadsListScreen = () => {
       async (response) => {
         if (response) {
           if (filterStatus) {
-            setLeadFilterData(response?.data);
+            setSearchLeadData(response?.data);
             setisFiltered(true);
           } else {
             setLeadData(response?.data);
@@ -67,34 +66,11 @@ const LeadsListScreen = () => {
     );
   };
 
-  const getLeadSearchHandle = async (searchValue) => {
-    const userPayload = {
-      isPaginationRequired: false,
-    };
-
-    await handleApiCall(
-      () => getLeadSearch(userPayload, searchValue),
-      async (response) => {
-        if (response) {
-          setSearchLeadData(response?.data === null ? [] : response?.data);
-        } else {
-          setSearchLeadData([]);
-        }
-      },
-      null,
-    );
-  };
-
   useFocusEffect(
     useCallback(() => {
       const payload = {
         isPaginationRequired: false,
       };
-
-      // clear search text
-      setSearchText('');
-
-      // get update data
       getLeadData(payload);
     }, []),
   );
@@ -114,35 +90,8 @@ const LeadsListScreen = () => {
     );
   };
 
-  const handleBlurTextInput = () => {
-    if (searchInputRef.current) {
-      searchInputRef.current.blur();
-    }
-  };
-
-  const debouncedSearch = useCallback(
-    debounce((text) => {
-      if (text === '') {
-        setSearchLeadData([]);
-      } else {
-        getLeadSearchHandle(text);
-      }
-    }, 300),
-    [],
-  );
-
-  const handleSearchTextChange = (text) => {
-    setSearchText(text);
-    debouncedSearch(text);
-  };
-  const handleSearchClose = (text) => {
-    setSearchText('');
-    setSearchLeadData([]);
-  };
-
-  const applyFilters = (selectedFilters) => {
-    const { fromDate, toDate, leadStatus, period, transactionType } =
-      selectedFilters;
+  const filterMapping = (filterDataList) => {
+    const { fromDate, toDate, leadStatus, period, searchText } = filterDataList;
 
     const periodMapping = {
       allTime: 'ALL_TIME',
@@ -169,26 +118,80 @@ const LeadsListScreen = () => {
       .filter((key) => leadStatus[key])
       .map((key) => leadStatusMapping[key]);
 
+    const formatDate = (date) => {
+      return new Date(date).toLocaleDateString('en-CA').replace(/-/g, '/');
+    };
     const payload = {
-      startDate:
-        selectedPeriod === 'custom'
-          ? fromDate.toISOString().split('T')[0]
-          : null,
-      endDate:
-        selectedPeriod === 'custom' ? toDate.toISOString().split('T')[0] : null,
+      startDate: selectedPeriod === 'custom' ? formatDate(fromDate) : null,
+      endDate: selectedPeriod === 'custom' ? formatDate(toDate) : null,
       statuses: selectedLeadStatus,
+      searchText: searchText ?? "",
       isPaginationRequired: false,
     };
     if (periodMapping[selectedPeriod] !== 'ALL_TIME') {
       payload.filter_by_date = periodMapping[selectedPeriod];
     }
+    return payload;
+  }
+
+  const handleBlurTextInput = () => {
+    if (searchInputRef.current) {
+      searchInputRef.current.blur();
+    }
+  };
+
+  const debouncedSearch = useCallback(
+    debounce((payload) => {
+      if (payload?.statuses?.length > 0) {
+        getLeadData(payload, true);
+      } else if (payload?.searchText !== '') {
+        getLeadData(payload, true);
+      } else {
+        setSearchLeadData([]);
+        setisFiltered(false);
+      }
+    }, 300),
+    [],
+  );
+
+  const handleSearchTextChange = (text) => {
+    setSearchText(text);
+    let payload = {};
+    if (Object.keys(isFilterList).length > 0) {
+      payload = filterMapping({ ...isFilterList, searchText: text });
+    } else {
+      payload = { searchText: text };
+    }
+    debouncedSearch(payload);
+  };
+
+  const handleSearchClose = (text) => {
+    setSearchText('');
+    if (Object.keys(isFilterList).length > 0) {
+      payload = filterMapping({ ...isFilterList, searchText: "" });
+      getLeadData(payload, true);
+    } else {
+      setSearchLeadData([])
+      setisFiltered(false);
+    }
+  };
+
+  const applyFilters = (selectedFilters) => {
+    setIsFilterList(selectedFilters)
+    const payload = filterMapping({ ...selectedFilters, searchText: searchText });
     getLeadData(payload, true);
     setIsFilterOpen(false);
   };
 
   const resetFiltersHandle = () => {
-    setLeadFilterData(null);
+    setIsFilterList({})
     setisFiltered(false);
+    if (searchText !== "") {
+      let payload = { searchText: searchText };
+      getLeadData(payload, true);
+    } else {
+      setSearchLeadData([])
+    }
   };
 
   return loading ? (
@@ -245,35 +248,10 @@ const LeadsListScreen = () => {
                 </View>
               </Shadow>
               <Text style={styles.searchTipText}>
-                {'Search by Lead Id, Name, Address'}
+                {'Search by Lead Id, Name'}
               </Text>
             </View>
-          ) : isFiltered ? (
-            leadFilterData?.length ? (
-              <FlatList
-                data={leadFilterData}
-                keyExtractor={(item) => item?.id?.toString()}
-                renderItem={renderLeadsByReferrals}
-                style={styles.flatListStyle}
-                showsVerticalScrollIndicator={false}
-              />
-            ) : (
-              <View style={styles.searchTipView}>
-                <Shadow>
-                  <View style={styles.searchView}>
-                    <Image
-                      source={icons.search}
-                      style={{
-                        ...commonStyles.icon24,
-                        tintColor: colors.xDarkGrey,
-                      }}
-                    />
-                  </View>
-                </Shadow>
-                <Text style={styles.searchTipText}>{'No Record Found'}</Text>
-              </View>
-            )
-          ) : (
+          ) : searchLeadData?.length ? (
             <View>
               <Text style={styles.searchResultText}>{'Result'}</Text>
               <FlatList
@@ -283,6 +261,21 @@ const LeadsListScreen = () => {
                 style={styles.flatListStyle}
                 showsVerticalScrollIndicator={false}
               />
+            </View>
+          ) : (
+            <View style={styles.searchTipView}>
+              <Shadow>
+                <View style={styles.searchView}>
+                  <Image
+                    source={icons.search}
+                    style={{
+                      ...commonStyles.icon24,
+                      tintColor: colors.xDarkGrey,
+                    }}
+                  />
+                </View>
+              </Shadow>
+              <Text style={styles.searchTipText}>{'No Record Found'}</Text>
             </View>
           )}
         </View>

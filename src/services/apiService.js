@@ -156,15 +156,6 @@ export const getLead = async (userPayload) => {
   }
 };
 
-export const getLeadSearch = async (userPayload, searchValue) => {
-  try {
-    const response = await api.post(apiEndpoints.getLeadSearch(searchValue), userPayload);
-    return response;
-  } catch (error) {
-    return handleError(error);
-  }
-};
-
 export const getLeadActivity = async (userPayload, id) => {
   try {
     const response = await api.post(apiEndpoints.getLeadActivity(id), userPayload);
@@ -195,15 +186,6 @@ export const activityReadStatus = async (userPayload, activityId) => {
 export const getWallet = async (userPayload) => {
   try {
     const response = await api.post(apiEndpoints.getWallet, userPayload);
-    return response;
-  } catch (error) {
-    return handleError(error);
-  }
-};
-
-export const getWalletSearch = async (userPayload, searchValue) => {
-  try {
-    const response = await api.post(apiEndpoints.getWalletSearch(searchValue), userPayload);
     return response;
   } catch (error) {
     return handleError(error);
