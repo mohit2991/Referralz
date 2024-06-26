@@ -315,9 +315,9 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       },
       amount: 0,
       status: 'REFERRAL_RECEIVED',
-      priority: formState.leadPriority,
-      source: formState.leadSource,
-      oops_problem: formState.oopsProgram,
+      priority: leadPriorityData.find((priority) => priority.name === formState.leadPriority)?.id || null,
+      source: leadSourceData.find((source) => source.name === formState.leadSource)?.id || null,
+      oops_problem: oopsProgramData.find((program) => program.name === formState.oopsProgram)?.id || null,
       description: formState.description,
       address: {
         address: formState.address,
@@ -333,8 +333,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     };
 
     setIsLoading(true);
-    console.log({ aaa1: userPayload })
-
     await handleApiCall(
       () => createLead(userPayload),
       async (response) => {

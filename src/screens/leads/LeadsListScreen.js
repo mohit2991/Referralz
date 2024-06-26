@@ -49,12 +49,10 @@ const LeadsListScreen = () => {
   const [isFiltered, setisFiltered] = useState(false);
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
-    console.log({ userPayload })
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
         if (response) {
-          console.log({ response })
           if (filterStatus) {
             setLeadFilterData(response?.data);
             setisFiltered(true)
