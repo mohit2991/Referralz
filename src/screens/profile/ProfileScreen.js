@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import axios from 'axios';
 
 import { ConfirmationModal, Header } from '../../components';
 import { commonStyles } from '../../styles/styles';
@@ -88,8 +89,6 @@ const ProfileScreen = () => {
       async (response) => {
         // Callback respose after success
         if (response) {
-          await setUserData(null);
-          await setDashboardData(null);
           await AsyncStorage.clear();
 
           setIsLogoutModal(false);

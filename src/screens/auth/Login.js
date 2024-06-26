@@ -88,7 +88,7 @@ const Login = () => {
       () => loginUser(userPayload), // Call API
       async (response) => {
         // Callback respose after success
-        const { access_token } = response.data;
+        const { access_token } = await response.data;
         if (access_token) {
           await AsyncStorage.setItem('accessToken', access_token);
 
@@ -105,7 +105,7 @@ const Login = () => {
 
           setLoading(false);
 
-          navigate('Dashboard');
+          navigate('BottomTabs');
         }
       },
       messages.loginSuccess, // Success message

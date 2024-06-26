@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useFocusEffect } from '@react-navigation/native';
 
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
@@ -87,19 +86,13 @@ const LeadsListScreen = () => {
     );
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const payload = {
-        isPaginationRequired: false,
-      };
+  useEffect(() => {
+    const payload = {
+      isPaginationRequired: false,
+    };
 
-      // clear search text
-      setSearchText('');
-
-      // get update data
-      getLeadData(payload);
-    }, []),
-  );
+    getLeadData(payload);
+  }, []);
 
   useEffect(() => {
     if (leadData !== null || searchLeadData !== null) {

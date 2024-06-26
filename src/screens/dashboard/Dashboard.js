@@ -16,15 +16,9 @@ import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { useFocusEffect } from '@react-navigation/native';
 
 const Dashboard = () => {
   const { handleApiCall } = useApiHandler();
-
-  const [filterOptions, setFilterOptions] = useState(
-    dashboardFilterOptionsList,
-  );
-  const [loading, setLoading] = useState(true);
   const {
     userData,
     setUserData,
@@ -33,51 +27,51 @@ const Dashboard = () => {
     setDashboardFilter,
   } = useUser();
 
+  const [filterOptions, setFilterOptions] = useState(
+    dashboardFilterOptionsList,
+  );
+  const [loading, setLoading] = useState(false);
+  const [isFetch, setIsFetch] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    await getUserData();
+    await getDasboardData();
+    setLoading(false);
+  };
+
   const getUserData = async () => {
-    // Get user deatils API Call
     await handleApiCall(
-      () => getUserDetails(), // Call API
-      async (response) => {
-        // Callback respose after success
-        if (response) {
-          await setUserData(response?.data);
+      getUserDetails,
+      (response) => {
+        if (response?.data) {
+          setUserData(response.data);
         }
       },
       null,
     );
   };
 
-  const getDasboardData = async (selectedFilter) => {
+  const getDasboardData = async () => {
     const userPayload = {
-      filter_by_date: selectedFilter ? selectedFilter.value : 'ONE_WEEK',
+      filter_by_date: 'ONE_WEEK', // Default filter or your preferred default
       isPaginationRequired: false,
     };
 
-    // Get Dashboard Deatils API Call
     await handleApiCall(
-      () => dashboardDetails(userPayload), // Call API
-      async (response) => {
-        if (response) {
-          await setDashboardData(response?.data);
+      () => dashboardDetails(userPayload),
+      (response) => {
+        if (response?.data) {
+          setDashboardData(response.data);
         }
       },
       null,
     );
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      setLoading(true);
-      getUserData();
-      getDasboardData();
-    }, []),
-  );
-
-  useEffect(() => {
-    if (userData !== null && dashboardData !== null) {
-      setLoading(false);
-    }
-  }, [userData, dashboardData]);
 
   const onFilterPress = (item) => {
     let updateFilterOptions = filterOptions?.map((obj) => {
