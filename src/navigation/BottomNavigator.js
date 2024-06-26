@@ -28,7 +28,7 @@ const BottomTabs = () => {
         // tabBarOptions={{
         //   keyboardHidesTabBar: true,
         // }}
-        screenOptions={({ route }) => ({
+        screenOptions={({ route = 'Dashboard' }) => ({
           headerShown: false,
           tabBarIcon: ({ focused }) => {
             let iconName;
