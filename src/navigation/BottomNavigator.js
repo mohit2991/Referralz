@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { CommonActions } from '@react-navigation/native';
 
 import { commonStyles } from '../styles/styles';
 import { CreateLeadBottomSheet } from '../components';
@@ -16,15 +17,18 @@ import {
   setNavigationRef,
   setupTokenExpirationCheck,
 } from '../auth/tokenManager';
+import { useUser } from '../contexts/userContext';
 
 const Tab = createBottomTabNavigator();
 
 export const CreateLead = () => <View />;
 
-const BottomTabs = () => {
+const BottomTabs = ({ navigation }) => {
   const navigationRef = useRef();
+  const { isLoggedIn } = useUser();
   const insets = useSafeAreaInsets();
   const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
+  const [hasJustLoggedIn, setHasJustLoggedIn] = useState(false);
 
   useEffect(() => {
     setNavigationRef(navigationRef.current);
@@ -34,6 +38,24 @@ const BottomTabs = () => {
       if (unsubscribe) unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setHasJustLoggedIn(true);
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (hasJustLoggedIn) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        })
+      );
+      setHasJustLoggedIn(false);
+    }
+  }, [hasJustLoggedIn, navigation]);
 
   const getTabIcon = (route, focused) => {
     let iconName;
@@ -101,6 +123,7 @@ const BottomTabs = () => {
   return (
     <View style={commonStyles.flex}>
       <Tab.Navigator
+        initialRouteName="Dashboard"
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarIcon: ({ focused }) => getTabIcon(route, focused),

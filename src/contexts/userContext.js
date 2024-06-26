@@ -2,11 +2,12 @@ import React, { createContext, useContext, useState } from 'react';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userData, setUserData] = useState(null);
     const [dashboardData, setDashboardData] = useState(null);
     const [dashboardFilter, setDashboardFilter] = useState('');
     return (
-        <UserContext.Provider value={{ userData, setUserData, dashboardData, setDashboardData, dashboardFilter, setDashboardFilter }}>
+        <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn, userData, setUserData, dashboardData, setDashboardData, dashboardFilter, setDashboardFilter }}>
             {children}
         </UserContext.Provider>
     );
