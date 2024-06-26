@@ -97,7 +97,7 @@ const LeadDetails = () => {
           <View style={commonStyles.flexRowCenter}>
             <TouchableOpacity
               style={{ padding: wp(8) }}
-              onPress={() => goBack()}
+              onPress={() => navigate('Leads', { renderComponent: false })}
             >
               <Image source={icons.backArrow} style={commonStyles.icon24} />
             </TouchableOpacity>

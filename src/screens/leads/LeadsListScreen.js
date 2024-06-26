@@ -33,7 +33,7 @@ const debounce = (func, delay) => {
   };
 };
 
-const LeadsListScreen = () => {
+const LeadsListScreen = ({ route }) => {
   const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
@@ -47,8 +47,10 @@ const LeadsListScreen = () => {
   const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
   const [isFiltered, setisFiltered] = useState(false);
   const [isFilterList, setIsFilterList] = useState({});
+  const initialParams = route.params || {};
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
+    console.log({ userPayload, isFilterList, searchText, aaaaaaa: "okkkkk" })
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
@@ -66,14 +68,16 @@ const LeadsListScreen = () => {
     );
   };
 
-  useFocusEffect(
-    useCallback(() => {
+  console.log({ aaa: initialParams?.renderComponent })
+
+  useEffect(() => {
+    if (initialParams?.renderComponent) {
       const payload = {
         isPaginationRequired: false,
       };
       getLeadData(payload);
-    }, []),
-  );
+    }
+  }, [initialParams?.renderComponent])
 
   useEffect(() => {
     if (leadData !== null || searchLeadData !== null) {

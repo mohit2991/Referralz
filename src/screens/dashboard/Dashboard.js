@@ -16,7 +16,6 @@ import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { useFocusEffect } from '@react-navigation/native';
 
 const Dashboard = () => {
   const { handleApiCall } = useApiHandler();
@@ -65,13 +64,11 @@ const Dashboard = () => {
     );
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      setLoading(true);
-      getUserData();
-      getDasboardData();
-    }, []),
-  );
+  useEffect(() => {
+    setLoading(true);
+    getUserData();
+    getDasboardData();
+  }, [])
 
   useEffect(() => {
     if (userData !== null && dashboardData !== null) {
