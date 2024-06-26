@@ -76,7 +76,9 @@ const WalletScreen = () => {
             <Text style={styles.cardTitleText}>{'Lifetime commission'}</Text>
             <Text
               style={styles.cardAmountText}
-            >{`$${walletData?.left_time_commission <= 0 ? 0 : walletData?.left_time_commission}`}</Text>
+            >
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(walletData?.left_time_commission <= 0 ? 0 : walletData?.left_time_commission)}
+            </Text>
           </LinearGradient>
         </Shadow>
         {walletData?.transactions?.length ? (

@@ -17,12 +17,10 @@ const useApi = () => {
     createLead: '/user/lead',
     createLeadImage: (id) => `/user/lead/${id}/success`,
     getLead: '/user/get-leads',
-    getLeadSearch: (searchValue) => `/user/lead/search?search-text=${searchValue}`,
     getLeadActivity: (id) => `/activity/lead/${id}`,
     getActivity: '/activity/user',
     activityReadStatus: (activityId) => `/activity/user/update-read-status?id=${activityId}`,
     getWallet: '/user/wallet',
-    getWalletSearch: (searchValue) => `/user/wallet/search?search-text=${searchValue}`,
   };
 };
 
