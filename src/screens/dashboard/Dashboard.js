@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BarGraph, Header, ItemCard, LeadsItemCard } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
@@ -16,6 +16,7 @@ import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Dashboard = () => {
   const { handleApiCall } = useApiHandler();
@@ -64,10 +65,13 @@ const Dashboard = () => {
     );
   };
 
-  useEffect(() => {
-    getUserData();
-    getDasboardData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      getUserData();
+      getDasboardData();
+    }, []),
+  );
 
   useEffect(() => {
     if (userData !== null && dashboardData !== null) {

@@ -15,7 +15,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { commonStyles } from '../../styles/styles';
 import { loginUser } from '../../services/apiService';
 import { Button, TextInputComp } from '../../components';
-import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
+import {
+  colors,
+  fontSize,
+  fonts,
+  hp,
+  icons,
+  wp,
+  encryptString,
+  decryptString,
+} from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import messages from '../../constants/messages';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -83,16 +92,20 @@ const Login = () => {
         if (access_token) {
           await AsyncStorage.setItem('accessToken', access_token);
 
-          // If login is successful and isRemember is true, store the credentials
+          const keepMeLogin = isRemember ? 'yes' : 'no';
+
+          // If login is successful, store the credentials
+
+          // If isRemember is true,
           if (isRemember) {
-            await storeCredentials(email, password);
+            await storeCredentials(email, password, keepMeLogin);
           } else {
-            await deleteCredentials();
+            await deleteCredentials(keepMeLogin);
           }
 
           setLoading(false);
 
-          navigate('BottomTabs');
+          navigate('Dashboard');
         }
       },
       messages.loginSuccess, // Success message

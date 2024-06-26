@@ -6,36 +6,65 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
+import React, { useState, useEffect } from 'react';
 import { Header, InfoComponent, Shadow, WalletItem } from '../../components';
 import { useUser } from '../../contexts/userContext';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import LinearGradient from 'react-native-linear-gradient';
-import { transactionList } from '../../utils/dataConstants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import useApiHandler from '../../hooks/useApiHandler';
+import { getWallet } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const WalletScreen = () => {
+  const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
   const insets = useSafeAreaInsets();
   const { userData } = useUser();
+  const [walletData, setWalletData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] = useState(false);
+  const getWalletData = async () => {
+    const userPayload = {
+      filter_by_date: 'ONE_WEEK',
+    };
+
+    await handleApiCall(
+      () => getWallet(userPayload),
+      async (response) => {
+        if (response) {
+          setWalletData(response?.data);
+        }
+      },
+      null,
+    );
+  };
+
+  useEffect(() => {
+    getWalletData();
+  }, []);
+
+  useEffect(() => {
+    if (walletData) {
+      setLoading(false);
+    }
+  }, [walletData]);
 
   const renderTransactionList = ({ item }) => {
     return <WalletItem item={item} />;
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       <Header
         isAvatar
         profileImage={userData?.download_profile_img_url}
         title={'Wallet'}
       />
-      <LoadingSpinner visible={loading} />
       <View style={styles.mainContainer}>
         <Shadow shadowStyle={styles.shadowStyle}>
           <LinearGradient
@@ -45,10 +74,12 @@ const WalletScreen = () => {
             style={styles.gradientView}
           >
             <Text style={styles.cardTitleText}>{'Lifetime commission'}</Text>
-            <Text style={styles.cardAmountText}>{'$0'}</Text>
+            <Text
+              style={styles.cardAmountText}
+            >{`$${walletData?.left_time_commission <= 0 ? 0 : walletData?.left_time_commission}`}</Text>
           </LinearGradient>
         </Shadow>
-        {true ? (
+        {walletData?.transactions?.length ? (
           <View style={styles.contentContainer}>
             <View style={styles.transTextView}>
               <Text style={styles.cardTitleText}>{'Transactions'}</Text>
@@ -60,7 +91,7 @@ const WalletScreen = () => {
               </TouchableOpacity>
             </View>
             <FlatList
-              data={transactionList}
+              data={walletData?.transactions}
               showsVerticalScrollIndicator={false}
               renderItem={renderTransactionList}
               ItemSeparatorComponent={() => <View style={{ height: hp(8) }} />}

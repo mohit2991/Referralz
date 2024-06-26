@@ -18,7 +18,9 @@ import moment from 'moment';
 
 const TransactionFilter = ({
   isOpen = false,
-  onClose = () => {},
+  applyFilters,
+  resetFiltersHandle,
+  onClose = () => { },
   isLeadsFilter,
 }) => {
   const insets = useSafeAreaInsets();
@@ -44,13 +46,15 @@ const TransactionFilter = ({
     venmo: false,
   });
   const [leadStatusFilter, setLeadStatusFilter] = useState({
-    submitted: false,
-    pendingApproval: false,
-    inProgress: false,
-    workCompleted: false,
-    paid: false,
-    dismissed: false,
-    canceled: false,
+    referralReceived: false,
+    inspectionScheduled: false,
+    inspectionCompleted: false,
+    referralPaid: false,
+    jobWon: false,
+    jobClosed: false,
+    jobClosedNoOpportunity: false,
+    jobClosedNoInsuranceNoMoney: false,
+    jobClosedHomeownerDeclined: false,
   });
 
   const { allTime, last7days, last30days, last90days, custom } =
@@ -59,13 +63,15 @@ const TransactionFilter = ({
   const { check, virtualCard, ach, venmo } = transactionTypeFilterList;
 
   const {
-    submitted,
-    pendingApproval,
-    inProgress,
-    workCompleted,
-    paid,
-    dismissed,
-    canceled,
+    referralReceived,
+    inspectionScheduled,
+    inspectionCompleted,
+    referralPaid,
+    jobWon,
+    jobClosed,
+    jobClosedNoOpportunity,
+    jobClosedNoInsuranceNoMoney,
+    jobClosedHomeownerDeclined
   } = leadStatusFilter;
 
   const snapPoints = useMemo(() => ['85%'], []);
@@ -117,6 +123,48 @@ const TransactionFilter = ({
     setCurrentPicker(picker);
     setDatePickerOpen(true);
   };
+
+  const resetFilters = () => {
+    setPeriodFilterList({
+      allTime: true,
+      last7days: false,
+      last30days: false,
+      last90days: false,
+      custom: false,
+    });
+    setTransactionTypeFilterList({
+      check: true,
+      virtualCard: false,
+      ach: false,
+      venmo: false,
+    });
+    setLeadStatusFilter({
+      referralReceived: false,
+      inspectionScheduled: false,
+      inspectionCompleted: false,
+      referralPaid: false,
+      jobWon: false,
+      jobClosed: false,
+      jobClosedNoOpportunity: false,
+      jobClosedNoInsuranceNoMoney: false,
+      jobClosedHomeownerDeclined: false,
+    });
+    setFromDate(new Date());
+    setToDate(new Date());
+    resetFiltersHandle()
+  };
+
+  const getSelectedFilters = () => {
+    const selectedFilters = {
+      period: periodFilterList,
+      fromDate,
+      toDate,
+      transactionType: transactionTypeFilterList,
+      leadStatus: leadStatusFilter,
+    };
+    applyFilters(selectedFilters);
+  };
+
 
   return (
     <Portal>
@@ -224,84 +272,108 @@ const TransactionFilter = ({
                     <>
                       <RadioSelector
                         multiSelect
-                        value={submitted}
-                        text={'Submitted'}
+                        value={referralReceived}
+                        text={'Referral Received'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            submitted: !submitted,
+                            referralReceived: !referralReceived,
                           })
                         }
                         containerStyle={styles.radioContainer}
                       />
                       <RadioSelector
                         multiSelect
-                        value={pendingApproval}
-                        text={'Pending approval'}
+                        value={inspectionScheduled}
+                        text={'Inspection Scheduled'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            pendingApproval: !pendingApproval,
+                            inspectionScheduled: !inspectionScheduled,
                           })
                         }
                         containerStyle={styles.radioContainer}
                       />
                       <RadioSelector
                         multiSelect
-                        value={inProgress}
-                        text={'In progress'}
+                        value={inspectionCompleted}
+                        text={'Inspection Completed'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            inProgress: !inProgress,
+                            inspectionCompleted: !inspectionCompleted,
                           })
                         }
                         containerStyle={styles.radioContainer}
                       />
                       <RadioSelector
                         multiSelect
-                        value={workCompleted}
-                        text={'Work completed'}
+                        value={referralPaid}
+                        text={'Referral Paid'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            workCompleted: !workCompleted,
+                            referralPaid: !referralPaid,
                           })
                         }
                         containerStyle={styles.radioContainer}
                       />
                       <RadioSelector
                         multiSelect
-                        value={paid}
-                        text={'Paid'}
+                        value={jobWon}
+                        text={'Job Won'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            paid: !paid,
+                            jobWon: !jobWon,
                           })
                         }
                         containerStyle={styles.radioContainer}
                       />
                       <RadioSelector
                         multiSelect
-                        value={dismissed}
-                        text={'Dismissed'}
+                        value={jobClosed}
+                        text={'Job Closed'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            dismissed: !dismissed,
+                            jobClosed: !jobClosed,
                           })
                         }
                         containerStyle={styles.radioContainer}
                       />
                       <RadioSelector
                         multiSelect
-                        value={canceled}
-                        text={'Canceled'}
+                        value={jobClosedNoOpportunity}
+                        text={'Job Closed No Opportunity'}
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            canceled: !canceled,
+                            jobClosedNoOpportunity: !jobClosedNoOpportunity,
+                          })
+                        }
+                        containerStyle={styles.radioContainer}
+                      />
+                      <RadioSelector
+                        multiSelect
+                        value={jobClosedNoInsuranceNoMoney}
+                        text={'Job Closed No Insurance No Money,'}
+                        onPress={() =>
+                          setLeadStatusFilter({
+                            ...leadStatusFilter,
+                            jobClosedNoInsuranceNoMoney: !jobClosedNoInsuranceNoMoney,
+                          })
+                        }
+                        containerStyle={styles.radioContainer}
+                      />
+                      <RadioSelector
+                        multiSelect
+                        value={jobClosedHomeownerDeclined}
+                        text={'Job Closed Homeowner Declined'}
+                        onPress={() =>
+                          setLeadStatusFilter({
+                            ...leadStatusFilter,
+                            jobClosedHomeownerDeclined: !jobClosedHomeownerDeclined,
                           })
                         }
                         containerStyle={styles.radioContainer}
@@ -339,11 +411,11 @@ const TransactionFilter = ({
               </View>
             </ScrollView>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.resetBtn} onPress={() => {}}>
+              <TouchableOpacity style={styles.resetBtn} onPress={resetFilters}>
                 <Text style={styles.btnText}>{'Reset'}</Text>
               </TouchableOpacity>
               <View style={{ width: wp(8) }} />
-              <TouchableOpacity style={styles.resultBtn} onPress={() => {}}>
+              <TouchableOpacity style={styles.resultBtn} onPress={getSelectedFilters}>
                 <Text style={{ ...styles.btnText, color: colors.white }}>
                   {'See result'}
                 </Text>
