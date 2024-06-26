@@ -40,22 +40,28 @@ const LeadsListScreen = () => {
   const { userData } = useUser();
   const [leadData, setLeadData] = useState(null);
   const [searchLeadData, setSearchLeadData] = useState(null);
+  const [leadFilterData, setLeadFilterData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
+  const [isFiltered, setisFiltered] = useState(false);
 
-  const getLeadData = async () => {
-    const userPayload = {
-      isPaginationRequired: false,
-    };
-
+  const getLeadData = async (userPayload = {}, filterStatus) => {
+    console.log({ userPayload })
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
         if (response) {
-          setLeadData(response?.data);
+          console.log({ response })
+          if (filterStatus) {
+            setLeadFilterData(response?.data);
+            setisFiltered(true)
+          } else {
+            setLeadData(response?.data);
+            setisFiltered(false)
+          }
         }
       },
       null,
@@ -81,7 +87,10 @@ const LeadsListScreen = () => {
   };
 
   useEffect(() => {
-    getLeadData();
+    const payload = {
+      isPaginationRequired: false,
+    };
+    getLeadData(payload);
   }, []);
 
   useEffect(() => {
@@ -125,6 +134,53 @@ const LeadsListScreen = () => {
     setSearchLeadData([]);
   };
 
+
+  const applyFilters = (selectedFilters) => {
+    const { fromDate, toDate, leadStatus, period, transactionType } = selectedFilters;
+
+    const periodMapping = {
+      allTime: "ALL_TIME",
+      custom: "CUSTOM",
+      last30days: "ONE_MONTH",
+      last7days: "ONE_WEEK",
+      last90days: "THREE_MONTHS",
+    };
+
+    const leadStatusMapping = {
+      referralReceived: "REFERRAL RECEIVED",
+      inspectionScheduled: "INSPECTION SCHEDULED",
+      inspectionCompleted: "INSPECTION COMPLETED",
+      referralPaid: "REFERRAL PAID",
+      jobWon: "JOB WON",
+      jobClosed: "JOB CLOSED",
+      jobClosedNoOpportunity: "JOB CLOSED NO OPPORTUNITY",
+      jobClosedNoInsuranceNoMoney: "JOB CLOSED NO INSURANCE NO MONEY",
+      jobClosedHomeownerDeclined: "JOB CLOSED HOMEOWNER DECLINED",
+    };
+
+    const selectedPeriod = Object.keys(period).find((key) => period[key]);
+    const selectedLeadStatus = Object.keys(leadStatus)
+      .filter((key) => leadStatus[key])
+      .map((key) => leadStatusMapping[key]);
+
+    const payload = {
+      startDate: selectedPeriod === 'custom' ? fromDate.toISOString().split('T')[0] : null,
+      endDate: selectedPeriod === 'custom' ? toDate.toISOString().split('T')[0] : null,
+      statuses: selectedLeadStatus,
+      isPaginationRequired: false
+    };
+    if (periodMapping[selectedPeriod] !== "ALL_TIME") {
+      payload.filter_by_date = periodMapping[selectedPeriod];
+    }
+    getLeadData(payload, true);
+    setIsFilterOpen(false)
+  };
+
+  const resetFiltersHandle = () => {
+    setLeadFilterData(null)
+    setisFiltered(false)
+  }
+
   return loading ? (
     <LoadingSpinner visible={loading} />
   ) : (
@@ -157,7 +213,7 @@ const LeadsListScreen = () => {
       />
       {leadData?.length ? (
         <View style={styles.container}>
-          {!isSearchFocused && searchText === '' ? (
+          {!isSearchFocused && searchText === '' && !isFiltered ? (
             <FlatList
               data={leadData}
               keyExtractor={(item) => item?.id?.toString()}
@@ -165,7 +221,7 @@ const LeadsListScreen = () => {
               style={styles.flatListStyle}
               showsVerticalScrollIndicator={false}
             />
-          ) : !searchLeadData?.length ? (
+          ) : !searchLeadData?.length && !isFiltered ? (
             <View style={styles.searchTipView}>
               <Shadow>
                 <View style={styles.searchView}>
@@ -182,6 +238,33 @@ const LeadsListScreen = () => {
                 {'Search by Lead Id, Name, Address'}
               </Text>
             </View>
+          ) : isFiltered ? (
+            leadFilterData?.length ? (
+              <FlatList
+                data={leadFilterData}
+                keyExtractor={(item) => item?.id?.toString()}
+                renderItem={renderLeadsByReferrals}
+                style={styles.flatListStyle}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <View style={styles.searchTipView}>
+                <Shadow>
+                  <View style={styles.searchView}>
+                    <Image
+                      source={icons.search}
+                      style={{
+                        ...commonStyles.icon24,
+                        tintColor: colors.xDarkGrey,
+                      }}
+                    />
+                  </View>
+                </Shadow>
+                <Text style={styles.searchTipText}>
+                  {'No Record Found'}
+                </Text>
+              </View>
+            )
           ) : (
             <View>
               <Text style={styles.searchResultText}>{'Result'}</Text>
@@ -216,6 +299,8 @@ const LeadsListScreen = () => {
         <TransactionFilter
           isLeadsFilter
           isOpen={isFilterOpen}
+          applyFilters={applyFilters}
+          resetFiltersHandle={resetFiltersHandle}
           onClose={() => setIsFilterOpen(false)}
         />
       )}

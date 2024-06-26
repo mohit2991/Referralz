@@ -71,7 +71,7 @@ export const payoutMethodsListData = [
     title: 'Virtual card',
     desc: 'Description',
     isSelected: false,
-    value: "VIRTUAL_VISA",
+    value: "VIRTUAL_CARD",
   },
 ];
 
