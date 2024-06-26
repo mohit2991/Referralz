@@ -24,7 +24,7 @@ import messages from '../../constants/messages';
 const ProfileScreen = () => {
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
-  const { userData, setUserData, setDashboardData } = useUser();
+  const { userData, setUserData, setDashboardData, setIsLoggedIn } = useUser();
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isLogoutModal, setIsLogoutModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -90,8 +90,7 @@ const ProfileScreen = () => {
         if (response) {
           await setUserData(null);
           await setDashboardData(null);
-          await AsyncStorage.clear();
-
+          setIsLoggedIn(false);
           setIsLogoutModal(false);
           navigate('Login');
         }
@@ -153,7 +152,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleDeleteAccount}
-        secondaryBtnPress={() => {}}
+        secondaryBtnPress={() => { }}
         toggleModal={() => setIsDeleteModal(!isDeleteModal)}
         primaryBtnStyle={{ backgroundColor: colors.darkRed }}
         secondaryTextStyle={{ color: colors.darkGrey }}
@@ -165,7 +164,7 @@ const ProfileScreen = () => {
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleLogout}
-        secondaryBtnPress={() => {}}
+        secondaryBtnPress={() => { }}
         primaryBtnStyle={{ marginTop: hp(48) }}
         toggleModal={() => setIsLogoutModal(!isLogoutModal)}
       />

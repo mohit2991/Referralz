@@ -33,11 +33,13 @@ import {
   loadCredentials,
   deleteCredentials,
 } from '../../auth/KeychainService';
+import { useUser } from '../../contexts/userContext';
 
 const Login = () => {
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
-  const [email, setEmail] = useState('');
+  const { setIsLoggedIn } = useUser();
+  const [email, setEmail,] = useState('');
   const [password, setPassword] = useState('');
   const [isPwdSecure, setIsPwdSecure] = useState(true);
   const [isRemember, setIsRemember] = useState(false);
@@ -104,8 +106,8 @@ const Login = () => {
           }
 
           setLoading(false);
-
-          navigate('Dashboard');
+          setIsLoggedIn(true)
+          navigate('BottomTabs');
         }
       },
       messages.loginSuccess, // Success message
