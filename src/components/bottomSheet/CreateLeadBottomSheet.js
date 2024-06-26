@@ -37,7 +37,7 @@ import { Buffer } from 'buffer';
 import axios from 'axios';
 import { ToastAlert } from '../../components';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
@@ -333,6 +333,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     };
 
     setIsLoading(true);
+    console.log({ aaa1: userPayload })
 
     await handleApiCall(
       () => createLead(userPayload),
