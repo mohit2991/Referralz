@@ -1,8 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -13,78 +12,106 @@ import WalletScreen from '../screens/wallet/WalletScreen';
 import LeadsListScreen from '../screens/leads/LeadsListScreen';
 import ActivityScreen from '../screens/activity/ActivityScreen';
 import { colors, fontSize, fonts, hp, icons, wp } from '../utils';
+import {
+  setNavigationRef,
+  setupTokenExpirationCheck,
+} from '../auth/tokenManager';
 
 const Tab = createBottomTabNavigator();
 
 export const CreateLead = () => <View />;
 
 const BottomTabs = () => {
+  const navigationRef = useRef();
   const insets = useSafeAreaInsets();
   const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
+
+  useEffect(() => {
+    setNavigationRef(navigationRef.current);
+    const unsubscribe = setupTokenExpirationCheck();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+  const getTabIcon = (route, focused) => {
+    let iconName;
+    switch (route.name) {
+      case 'Dashboard':
+        iconName = icons.dashboard;
+        break;
+      case 'Leads':
+        iconName = icons.leadsIcon;
+        break;
+      case 'Activity':
+        iconName = icons.activity;
+        break;
+      case 'Wallet':
+        iconName = icons.wallet;
+        break;
+      default:
+        iconName = null;
+    }
+    return (
+      <View style={styles.iconContainer}>
+        {iconName && (
+          <Image
+            source={iconName}
+            style={{
+              ...commonStyles.icon20,
+              tintColor: focused ? colors.primary : colors.grey,
+            }}
+          />
+        )}
+      </View>
+    );
+  };
+
+  const getTabLabel = (route, focused) => {
+    let label;
+    switch (route.name) {
+      case 'Dashboard':
+        label = 'Dashboard';
+        break;
+      case 'Leads':
+        label = 'Leads';
+        break;
+      case 'Activity':
+        label = 'Activity';
+        break;
+      case 'Wallet':
+        label = 'Wallet';
+        break;
+      default:
+        label = '';
+    }
+    return (
+      <Text
+        style={{
+          ...styles.labelText,
+          color: focused ? colors.primary : colors.grey,
+        }}
+      >
+        {label}
+      </Text>
+    );
+  };
 
   return (
     <View style={commonStyles.flex}>
       <Tab.Navigator
-        // tabBarOptions={{
-        //   keyboardHidesTabBar: true,
-        // }}
-        screenOptions={({ route = 'Dashboard' }) => ({
+        screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            let iconName;
-            if (route.name === 'Dashboard') {
-              iconName = icons.dashboard;
-            } else if (route.name === 'Leads') {
-              iconName = icons.leadsIcon;
-            } else if (route.name === 'Activity') {
-              iconName = icons.activity;
-            } else if (route.name === 'Wallet') {
-              iconName = icons.wallet;
-            }
-
-            return (
-              <View style={styles.iconContainer}>
-                <Image
-                  source={iconName}
-                  style={{
-                    ...commonStyles.icon20,
-                    tintColor: focused ? colors.primary : colors.grey,
-                  }}
-                />
-              </View>
-            );
-          },
-          tabBarLabel: ({ focused }) => {
-            let label;
-            if (route.name === 'Dashboard') {
-              label = 'Dashboard';
-            } else if (route.name === 'Leads') {
-              label = 'Leads';
-            } else if (route.name === 'Create Lead') {
-              label = '';
-            } else if (route.name === 'Activity') {
-              label = 'Activity';
-            } else if (route.name === 'Wallet') {
-              label = 'Wallet';
-            }
-
-            return (
-              <Text
-                style={{
-                  ...styles.labelText,
-                  color: focused ? colors.primary : colors.grey,
-                }}
-              >
-                {label}
-              </Text>
-            );
-          },
+          tabBarIcon: ({ focused }) => getTabIcon(route, focused),
+          tabBarLabel: ({ focused }) => getTabLabel(route, focused),
           tabBarStyle: {
             ...styles.tabBar,
             paddingBottom: insets.bottom,
             height: hp(60) + insets.bottom,
           },
         })}
+        ref={navigationRef}
       >
         <Tab.Screen name="Dashboard" component={Dashboard} />
         <Tab.Screen name="Leads" component={LeadsListScreen} />

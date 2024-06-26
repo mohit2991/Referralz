@@ -1,9 +1,11 @@
 import * as Keychain from 'react-native-keychain';
 
 // Store credentials
-export const storeCredentials = async (username, password) => {
+export const storeCredentials = async (username, password, serviceName) => {
   try {
-    await Keychain.setGenericPassword(username, password);
+    await Keychain.setGenericPassword(username, password, {
+      service: serviceName,
+    });
   } catch (error) {
     console.error('Error storing credentials', error);
   }
@@ -25,9 +27,11 @@ export const loadCredentials = async () => {
 };
 
 // Delete credentials
-export const deleteCredentials = async () => {
+export const deleteCredentials = async (serviceName) => {
   try {
-    await Keychain.resetGenericPassword();
+    await Keychain.resetGenericPassword({
+      service: serviceName,
+    });
   } catch (error) {
     console.error('Error deleting credentials', error);
   }
