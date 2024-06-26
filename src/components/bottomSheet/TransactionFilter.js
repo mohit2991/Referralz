@@ -355,28 +355,28 @@ const TransactionFilter = ({
                   ? insets.bottom === 0
                     ? hp(12)
                     : insets.bottom
-                  : 0,
+                  : hp(12),
               }}
             />
           </View>
-          {/* {isDatePickerOpen && ( */}
-          <DatePicker
-            modal
-            open={isDatePickerOpen}
-            date={currentPicker === 'fromDate' ? fromDate : toDate}
-            onConfirm={(date) => handleDateChange(date)}
-            onCancel={() => setDatePickerOpen(false)}
-            buttonColor={colors.primary}
-            mode="date"
-            maximumDate={new Date()}
-            dividerColor={colors.primary}
-            title={
-              currentPicker === 'fromDate'
-                ? `Select "To" Date`
-                : `Select "To" Date`
-            }
-          />
-          {/* )} */}
+          {isDatePickerOpen && (
+            <DatePicker
+              modal
+              open={isDatePickerOpen}
+              date={currentPicker === 'fromDate' ? fromDate : toDate}
+              onConfirm={(date) => handleDateChange(date)}
+              onCancel={() => setDatePickerOpen(false)}
+              buttonColor={colors.primary}
+              mode="date"
+              maximumDate={new Date()}
+              dividerColor={colors.primary}
+              title={
+                currentPicker === 'fromDate'
+                  ? `Select "To" Date`
+                  : `Select "To" Date`
+              }
+            />
+          )}
         </View>
       </BottomSheet>
     </Portal>
