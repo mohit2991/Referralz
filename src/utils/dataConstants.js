@@ -149,3 +149,77 @@ export const homeLeadsList = [
     interest: 'Low',
   },
 ];
+
+
+export const transactionList = [
+  {
+    id: 1,
+    payment_method: 'Payout: Virtual Card',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 2,
+    payment_method: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 3,
+    payment_method: 'Payout: Venmo',
+    checkNumber: 'Check No. 735373',
+    amount: '5000',
+    isCard: true,
+  },
+  {
+    id: 4,
+    payment_method: 'Payout: Virtual Card',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 5,
+    payment_method: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 6,
+    payment_method: 'Payout: Virtual Card',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 7,
+    payment_method: 'Payout: Venmo',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 8,
+    payment_method: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: true,
+  },
+  {
+    id: 9,
+    payment_method: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+  {
+    id: 10,
+    payment_method: 'Payout: ACH',
+    checkNumber: 'Check No. 735373',
+    amount: '2000',
+    isCard: false,
+  },
+];

@@ -13,14 +13,17 @@ const InboxCheck = () => {
 
   const { title, description, btnText, routeName, email } = params;
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (routeName !== '') {
       navigate(routeName);
     } else {
       const sendEmail = `mailto:${email}`;
-      Linking.openURL(sendEmail).catch((err) =>
-        console.error(`Failed to open email ${email} app`, err)
-      );
+      const isValidURL = await Linking.canOpenURL(mailtoUrl);
+      if (isValidURL) {
+        await Linking.openURL(sendEmail).catch((err) =>
+          console.error(`Failed to open email ${email} app`, err),
+        );
+      }
     }
   };
   return (
