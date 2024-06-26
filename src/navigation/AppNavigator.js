@@ -17,6 +17,7 @@ import PayBilling from '../screens/profile/PayBilling';
 import BottomTabs from './BottomNavigator';
 import LeadDetails from '../screens/leads/LeadDetails';
 import ContactUsScreen from '../screens/leads/ContactUsScreen';
+import TransactionList from '../screens/wallet/TransactionList';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,6 +56,7 @@ const AppNavigator = () => {
         <Stack.Screen name="LeadDetails" component={LeadDetails} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+        <Stack.Screen name="TransactionList" component={TransactionList} />
         <Stack.Screen
           name="ContactUsScreen"
           component={ContactUsScreen}

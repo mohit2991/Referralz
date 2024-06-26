@@ -102,10 +102,12 @@ const BottomTabs = () => {
           style={{ ...commonStyles.icon24, tintColor: colors.white }}
         />
       </TouchableOpacity>
-      <CreateLeadBottomSheet
-        isOpen={isCreateLeadVisible}
-        onClose={() => setIsCreateLeadVisible(false)}
-      />
+      {isCreateLeadVisible && (
+        <CreateLeadBottomSheet
+          isOpen={isCreateLeadVisible}
+          onClose={() => setIsCreateLeadVisible(false)}
+        />
+      )}
     </View>
   );
 };

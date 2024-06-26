@@ -13,11 +13,13 @@ import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
 import { useUser } from '../../contexts/userContext';
 import {
+  CreateLeadBottomSheet,
   Header,
   InfoComponent,
   LeadsItemCard,
   SearchBar,
   Shadow,
+  TransactionFilter,
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
 import { getLead, getLeadSearch } from '../../services/apiService';
@@ -40,7 +42,9 @@ const LeadsListScreen = () => {
   const [searchLeadData, setSearchLeadData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isCreateLeadVisible, setIsCreateLeadVisible] = useState(false);
 
   const getLeadData = async () => {
     const userPayload = {
@@ -142,7 +146,9 @@ const LeadsListScreen = () => {
           setIsSearchFocused(false);
           handleBlurTextInput();
         }}
-        onFilterPress={() => {}}
+        onFilterPress={() => {
+          setIsFilterOpen(true);
+        }}
         onClosePress={handleSearchClose}
         onFocus={() => setIsSearchFocused(true)}
         onBlur={() => setIsSearchFocused(false)}
@@ -173,7 +179,7 @@ const LeadsListScreen = () => {
                 </View>
               </Shadow>
               <Text style={styles.searchTipText}>
-                {'Search by Lead Id, Name'}
+                {'Search by Lead Id, Name, Address'}
               </Text>
             </View>
           ) : (
@@ -200,9 +206,24 @@ const LeadsListScreen = () => {
             btnText={'Create lead'}
             btnStyle={{ borderColor: colors.darkBlack }}
             btnTextStyle={{ color: colors.xDarkGrey }}
-            onPress={() => {}}
+            onPress={() => {
+              setIsCreateLeadVisible(true);
+            }}
           />
         </KeyboardAvoidingView>
+      )}
+      {isFilterOpen && (
+        <TransactionFilter
+          isLeadsFilter
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+        />
+      )}
+      {isCreateLeadVisible && (
+        <CreateLeadBottomSheet
+          isOpen={isCreateLeadVisible}
+          onClose={() => setIsCreateLeadVisible(false)}
+        />
       )}
     </View>
   );
@@ -244,7 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: hp(130),
+    marginTop: hp(150),
   },
   searchResultText: {
     fontSize: fontSize(18),
