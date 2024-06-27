@@ -24,6 +24,7 @@ import {
 import useApiHandler from '../../hooks/useApiHandler';
 import { getLead } from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const debounce = (func, delay) => {
   let timer;
@@ -34,6 +35,7 @@ const debounce = (func, delay) => {
 };
 
 const LeadsListScreen = ({ route }) => {
+  const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
@@ -50,7 +52,7 @@ const LeadsListScreen = ({ route }) => {
   const initialParams = route.params || {};
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
-    console.log({ userPayload, isFilterList, searchText, aaaaaaa: "okkkkk" })
+    console.log({ userPayload, isFilterList, searchText, aaaaaaa: 'okkkkk' });
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
@@ -68,7 +70,7 @@ const LeadsListScreen = ({ route }) => {
     );
   };
 
-  console.log({ aaa: initialParams?.renderComponent })
+  console.log({ aaa: initialParams?.renderComponent });
 
   useEffect(() => {
     if (initialParams?.renderComponent) {
@@ -77,7 +79,7 @@ const LeadsListScreen = ({ route }) => {
       };
       getLeadData(payload);
     }
-  }, [initialParams?.renderComponent])
+  }, [initialParams?.renderComponent]);
 
   useEffect(() => {
     if (leadData !== null || searchLeadData !== null) {
@@ -129,14 +131,14 @@ const LeadsListScreen = ({ route }) => {
       startDate: selectedPeriod === 'custom' ? formatDate(fromDate) : null,
       endDate: selectedPeriod === 'custom' ? formatDate(toDate) : null,
       statuses: selectedLeadStatus,
-      searchText: searchText ?? "",
+      searchText: searchText ?? '',
       isPaginationRequired: false,
     };
     if (periodMapping[selectedPeriod] !== 'ALL_TIME') {
       payload.filter_by_date = periodMapping[selectedPeriod];
     }
     return payload;
-  }
+  };
 
   const handleBlurTextInput = () => {
     if (searchInputRef.current) {
@@ -172,29 +174,32 @@ const LeadsListScreen = ({ route }) => {
   const handleSearchClose = (text) => {
     setSearchText('');
     if (Object.keys(isFilterList).length > 0) {
-      payload = filterMapping({ ...isFilterList, searchText: "" });
+      payload = filterMapping({ ...isFilterList, searchText: '' });
       getLeadData(payload, true);
     } else {
-      setSearchLeadData([])
+      setSearchLeadData([]);
       setisFiltered(false);
     }
   };
 
   const applyFilters = (selectedFilters) => {
-    setIsFilterList(selectedFilters)
-    const payload = filterMapping({ ...selectedFilters, searchText: searchText });
+    setIsFilterList(selectedFilters);
+    const payload = filterMapping({
+      ...selectedFilters,
+      searchText: searchText,
+    });
     getLeadData(payload, true);
     setIsFilterOpen(false);
   };
 
   const resetFiltersHandle = () => {
-    setIsFilterList({})
+    setIsFilterList({});
     setisFiltered(false);
-    if (searchText !== "") {
+    if (searchText !== '') {
       let payload = { searchText: searchText };
       getLeadData(payload, true);
     } else {
-      setSearchLeadData([])
+      setSearchLeadData([]);
     }
   };
 
@@ -235,8 +240,15 @@ const LeadsListScreen = ({ route }) => {
               data={leadData}
               keyExtractor={(item) => item?.id?.toString()}
               renderItem={renderLeadsByReferrals}
-              style={styles.flatListStyle}
+              style={{
+                ...styles.flatListStyle,
+                marginBottom: hp(60) + insets.bottom,
+                paddingBottom: hp(16),
+              }}
               showsVerticalScrollIndicator={false}
+              ListFooterComponent={() => (
+                <View style={{ height: insets.bottom + hp(16) }} />
+              )}
             />
           ) : !searchLeadData?.length && !isFiltered ? (
             <View style={styles.searchTipView}>
@@ -262,8 +274,16 @@ const LeadsListScreen = ({ route }) => {
                 data={searchLeadData}
                 keyExtractor={(item) => item?.id?.toString()}
                 renderItem={renderLeadsByReferrals}
-                style={styles.flatListStyle}
+                style={{
+                  ...styles.flatListStyle,
+                  marginBottom: hp(60) + insets.bottom,
+                  paddingBottom: hp(16),
+                }}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: hp(16) }}
+                ListFooterComponent={() => (
+                  <View style={{ height: insets.bottom + hp(16) }} />
+                )}
               />
             </View>
           ) : (
@@ -362,5 +382,6 @@ const styles = StyleSheet.create({
     lineHeight: hp(28),
     fontFamily: fonts.semiBold,
     marginTop: hp(22),
+    color: colors.xDarkGrey,
   },
 });

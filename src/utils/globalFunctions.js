@@ -1,3 +1,26 @@
+import { createRef } from 'react';
+
+export const navigationRef = createRef();
+
+export const resetStack = (name, params) =>
+  navigationRef.current?.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [{ name: name, params: params }],
+    }),
+  );
+
+export const isValidEmail = (email) => {
+  const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  return emailPattern.test(email);
+};
+
+export const validatePassword = (password) => {
+  const regex =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return regex.test(password);
+};
+
 export const getTagColor = (status) => {
   switch (status) {
     case 'Received':

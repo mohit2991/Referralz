@@ -11,6 +11,7 @@ import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import messages from '../../constants/messages';
+import { isValidEmail, validatePassword } from '../../utils/globalFunctions';
 
 const Register = () => {
   const { navigate } = useNavigation();
@@ -47,11 +48,16 @@ const Register = () => {
   const isReadyToCreate = () => {
     if (
       email !== '' &&
+      isValidEmail(email) &&
       firstname !== '' &&
       lastname !== '' &&
       password !== '' &&
+      validatePassword(password) &&
       confirmpassword !== '' &&
-      password === confirmpassword
+      password === confirmpassword &&
+      (isReferralPartner && haveCompanyCode
+        ? companycode !== '' && companycode?.length === 6
+        : true)
     ) {
       return false;
     } else {
@@ -59,19 +65,9 @@ const Register = () => {
     }
   };
 
-  const validatePassword = (password) => {
-    const regex =
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return regex.test(password);
-  };
-
-  const onPwdBlur = () => {
-    validatePassword(password) ? setIsPwdErr(false) : setIsPwdErr(true);
-  };
-
   const onPasswordChange = (text) => {
     setPassword(text);
-    validatePassword(password) ? setIsPwdErr(false) : setIsPwdErr(true);
+    setIsPwdErr(!validatePassword(text));
   };
 
   const onCreateAccountPress = async () => {
@@ -170,23 +166,30 @@ const Register = () => {
             />
           }
           onRightPress={() => setIsPwdSecure(!isPwdSecure)}
-          onBlur={onPwdBlur}
           additionalContainerStyle={{
-            borderColor: isPwdErr ? colors.darkRed : colors.grey,
+            borderColor:
+              password === ''
+                ? colors.grey
+                : isPwdErr
+                  ? colors.darkRed
+                  : colors.grey,
           }}
         />
-        {password !== '' && isPwdErr && (
-          <Text
-            style={{
-              ...styles.errText,
-              color: isPwdErr ? colors.darkRed : colors.green,
-            }}
-          >
-            {
-              'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'
-            }
-          </Text>
-        )}
+        <Text
+          style={{
+            ...styles.errText,
+            color:
+              password === ''
+                ? colors.grey
+                : isPwdErr
+                  ? colors.darkRed
+                  : colors.green,
+          }}
+        >
+          {
+            'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'
+          }
+        </Text>
         <TextInputComp
           value={confirmpassword}
           maxLength={16}
@@ -244,6 +247,7 @@ const Register = () => {
             value={companycode}
             maxLength={6}
             labelText={'Company code'}
+            keyboardType={'number-pad'}
             onChangeText={(text) => setCompanycode(text)}
             additionalContainerStyle={{ borderColor: colors.primary }}
           />

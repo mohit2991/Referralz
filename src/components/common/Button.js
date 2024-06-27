@@ -1,10 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { colors, fontSize, fonts, hp, isIos, wp } from '../../utils';
 
 const Button = ({
   title,
+  loading,
   onPress,
   disabled,
   customBtnStyle,
@@ -22,17 +29,21 @@ const Button = ({
       ]}
       onPress={onPress}
     >
-      <Text
-        style={[
-          styles.titleText,
-          {
-            color: disabled ? colors.grey : colors.white,
-          },
-          customTitleStyle,
-        ]}
-      >
-        {title}
-      </Text>
+      {loading ? (
+        <ActivityIndicator size={'small'} color={colors.white} />
+      ) : (
+        <Text
+          style={[
+            styles.titleText,
+            {
+              color: disabled ? colors.grey : colors.white,
+            },
+            customTitleStyle,
+          ]}
+        >
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };

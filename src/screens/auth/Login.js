@@ -34,12 +34,13 @@ import {
   deleteCredentials,
 } from '../../auth/KeychainService';
 import { useUser } from '../../contexts/userContext';
+import { isValidEmail } from '../../utils/globalFunctions';
 
 const Login = () => {
   const { navigate } = useNavigation();
   const { handleApiCall } = useApiHandler();
   const { setIsLoggedIn } = useUser();
-  const [email, setEmail,] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPwdSecure, setIsPwdSecure] = useState(true);
   const [isRemember, setIsRemember] = useState(false);
@@ -55,7 +56,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (email !== '' && password !== '') {
+    if (isValidEmail(email) && password !== '') {
       setIsButtonDisabled(false);
     } else {
       setIsButtonDisabled(true);
@@ -106,7 +107,7 @@ const Login = () => {
           }
 
           setLoading(false);
-          setIsLoggedIn(true)
+          setIsLoggedIn(true);
           navigate('BottomTabs');
         }
       },

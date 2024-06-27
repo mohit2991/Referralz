@@ -64,7 +64,9 @@ const EditProfileVerification = () => {
 
   useEffect(() => {
     if (otpInputRef.current) {
-      otpInputRef.current.focusField(0);
+      setTimeout(() => {
+        otpInputRef.current.focusField(0);
+      }, 500);
     }
   }, []);
 
@@ -85,11 +87,11 @@ const EditProfileVerification = () => {
             autoFocusOnLoad={false}
             onCodeChanged={handleOtpChange}
             codeInputFieldStyle={styles.underlineStyleBase}
-            codeInputHighlightStyle={styles.underlineStyleHighLighted}
             onCodeFilled={handleOtpComplete}
             keyboardType="number-pad"
             placeholderCharacter="—"
             placeholderTextColor={colors.grey}
+            selectionColor={colors.transparent}
           />
         </View>
         <Button
@@ -142,11 +144,7 @@ const styles = StyleSheet.create({
     height: hp(56),
     borderColor: colors.transparent,
     fontSize: fontSize(16),
-    lineHeight: hp(24),
     color: colors.darkBlack,
     fontFamily: fonts.regular,
-  },
-  underlineStyleHighLighted: {
-    // borderColor: '#03DAC6',
   },
 });
