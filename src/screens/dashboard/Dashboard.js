@@ -16,12 +16,9 @@ import { getUserDetails, dashboardDetails } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { useIsFocused } from '@react-navigation/native';
 
 const Dashboard = () => {
   const { handleApiCall } = useApiHandler();
-  const isFocused = useIsFocused();
-
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
@@ -70,7 +67,7 @@ const Dashboard = () => {
     setLoading(true);
     getUserData();
     getDasboardData();
-  }, [isFocused]);
+  }, []);
 
   useEffect(() => {
     if (userData !== null && dashboardData !== null) {
@@ -127,7 +124,9 @@ const Dashboard = () => {
     return <LeadsItemCard item={item} />;
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       <Header
         isAvatar

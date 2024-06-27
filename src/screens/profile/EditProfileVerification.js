@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
-import { Button, Header, ToastAlert } from '../../components';
+import { Button, Header } from '../../components';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {
   updateUserDetails,

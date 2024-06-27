@@ -39,8 +39,7 @@ const LeadsListScreen = ({ route }) => {
   const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
-  const { userData } = useUser();
-  const [leadData, setLeadData] = useState(null);
+  const { userData, leadData, setLeadData } = useUser();
   const [searchLeadData, setSearchLeadData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -52,7 +51,6 @@ const LeadsListScreen = ({ route }) => {
   const initialParams = route.params || {};
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
-    console.log({ userPayload, isFilterList, searchText, aaaaaaa: 'okkkkk' });
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
@@ -69,8 +67,6 @@ const LeadsListScreen = ({ route }) => {
       null,
     );
   };
-
-  console.log({ aaa: initialParams?.renderComponent });
 
   useEffect(() => {
     if (initialParams?.renderComponent) {
