@@ -16,7 +16,6 @@ import { Header, InfoComponent, LeadsItemCard } from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import {
-  dashboardDetails,
   getActivity,
   activityReadStatus,
 } from '../../services/apiService';
@@ -25,29 +24,9 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 const ActivityScreen = () => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
-  const { userData } = useUser();
-  const [todayActivityData, setTodayActivityData] = useState(null);
-  const [thisWeeActivitykData, setThisWeekActivityData] = useState(null);
+  const { userData, dashboardData, todayActivityData, setTodayActivityData } = useUser();
+  const [thisWeeActivitykData, setThisWeekActivityData] = useState(dashboardData);
   const [loading, setLoading] = useState(true);
-
-  const getDasboardData = async () => {
-    const userPayload = {
-      filter_by_date: 'ONE_WEEK',
-      isPaginationRequired: false,
-    };
-
-    // API Call
-    await handleApiCall(
-      () => dashboardDetails(userPayload),
-      async (response) => {
-        if (response) {
-          setThisWeekActivityData(response?.data);
-        }
-      },
-      null,
-      null,
-    );
-  };
 
   const getActivityData = async () => {
     const userPayload = {};
@@ -78,7 +57,6 @@ const ActivityScreen = () => {
   };
 
   useEffect(() => {
-    getDasboardData();
     getActivityData();
   }, []);
 

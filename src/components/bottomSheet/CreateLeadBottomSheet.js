@@ -30,6 +30,8 @@ import {
   createLead,
   createLeadImage,
   dashboardDetails,
+  getActivity,
+  getLead,
 } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import RNFS from 'react-native-fs';
@@ -45,7 +47,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const priorityDDRef = useRef(null);
   const oopsProgramDDRef = useRef(null);
   const scrollViewRef = useRef(null);
-  const { dashboardFilter, setDashboardData } = useUser();
+  const { dashboardFilter, setDashboardData, setTodayActivityData, setLeadData } = useUser();
   const [formState, setFormState] = useState({
     firstName: '',
     lastName: '',
@@ -105,12 +107,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       scrollViewRef.current?.scrollToPosition(0, 0);
     }
   }, [isOpen]);
-
-  // useEffect(() => {
-  //   if (leadSourceData && leadPriorityData && dashboardFilter) {
-  //     setIsLoading(false);
-  //   }
-  // }, [leadSourceData, leadPriorityData, dashboardFilter]);
 
   const fetchLeadSourceData = async () => {
     await handleApiCall(
@@ -275,6 +271,35 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     );
   };
 
+  const getActivityData = async () => {
+    const userPayload = {};
+    await handleApiCall(
+      () => getActivity(userPayload),
+      async (response) => {
+        if (response) {
+          setTodayActivityData(response?.data);
+        }
+      },
+      null,
+      null,
+    );
+  };
+
+  const getLeadData = async () => {
+    const payload = {
+      isPaginationRequired: false,
+    };
+    await handleApiCall(
+      () => getLead(payload),
+      async (response) => {
+        if (response) {
+          setLeadData(response?.data);
+        }
+      },
+      null,
+    );
+  };
+
   const createLeadImageHandle = async (id) => {
     await handleApiCall(() => createLeadImage(id));
   };
@@ -343,6 +368,8 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
           }
           setSuccessScreen(true);
           getDasboardData();
+          getActivityData();
+          getLeadData();
         }
       },
       null, // Success message

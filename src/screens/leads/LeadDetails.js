@@ -88,6 +88,15 @@ const LeadDetails = () => {
     );
   };
 
+  const getFormattedStatus = (status) => {
+    return status
+      ?.toLowerCase()
+      .replace('_', ' ')
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   return (
     <View style={commonStyles.flex}>
       <LoadingSpinner visible={loading} />
@@ -228,6 +237,22 @@ const LeadDetails = () => {
               />
               <Text style={styles.referalCardInt}>{item?.priority?.name}</Text>
             </View>
+            <View style={commonStyles.flexRowCenter}>
+              <View style={[
+                styles.tagView,
+                {
+                  backgroundColor: getTagColor(item?.internal_status)?.light,
+                },
+              ]}>
+                <Text style={[
+                  styles.tagText,
+                  {
+                    color: getTagColor(item?.internal_status)?.dark,
+                  },
+                ]}>{getFormattedStatus(item?.status)}</Text>
+              </View>
+            </View>
+
           </ItemCard>
 
           <ItemCard
