@@ -497,7 +497,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                   contentContainerStyle={styles.keyboardAwareStyle}
                   extraScrollHeight={hp(100)}
                 >
-                  <View style={styles.ddView}>
+                  <View style={{ ...styles.ddView, zIndex: 99 }}>
                     <TouchableOpacity
                       activeOpacity={1}
                       onPress={() => {
@@ -533,7 +533,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                       </Shadow>
                     )}
                   </View>
-                  <View style={styles.ddView}>
+                  <View style={{ ...styles.ddView, zIndex: 77 }}>
                     <TouchableOpacity
                       activeOpacity={1}
                       onPress={() => {
@@ -572,7 +572,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                     )}
                   </View>
 
-                  <View style={styles.ddView}>
+                  <View style={{ ...styles.ddView, zIndex: 55 }}>
                     <TouchableOpacity
                       activeOpacity={1}
                       onPress={() => {
@@ -986,5 +986,8 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowRadius: 5,
+    position: 'absolute',
+    width: '100%',
+    top: hp(58),
   },
 });
