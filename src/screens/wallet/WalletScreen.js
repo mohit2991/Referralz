@@ -56,15 +56,14 @@ const WalletScreen = () => {
     return <WalletItem item={item} />;
   };
 
-  return loading ? (
-    <LoadingSpinner visible={loading} />
-  ) : (
+  return (
     <View style={commonStyles.flex}>
       <Header
         isAvatar
         profileImage={userData?.download_profile_img_url}
         title={'Wallet'}
       />
+      <LoadingSpinner visible={loading} />
       <View style={styles.mainContainer}>
         <Shadow shadowStyle={styles.shadowStyle}>
           <LinearGradient
@@ -74,10 +73,15 @@ const WalletScreen = () => {
             style={styles.gradientView}
           >
             <Text style={styles.cardTitleText}>{'Lifetime commission'}</Text>
-            <Text
-              style={styles.cardAmountText}
-            >
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(walletData?.left_time_commission <= 0 ? 0 : walletData?.left_time_commission)}
+            <Text style={styles.cardAmountText}>
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              }).format(
+                walletData?.left_time_commission <= 0
+                  ? 0
+                  : walletData?.left_time_commission,
+              )}
             </Text>
           </LinearGradient>
         </Shadow>
@@ -107,13 +111,15 @@ const WalletScreen = () => {
               marginBottom: hp(76) + insets.bottom,
             }}
           >
-            <InfoComponent
-              icon={icons.transactionEmpty}
-              title={'No transactions yet'}
-              description={
-                'Once you start creating a lead and earning money, you can keep track of your transactions here.'
-              }
-            />
+            {!loading && (
+              <InfoComponent
+                icon={icons.transactionEmpty}
+                title={'No transactions yet'}
+                description={
+                  'Once you start creating a lead and earning money, you can keep track of your transactions here.'
+                }
+              />
+            )}
           </View>
         )}
       </View>

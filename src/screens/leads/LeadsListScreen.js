@@ -25,6 +25,7 @@ import useApiHandler from '../../hooks/useApiHandler';
 import { getLead } from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { isEmpty } from 'lodash';
 
 const debounce = (func, delay) => {
   let timer;
@@ -51,10 +52,12 @@ const LeadsListScreen = ({ route }) => {
   const initialParams = route.params || {};
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
+    setLoading(true);
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
         if (response) {
+          setLoading(false);
           if (filterStatus) {
             setSearchLeadData(response?.data);
             setisFiltered(true);
@@ -66,6 +69,7 @@ const LeadsListScreen = ({ route }) => {
       },
       null,
     );
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -199,9 +203,21 @@ const LeadsListScreen = ({ route }) => {
     }
   };
 
-  return loading ? (
-    <LoadingSpinner visible={loading} />
-  ) : (
+  const isFilteredLeadsDataList = () => {
+    if (!isEmpty(isFilterList)) {
+      const allLeadStatusFalse = Object.values(isFilterList?.leadStatus).every(
+        (value) => value === false,
+      );
+      if (isFilterList?.period?.allTime && allLeadStatusFalse) {
+        return false;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  return (
     <View style={commonStyles.flex}>
       {!isSearchFocused && (
         <Header
@@ -213,7 +229,8 @@ const LeadsListScreen = ({ route }) => {
       <SearchBar
         ref={searchInputRef}
         value={searchText}
-        isFiltered={false}
+        // isFiltered={false}
+        isFiltered={isFilteredLeadsDataList()}
         editable={leadData?.length > 0}
         isFocus={isSearchFocused}
         onCancelPress={() => {
@@ -229,6 +246,7 @@ const LeadsListScreen = ({ route }) => {
         placeholder={'Search Lead ID, Name'}
         onChangeText={handleSearchTextChange}
       />
+      <LoadingSpinner visible={loading} />
       {leadData?.length ? (
         <View style={styles.container}>
           {!isSearchFocused && searchText === '' && !isFiltered ? (
@@ -242,9 +260,7 @@ const LeadsListScreen = ({ route }) => {
                 paddingBottom: hp(16),
               }}
               showsVerticalScrollIndicator={false}
-              ListFooterComponent={() => (
-                <View style={{ height: insets.bottom + hp(16) }} />
-              )}
+              ListFooterComponent={() => <View style={{ height: hp(16) }} />}
             />
           ) : !searchLeadData?.length && !isFiltered ? (
             <View style={styles.searchTipView}>
@@ -276,10 +292,7 @@ const LeadsListScreen = ({ route }) => {
                   paddingBottom: hp(16),
                 }}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: hp(16) }}
-                ListFooterComponent={() => (
-                  <View style={{ height: insets.bottom + hp(16) }} />
-                )}
+                ListFooterComponent={() => <View style={{ height: hp(66) }} />}
               />
             </View>
           ) : (
@@ -301,19 +314,21 @@ const LeadsListScreen = ({ route }) => {
         </View>
       ) : (
         <KeyboardAvoidingView style={styles.emptyContainer}>
-          <InfoComponent
-            icon={icons.leadsEmpty}
-            title={'No leads yet'}
-            description={
-              'Start creating leads to begin earning. Your first opportunity is just a few clicks away!'
-            }
-            btnText={'Create lead'}
-            btnStyle={{ borderColor: colors.darkBlack }}
-            btnTextStyle={{ color: colors.xDarkGrey }}
-            onPress={() => {
-              setIsCreateLeadVisible(true);
-            }}
-          />
+          {!loading && (
+            <InfoComponent
+              icon={icons.leadsEmpty}
+              title={'No leads yet'}
+              description={
+                'Start creating leads to begin earning. Your first opportunity is just a few clicks away!'
+              }
+              btnText={'Create lead'}
+              btnStyle={{ borderColor: colors.darkBlack }}
+              btnTextStyle={{ color: colors.xDarkGrey }}
+              onPress={() => {
+                setIsCreateLeadVisible(true);
+              }}
+            />
+          )}
         </KeyboardAvoidingView>
       )}
       {isFilterOpen && (

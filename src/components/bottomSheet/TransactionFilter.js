@@ -71,7 +71,7 @@ const TransactionFilter = ({
     jobClosed,
     jobClosedNoOpportunity,
     jobClosedNoInsuranceNoMoney,
-    jobClosedHomeownerDeclined
+    jobClosedHomeownerDeclined,
   } = leadStatusFilter;
 
   const snapPoints = useMemo(() => ['85%'], []);
@@ -151,7 +151,7 @@ const TransactionFilter = ({
     });
     setFromDate(new Date());
     setToDate(new Date());
-    resetFiltersHandle()
+    resetFiltersHandle();
   };
 
   const getSelectedFilters = () => {
@@ -162,9 +162,9 @@ const TransactionFilter = ({
       transactionType: transactionTypeFilterList,
       leadStatus: leadStatusFilter,
     };
+
     applyFilters(selectedFilters);
   };
-
 
   return (
     <Portal>
@@ -361,7 +361,8 @@ const TransactionFilter = ({
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            jobClosedNoInsuranceNoMoney: !jobClosedNoInsuranceNoMoney,
+                            jobClosedNoInsuranceNoMoney:
+                              !jobClosedNoInsuranceNoMoney,
                           })
                         }
                         containerStyle={styles.radioContainer}
@@ -373,7 +374,8 @@ const TransactionFilter = ({
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            jobClosedHomeownerDeclined: !jobClosedHomeownerDeclined,
+                            jobClosedHomeownerDeclined:
+                              !jobClosedHomeownerDeclined,
                           })
                         }
                         containerStyle={styles.radioContainer}
@@ -415,7 +417,10 @@ const TransactionFilter = ({
                 <Text style={styles.btnText}>{'Reset'}</Text>
               </TouchableOpacity>
               <View style={{ width: wp(8) }} />
-              <TouchableOpacity style={styles.resultBtn} onPress={getSelectedFilters}>
+              <TouchableOpacity
+                style={styles.resultBtn}
+                onPress={getSelectedFilters}
+              >
                 <Text style={{ ...styles.btnText, color: colors.white }}>
                   {'See result'}
                 </Text>

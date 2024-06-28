@@ -5,16 +5,19 @@ import AppNavigator from './navigation/AppNavigator';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './components';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <UserProvider>
-        <PortalProvider>
-          <AppNavigator />
-        </PortalProvider>
-        <Toast config={toastConfig} />
-      </UserProvider>
+      <PaperProvider>
+        <UserProvider>
+          <PortalProvider>
+            <AppNavigator />
+          </PortalProvider>
+          <Toast config={toastConfig} />
+        </UserProvider>
+      </PaperProvider>
     </GestureHandlerRootView>
   );
 };

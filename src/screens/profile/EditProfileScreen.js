@@ -137,6 +137,21 @@ const EditProfileScreen = () => {
     setHasChanges(true);
   };
 
+  const isReadyToEdit = () => {
+    if (
+      formData.first_name !== '' &&
+      formData.last_name !== '' &&
+      formData.email_id !== '' &&
+      formData.contact_no !== '' &&
+      formData.birth_date !== '' &&
+      formData.contact_no?.length === 10
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const updateProfile = async () => {
     setLoading(true);
 
@@ -261,8 +276,12 @@ const EditProfileScreen = () => {
                 />
               )
             }
-            onRightPress={() => { }}
           />
+          {formData.contact_no?.length !== 10 && formData.contact_no !== '' && (
+            <Text style={styles.errText}>
+              Length of Phone number should be 10.
+            </Text>
+          )}
           <TextInputComp
             value={
               formData.birth_date
@@ -282,6 +301,7 @@ const EditProfileScreen = () => {
             value={formData.company_unique_code}
             maxLength={6}
             labelText={'Company code'}
+            keyboardType={'number-pad'}
             onChangeText={(text) => handleChange('company_unique_code', text)}
           />
           <TextInputComp
@@ -295,7 +315,7 @@ const EditProfileScreen = () => {
       </View>
       <BottomButton
         title={'Update'}
-        disabled={loading || !hasChanges}
+        disabled={loading || !hasChanges || isReadyToEdit()}
         onPress={updateProfile}
       />
       <View
@@ -353,6 +373,8 @@ const styles = StyleSheet.create({
     width: wp(80),
     height: wp(80),
     borderRadius: wp(80),
+    borderWidth: wp(1),
+    borderColor: colors.xLiteGrey,
   },
   uploadImgBtn: {
     marginTop: hp(8),
@@ -363,5 +385,12 @@ const styles = StyleSheet.create({
   },
   safeAreaViewStyle: {
     backgroundColor: colors.white,
+  },
+  errText: {
+    marginTop: hp(4),
+    lineHeight: hp(16),
+    color: colors.darkRed,
+    fontSize: fontSize(12),
+    fontFamily: fonts.regular,
   },
 });
