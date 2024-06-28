@@ -166,6 +166,7 @@ const TransactionList = () => {
   const resetFiltersHandle = () => {
     setIsFilterList({});
     setisFiltered(false);
+    setIsFilterOpen(false);
     if (searchText !== '') {
       let payload = { searchText: searchText };
       getWalletData(payload, true);
@@ -270,6 +271,7 @@ const TransactionList = () => {
         <TransactionFilter
           isOpen={isFilterOpen}
           applyFilters={applyFilters}
+          selectedFilterFields={isFilterList}
           resetFiltersHandle={resetFiltersHandle}
           onClose={() => setIsFilterOpen(false)}
         />

@@ -195,6 +195,7 @@ const LeadsListScreen = ({ route }) => {
   const resetFiltersHandle = () => {
     setIsFilterList({});
     setisFiltered(false);
+    setIsFilterOpen(false);
     if (searchText !== '') {
       let payload = { searchText: searchText };
       getLeadData(payload, true);
@@ -336,6 +337,7 @@ const LeadsListScreen = ({ route }) => {
           isLeadsFilter
           isOpen={isFilterOpen}
           applyFilters={applyFilters}
+          selectedFilterFields={isFilterList}
           resetFiltersHandle={resetFiltersHandle}
           onClose={() => setIsFilterOpen(false)}
         />
