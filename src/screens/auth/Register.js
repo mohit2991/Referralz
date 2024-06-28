@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -6,7 +6,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { createUser } from '../../services/apiService';
 import { commonStyles } from '../../styles/styles';
-import { Button, RadioSelector, TextInputComp } from '../../components';
+import {
+  Button,
+  CheckItem,
+  RadioSelector,
+  TextInputComp,
+} from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -29,6 +34,21 @@ const Register = () => {
   const [haveCompanyCode, setHaveCompanyCode] = useState(true);
   const [isPwdErr, setIsPwdErr] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkUpperCase, setCheckUpperCase] = useState(false);
+  const [checkLowerCase, setCheckLowerCase] = useState(false);
+  const [checkPwdLength, setCheckPwdLength] = useState(false);
+  const [checkSpecialChar, setCheckSpecialChar] = useState(false);
+  const [checkNumber, setCheckNumber] = useState(false);
+
+  useEffect(() => {
+    setCheckUpperCase(/[A-Z]/.test(password));
+    setCheckLowerCase(/[a-z]/.test(password));
+    setCheckPwdLength(password?.length > 7);
+    setCheckSpecialChar(
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password),
+    );
+    setCheckNumber(/\d/.test(password));
+  }, [password]);
 
   const onSignInPress = () => {
     navigate('Login');
@@ -175,21 +195,20 @@ const Register = () => {
                   : colors.grey,
           }}
         />
-        <Text
-          style={{
-            ...styles.errText,
-            color:
-              password === ''
-                ? colors.grey
-                : isPwdErr
-                  ? colors.darkRed
-                  : colors.green,
-          }}
-        >
-          {
-            'Password must be at least 8 characters with an uppercase letter, lowercase letter, number, and special character'
-          }
+
+        <View style={styles.devider} />
+        <Text style={[styles.conditionText, styles.pwdConditionHeader]}>
+          {'Your password must contain'}
         </Text>
+        <CheckItem value={checkUpperCase} condition={'an uppercase letter'} />
+        <CheckItem value={checkLowerCase} condition={'a lowercase letter'} />
+        <CheckItem
+          value={checkPwdLength}
+          condition={'more than 8 characters'}
+        />
+        <CheckItem value={checkSpecialChar} condition={'a special symbol'} />
+        <CheckItem value={checkNumber} condition={'a number'} />
+
         <TextInputComp
           value={confirmpassword}
           maxLength={16}
@@ -347,6 +366,22 @@ const styles = StyleSheet.create({
   alreadyAccText: {
     marginTop: hp(16),
     textAlign: 'center',
+  },
+  devider: {
+    height: hp(4),
+    marginVertical: hp(6),
+    backgroundColor: colors.xLiteGrey,
+  },
+  pwdConditionHeader: {
+    marginLeft: 0,
+    marginVertical: hp(4),
+  },
+  conditionText: {
+    fontSize: fontSize(12),
+    lineHeight: hp(16),
+    fontFamily: fonts.regular,
+    color: colors.black,
+    marginLeft: wp(8),
   },
 });
 

@@ -2,6 +2,7 @@ import Button from './common/Button';
 import Header from './common/Header';
 import Shadow from './common/Shadow';
 import ItemCard from './common/ItemCard';
+import CheckItem from './common/CheckItem';
 import SearchBar from './common/SearchBar';
 import BarGraph from './dashboard/BarGraph';
 import WalletItem from './wallet/WalletItem';
@@ -23,6 +24,7 @@ export {
   ItemCard,
   BarGraph,
   SearchBar,
+  CheckItem,
   ToastAlert,
   WalletItem,
   toastConfig,

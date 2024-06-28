@@ -31,9 +31,9 @@ const BarGraph = ({ graphData }) => {
       <BarChart
         data={data}
         width={wp(280)}
-        barWidth={wp(42)}
+        barWidth={wp(40)}
         initialSpacing={15}
-        spacing={wp(36)}
+        spacing={wp(30)}
         barBorderRadius={4}
         showGradient
         frontColor={'#248DDE'}
@@ -71,7 +71,7 @@ export default BarGraph;
 const styles = StyleSheet.create({
   labelText: {
     lineHeight: hp(16),
-    fontSize: fontSize(12),
+    fontSize: fontSize(11),
     color: colors.xDarkGrey,
     fontFamily: fonts.regular,
   },

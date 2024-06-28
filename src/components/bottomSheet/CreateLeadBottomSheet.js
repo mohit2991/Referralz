@@ -203,6 +203,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
+          isRightIcon={false}
           value={item?.name === formState.leadSource}
           text={item?.name || item?.name}
           onPress={() => {
@@ -221,6 +222,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
+          isRightIcon={false}
           value={item?.name === formState.oopsProgram}
           text={item?.name}
           onPress={() => {
@@ -239,6 +241,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
     return (
       <View style={styles.ddItemsView}>
         <RadioSelector
+          isRightIcon={false}
           value={item?.name === formState.leadPriority}
           text={item?.name}
           onPress={() => {

@@ -266,6 +266,7 @@ const EditProfileScreen = () => {
           <TextInputComp
             value={formData.contact_no}
             maxLength={10}
+            keyboardType={'number-pad'}
             labelText={'Phone number'}
             onChangeText={(text) => handleChange('contact_no', text)}
             rightIcon={

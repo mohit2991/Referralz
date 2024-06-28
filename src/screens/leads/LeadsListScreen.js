@@ -205,7 +205,7 @@ const LeadsListScreen = ({ route }) => {
   };
 
   const isFilteredLeadsDataList = () => {
-    if (!isEmpty(isFilterList)) {
+    if (!isEmpty(isFilterList) && !isSearchFocused) {
       const allLeadStatusFalse = Object.values(isFilterList?.leadStatus).every(
         (value) => value === false,
       );
@@ -282,8 +282,10 @@ const LeadsListScreen = ({ route }) => {
             </View>
           ) : searchLeadData?.length ? (
             <View>
-              <Text style={styles.searchResultText}>{'Result'}</Text>
               <FlatList
+                ListHeaderComponent={() => (
+                  <Text style={styles.searchResultText}>{'Result'}</Text>
+                )}
                 data={searchLeadData}
                 keyExtractor={(item) => item?.id?.toString()}
                 renderItem={renderLeadsByReferrals}
@@ -394,7 +396,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     lineHeight: hp(28),
     fontFamily: fonts.semiBold,
-    marginTop: hp(22),
+    marginBottom: hp(5),
     color: colors.xDarkGrey,
   },
 });

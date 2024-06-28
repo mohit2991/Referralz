@@ -7,8 +7,9 @@ const RadioSelector = ({
   text,
   value,
   onPress,
-  containerStyle,
   multiSelect,
+  containerStyle,
+  isRightIcon = true,
 }) => {
   return (
     <TouchableOpacity
@@ -17,23 +18,27 @@ const RadioSelector = ({
       style={[commonStyles.flexRowJustify, containerStyle]}
     >
       <Text style={styles.radioText}>{text}</Text>
-      {!multiSelect ? (
-        <Image
-          style={commonStyles.icon24}
-          source={value ? icons.activeRadio : icons.inActiveRadio}
-        />
-      ) : (
-        <View
-          style={[
-            styles.checkBox,
-            {
-              backgroundColor: value ? colors.primary : colors.white,
-              borderColor: value ? colors.primary : colors.grey0,
-            },
-          ]}
-        >
-          {value && (
-            <Image source={icons.checkMark} style={commonStyles.icon24} />
+      {isRightIcon && (
+        <View>
+          {!multiSelect ? (
+            <Image
+              style={commonStyles.icon24}
+              source={value ? icons.activeRadio : icons.inActiveRadio}
+            />
+          ) : (
+            <View
+              style={[
+                styles.checkBox,
+                {
+                  backgroundColor: value ? colors.primary : colors.white,
+                  borderColor: value ? colors.primary : colors.grey0,
+                },
+              ]}
+            >
+              {value && (
+                <Image source={icons.checkMark} style={commonStyles.icon24} />
+              )}
+            </View>
           )}
         </View>
       )}
