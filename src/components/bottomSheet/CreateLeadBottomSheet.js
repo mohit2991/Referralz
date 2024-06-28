@@ -20,7 +20,6 @@ import { commonStyles } from '../../styles/styles';
 import BottomButton from '../common/BottomButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import InfoComponent from '../common/InfoComponent';
-import { Dropdown } from 'react-native-element-dropdown';
 import RadioSelector from '../common/RadioSelector';
 import { launchImageLibrary } from 'react-native-image-picker';
 import useApiHandler from '../../hooks/useApiHandler';
@@ -37,17 +36,20 @@ import { useUser } from '../../contexts/userContext';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import axios from 'axios';
-import { ToastAlert } from '../../components';
+import { Shadow, ToastAlert } from '../../components';
+import { isValidEmail } from '../../utils/globalFunctions';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
-  const sourceDDRef = useRef(null);
-  const priorityDDRef = useRef(null);
-  const oopsProgramDDRef = useRef(null);
   const scrollViewRef = useRef(null);
-  const { dashboardFilter, setDashboardData, setTodayActivityData, setLeadData } = useUser();
+  const {
+    dashboardFilter,
+    setDashboardData,
+    setTodayActivityData,
+    setLeadData,
+  } = useUser();
   const [formState, setFormState] = useState({
     firstName: '',
     lastName: '',
@@ -209,7 +211,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
               leadSource: item.name,
             }));
             setIsSourceFocus(false);
-            sourceDDRef.current.close();
           }}
         />
       </View>
@@ -228,7 +229,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
               oopsProgram: item.name,
             }));
             setIsoopsProgramFocus(false);
-            oopsProgramDDRef.current.close();
           }}
         />
       </View>
@@ -247,7 +247,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
               leadPriority: item.name,
             }));
             setIsPriorityFocus(false);
-            priorityDDRef.current.close();
           }}
         />
       </View>
@@ -340,9 +339,17 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       },
       amount: 0,
       status: 'REFERRAL_RECEIVED',
-      priority: leadPriorityData.find((priority) => priority.name === formState.leadPriority)?.id || null,
-      source: leadSourceData.find((source) => source.name === formState.leadSource)?.id || null,
-      oops_problem: oopsProgramData.find((program) => program.name === formState.oopsProgram)?.id || null,
+      priority:
+        leadPriorityData.find(
+          (priority) => priority.name === formState.leadPriority,
+        )?.id || null,
+      source:
+        leadSourceData.find((source) => source.name === formState.leadSource)
+          ?.id || null,
+      oops_problem:
+        oopsProgramData.find(
+          (program) => program.name === formState.oopsProgram,
+        )?.id || null,
       description: formState.description,
       address: {
         address: formState.address,
@@ -402,12 +409,22 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     setImageData([{ id: 1 }]);
   };
 
+  const handlePhoneNumberChange = (text) => {
+    if (!text.startsWith('+91 ')) {
+      text = '+91 ' + text.replace('+91 ', '');
+    }
+    setFormState((prevState) => ({
+      ...prevState,
+      phoneNumber: text,
+    }));
+  };
+
   const isButtonEnable = () => {
     if (
       firstName !== '' &&
       lastName !== '' &&
       phoneNumber !== '' &&
-      email !== '' &&
+      phoneNumber?.length === 10 &&
       address !== '' &&
       aptSuit !== '' &&
       city !== '' &&
@@ -420,9 +437,17 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
       leadSource !== '' &&
       leadSource !== 'Select' &&
       oopsProgram !== '' &&
-      oopsProgram !== 'Select'
+      oopsProgram !== 'Select' &&
+      email !== '' &&
+      isValidEmail(email)
     ) {
-      return true;
+      if (email !== '' && isValidEmail(email)) {
+        return true;
+      } else if (email === '') {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -469,129 +494,120 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                   contentContainerStyle={styles.keyboardAwareStyle}
                   extraScrollHeight={hp(100)}
                 >
-                  <View>
-                    <TextInputComp
-                      editable={false}
-                      value={formState.leadSource}
-                      labelText={'Source'}
-                      rightIcon={
-                        <Image
-                          source={icons.downChevron}
-                          style={[
-                            commonStyles.icon24,
-                            {
-                              transform: [
-                                {
-                                  rotate: !isSourceFocus ? `0deg` : `${180}deg`,
-                                },
-                              ],
-                            },
-                          ]}
-                        />
-                      }
-                      onRightPress={() => {
-                        sourceDDRef.current.open();
+                  <View style={styles.ddView}>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        setIsSourceFocus(!isSourceFocus);
+                        setIsoopsProgramFocus(false);
+                        setIsPriorityFocus(false);
                       }}
-                    />
-                    <Dropdown
-                      ref={sourceDDRef}
-                      style={styles.dropdown}
-                      data={leadSourceData}
-                      labelField="name"
-                      valueField="id"
-                      value={formState.leadSource}
-                      onFocus={() => setIsSourceFocus(true)}
-                      onBlur={() => setIsSourceFocus(false)}
-                      // onChange={(item) => {
-                      //   setLeadSource(item?.label);
-                      //   setIsSourceFocus(false);
-                      // }}
-                      renderItem={renderSourceDDItems}
-                    />
+                      style={styles.ddContainer}
+                    >
+                      <View>
+                        <Text style={styles.ddLabelText}>{'Source'}</Text>
+                        <Text style={styles.ddSelectedText}>{leadSource}</Text>
+                      </View>
+                      <Image
+                        source={icons.downChevron}
+                        style={[
+                          commonStyles.icon24,
+                          {
+                            transform: [
+                              {
+                                rotate: !isSourceFocus ? `0deg` : `${180}deg`,
+                              },
+                            ],
+                          },
+                        ]}
+                      />
+                    </TouchableOpacity>
+                    {isSourceFocus && (
+                      <Shadow shadowStyle={styles.ddShadowStyle}>
+                        {leadSourceData?.map((item) =>
+                          renderSourceDDItems(item),
+                        )}
+                      </Shadow>
+                    )}
                   </View>
-                  <View>
-                    <TextInputComp
-                      editable={false}
-                      value={formState.oopsProgram}
-                      labelText={'Oops program'}
-                      rightIcon={
-                        <Image
-                          source={icons.downChevron}
-                          style={[
-                            commonStyles.icon24,
-                            {
-                              transform: [
-                                {
-                                  rotate: !isOopsProgramFocus
-                                    ? `0deg`
-                                    : `${180}deg`,
-                                },
-                              ],
-                            },
-                          ]}
-                        />
-                      }
-                      onRightPress={() => {
-                        oopsProgramDDRef.current.open();
+                  <View style={styles.ddView}>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        setIsoopsProgramFocus(!isOopsProgramFocus);
+                        setIsSourceFocus(false);
+                        setIsPriorityFocus(false);
                       }}
-                    />
-                    <Dropdown
-                      ref={oopsProgramDDRef}
-                      style={styles.dropdown}
-                      data={oopsProgramData}
-                      labelField="name"
-                      valueField="id"
-                      value={formState.oopsProgram}
-                      onFocus={() => setIsoopsProgramFocus(true)}
-                      onBlur={() => setIsoopsProgramFocus(false)}
-                      // onChange={(item) => {
-                      //   setOopsProgram(item?.label);
-                      //   setIsoopsProgramFocus(false);
-                      // }}
-                      renderItem={renderOopsDDItems}
-                    />
+                      style={styles.ddContainer}
+                    >
+                      <View>
+                        <Text style={styles.ddLabelText}>{'Oops program'}</Text>
+                        <Text style={styles.ddSelectedText}>{oopsProgram}</Text>
+                      </View>
+                      <Image
+                        source={icons.downChevron}
+                        style={[
+                          commonStyles.icon24,
+                          {
+                            transform: [
+                              {
+                                rotate: !isOopsProgramFocus
+                                  ? `0deg`
+                                  : `${180}deg`,
+                              },
+                            ],
+                          },
+                        ]}
+                      />
+                    </TouchableOpacity>
+                    {isOopsProgramFocus && (
+                      <Shadow shadowStyle={styles.ddShadowStyle}>
+                        {oopsProgramData?.map((item) =>
+                          renderOopsDDItems(item),
+                        )}
+                      </Shadow>
+                    )}
                   </View>
-                  <View>
-                    <TextInputComp
-                      editable={false}
-                      value={formState.leadPriority}
-                      labelText={'Lead priority'}
-                      rightIcon={
-                        <Image
-                          source={icons.downChevron}
-                          style={[
-                            commonStyles.icon24,
-                            {
-                              transform: [
-                                {
-                                  rotate: !isPriorityFocus
-                                    ? `0deg`
-                                    : `${180}deg`,
-                                },
-                              ],
-                            },
-                          ]}
-                        />
-                      }
-                      onRightPress={() => {
-                        priorityDDRef.current.open();
+
+                  <View style={styles.ddView}>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        setIsSourceFocus(false);
+                        setIsoopsProgramFocus(false);
+                        setIsPriorityFocus(!isPriorityFocus);
                       }}
-                    />
-                    <Dropdown
-                      ref={priorityDDRef}
-                      style={styles.dropdown}
-                      data={leadPriorityData}
-                      labelField="name"
-                      valueField="id"
-                      value={formState.leadPriority}
-                      onFocus={() => setIsPriorityFocus(true)}
-                      onBlur={() => setIsPriorityFocus(false)}
-                      // onChange={(item) => {
-                      //   setLeadPriority(item?.label);
-                      //   setIsPriorityFocus(false);
-                      // }}
-                      renderItem={renderPriorityDDItems}
-                    />
+                      style={styles.ddContainer}
+                    >
+                      <View>
+                        <Text style={styles.ddLabelText}>
+                          {'Lead priority'}
+                        </Text>
+                        <Text style={styles.ddSelectedText}>
+                          {leadPriority}
+                        </Text>
+                      </View>
+                      <Image
+                        source={icons.downChevron}
+                        style={[
+                          commonStyles.icon24,
+                          {
+                            transform: [
+                              {
+                                rotate: !isPriorityFocus ? `0deg` : `${180}deg`,
+                              },
+                            ],
+                          },
+                        ]}
+                      />
+                    </TouchableOpacity>
+                    {isPriorityFocus && (
+                      <Shadow shadowStyle={styles.ddShadowStyle}>
+                        {leadPriorityData?.map((item) =>
+                          renderPriorityDDItems(item),
+                        )}
+                      </Shadow>
+                    )}
                   </View>
                   <View style={styles.titleView}>
                     <Text style={styles.headerText}>
@@ -625,14 +641,10 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                   />
                   <TextInputComp
                     value={formState.phoneNumber}
-                    maxLength={10}
+                    maxLength={14}
+                    keyboardType={'number-pad'}
                     labelText={'Phone number'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        phoneNumber: text,
-                      }))
-                    }
+                    onChangeText={handlePhoneNumberChange}
                   />
                   <TextInputComp
                     value={formState.email}
@@ -689,6 +701,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                     value={formState.postalCode}
                     maxLength={8}
                     labelText={'Postal code'}
+                    keyboardType={'number-pad'}
                     onChangeText={(text) =>
                       setFormState((prevState) => ({
                         ...prevState,
@@ -901,12 +914,13 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     width: '100%',
-    marginTop: hp(-20),
+    // marginTop: hp(-20),
     zIndex: -1,
   },
   ddItemsView: {
     paddingHorizontal: wp(16),
     paddingVertical: hp(12),
+    backgroundColor: colors.white,
   },
   addFileView: {
     height: hp(100),
@@ -939,5 +953,35 @@ const styles = StyleSheet.create({
     zIndex: 100,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  ddContainer: {
+    borderRadius: wp(8),
+    borderColor: colors.grey,
+    borderWidth: wp(1),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(8),
+  },
+  ddView: { marginTop: hp(16) },
+  ddLabelText: {
+    fontSize: fontSize(12),
+    lineHeight: hp(16),
+    fontFamily: fonts.regular,
+    color: colors.darkGrey,
+  },
+  ddSelectedText: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    color: colors.darkBlack,
+    fontFamily: fonts.regular,
+  },
+  ddShadowStyle: {
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 5,
   },
 });
