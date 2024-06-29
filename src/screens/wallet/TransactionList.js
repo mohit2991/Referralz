@@ -176,7 +176,7 @@ const TransactionList = () => {
   };
 
   const isFilteredWalletDataList = () => {
-    if (!isEmpty(isFilterList)) {
+    if (!isEmpty(isFilterList) && !isSearchFocused) {
       if (
         isFilterList?.period?.allTime &&
         isFilterList?.transactionType?.check
