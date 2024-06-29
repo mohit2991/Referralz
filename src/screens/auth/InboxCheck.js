@@ -3,9 +3,9 @@ import { View, StyleSheet, Linking } from 'react-native';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { colors, wp } from '../utils';
-import { commonStyles } from '../styles/styles';
-import { Header, InfoComponent } from '../components';
+import { colors, wp } from '../../utils';
+import { commonStyles } from '../../styles/styles';
+import { Header, InfoComponent } from '../../components';
 
 const InboxCheck = () => {
   const { params } = useRoute();

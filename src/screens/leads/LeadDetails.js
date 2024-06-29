@@ -55,11 +55,11 @@ const LeadDetails = () => {
     getLeadActivityData();
   }, [item]);
 
-  const DetailItemView = ({ title, detail }) => {
+  const DetailItemView = ({ title, detail, detailStyle }) => {
     return (
       <View>
         {title && <Text style={styles.itemTitleText}>{title}</Text>}
-        <Text style={styles.itemDetailText}>{detail}</Text>
+        <Text style={[styles.itemDetailText, detailStyle]}>{detail}</Text>
       </View>
     );
   };
@@ -266,11 +266,12 @@ const LeadDetails = () => {
             <DetailItemView
               title={'Full name'}
               detail={`${item?.customer?.first_name} ${item?.customer?.last_name}`}
+              detailStyle={styles.textCapitalize}
             />
             <View style={styles.height16} />
             <DetailItemView
               title={'Phone number'}
-              detail={item?.customer?.phone_number}
+              detail={`+91 ${item?.customer?.phone_number}`}
             />
             <View style={styles.height16} />
             <DetailItemView
@@ -458,6 +459,9 @@ const styles = StyleSheet.create({
     lineHeight: hp(24),
     fontFamily: fonts.regular,
     color: colors.xDarkGrey,
+  },
+  textCapitalize: {
+    textTransform: 'capitalize',
   },
   height16: {
     height: hp(16),

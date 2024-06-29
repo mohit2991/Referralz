@@ -56,14 +56,15 @@ const WalletScreen = () => {
     return <WalletItem item={item} />;
   };
 
-  return (
+  return loading ? (
+    <LoadingSpinner visible={loading} />
+  ) : (
     <View style={commonStyles.flex}>
       <Header
         isAvatar
         profileImage={userData?.download_profile_img_url}
         title={'Wallet'}
       />
-      <LoadingSpinner visible={loading} />
       <View style={styles.mainContainer}>
         <Shadow shadowStyle={styles.shadowStyle}>
           <LinearGradient

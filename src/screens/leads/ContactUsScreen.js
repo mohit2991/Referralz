@@ -24,13 +24,13 @@ const ContactUsScreen = () => {
         shadowStyle={{ shadowOpacity: 0 }}
         cardContainerStyle={styles.listCardView}
       >
-        <Text style={styles.cardTitleTextStyle}>{item?.type == 'ADMIN' ? 'Project manager' : 'Business developer'}</Text>
+        <Text style={styles.cardTitleTextStyle}>{item?.type == 'ADMIN' ? 'Project Manager' : 'Business Developer'}</Text>
         <View style={styles.height24} />
         <DetailItemView title={'Full name'} detail={`${item?.first_name} ${item?.last_name}`} />
         <View style={styles.height16} />
         <DetailItemView
           title={'Phone number'}
-          detail={item?.contact_no}
+          detail={`+91 ${item?.contact_no}`}
           detailTextColor={colors.blue}
         />
       </ItemCard>
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(24),
     fontFamily: fonts.regular,
     color: colors.xDarkGrey,
+    textTransform: 'capitalize',
   },
   cardTitleTextStyle: {
     fontSize: fontSize(18),

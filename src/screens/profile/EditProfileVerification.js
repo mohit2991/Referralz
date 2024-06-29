@@ -12,6 +12,7 @@ import {
 } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
 
 const EditProfileVerification = () => {
   const { navigate } = useNavigation();
@@ -76,7 +77,7 @@ const EditProfileVerification = () => {
       <View style={styles.container}>
         <Text style={styles.titleText}>{'Enter code'}</Text>
         <Text style={styles.descText}>
-          {`We sent a verification code to your phone number ${userPayload?.contact_no}`}
+          {`We sent a verification code to your phone number +91 ${userPayload?.contact_no}`}
         </Text>
         <View style={styles.otpInputView}>
           <OTPInputView

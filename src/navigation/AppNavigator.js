@@ -5,7 +5,7 @@ import Splash from '../screens/Splash';
 import Register from '../screens/auth/Register';
 import Login from '../screens/auth/Login';
 import ForgotPassword from '../screens/auth/ForgotPassword';
-import InboxCheck from '../screens/InboxCheck';
+import InboxCheck from '../screens/auth/InboxCheck';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import EditProfileVerification from '../screens/profile/EditProfileVerification';
