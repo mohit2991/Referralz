@@ -18,11 +18,10 @@ const InboxCheck = () => {
       navigate(routeName);
     } else {
       const sendEmail = `mailto:${email}`;
-      const isValidURL = await Linking.canOpenURL(mailtoUrl);
-      if (isValidURL) {
-        await Linking.openURL(sendEmail).catch((err) =>
-          console.error(`Failed to open email ${email} app`, err),
-        );
+      try {
+        Linking.openURL(sendEmail);
+      } catch (error) {
+        console.log("error",error)
       }
     }
   };
