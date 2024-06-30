@@ -2,6 +2,8 @@ import React from 'react';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { View, Image, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { colors, fontSize, fonts, hp, icons } from '../../utils';
+import LottieViewer from './LottieViewer';
+import { lotties } from '../../utils/icons';
 
 const LoadingSpinner = ({ visible, text = 'Loading...' }) => {
   return (
@@ -9,8 +11,7 @@ const LoadingSpinner = ({ visible, text = 'Loading...' }) => {
       visible={visible}
       customIndicator={
         <View style={styles.container}>
-          <ActivityIndicator size={'small'} color={colors.xDarkGrey} />
-          {/* <Image source={icons.loader} style={styles.spinnerIconStyle} /> */}
+          <LottieViewer children={undefined} source={lotties.loader} />
           <Text style={styles.spinnerTextStyle}>{text}</Text>
         </View>
       }

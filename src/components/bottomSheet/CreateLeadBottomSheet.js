@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetScrollView,
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
@@ -38,8 +39,9 @@ import { Buffer } from 'buffer';
 import axios from 'axios';
 import { Shadow, ToastAlert } from '../../components';
 import { isValidEmail } from '../../utils/globalFunctions';
+import LoadingSpinner from '../common/LoadingSpinner';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
@@ -338,7 +340,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
         email_id: formState.email,
         first_name: formState.firstName,
         last_name: formState.lastName,
-        phone_number: formState.phoneNumber.replace("+91 ", ""),
+        phone_number: formState.phoneNumber.replace('+91 ', ''),
       },
       amount: 0,
       status: 'REFERRAL_RECEIVED',
@@ -412,10 +414,10 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   };
 
   const handlePhoneNumberChange = (text) => {
-    if (text === "+91 " || text === "+91") {
-      text = "";
-    } else if (!text.startsWith("+91 ") && text.length > 0) {
-      text = "+91 " + text.replace("+91 ", "");
+    if (text === '+91 ' || text === '+91') {
+      text = '';
+    } else if (!text.startsWith('+91 ') && text.length > 0) {
+      text = '+91 ' + text.replace('+91 ', '');
     }
     setFormState((prevState) => ({
       ...prevState,
@@ -457,7 +459,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
     }
   };
 
-
   return (
     <Portal>
       <BottomSheet
@@ -483,309 +484,321 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
                 <Text style={styles.closeText}>{'Close'}</Text>
               </TouchableOpacity>
             </View>
-            {isLoading && (
-              <View style={styles.loaderView}>
-                <ActivityIndicator color={colors.black} size={'small'} />
-                <Text style={styles.loadingTextStyle}>{'Loading...'}</Text>
-              </View>
-            )}
+            <LoadingSpinner visible={isLoading} />
             {!successScreen ? (
               <View style={commonStyles.flex}>
-                <KeyboardAwareScrollView
+                <BottomSheetScrollView
                   ref={scrollViewRef}
                   scrollEnabled={true}
-                  enableOnAndroid
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={styles.keyboardAwareStyle}
-                  extraScrollHeight={hp(100)}
+                  extraScrollHeight={hp(60)}
                 >
-                  <View style={{ ...styles.ddView, zIndex: 99 }}>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        setIsSourceFocus(!isSourceFocus);
-                        setIsoopsProgramFocus(false);
-                        setIsPriorityFocus(false);
-                      }}
-                      style={styles.ddContainer}
-                    >
-                      <View>
-                        <Text style={styles.ddLabelText}>{'Source'}</Text>
-                        <Text style={styles.ddSelectedText}>{leadSource}</Text>
-                      </View>
-                      <Image
-                        source={icons.downChevron}
-                        style={[
-                          commonStyles.icon24,
-                          {
-                            transform: [
-                              {
-                                rotate: !isSourceFocus ? `0deg` : `${180}deg`,
-                              },
-                            ],
-                          },
-                        ]}
-                      />
-                    </TouchableOpacity>
-                    {isSourceFocus && (
-                      <Shadow shadowStyle={styles.ddShadowStyle}>
-                        {leadSourceData?.map((item) =>
-                          renderSourceDDItems(item),
-                        )}
-                      </Shadow>
-                    )}
-                  </View>
-                  <View style={{ ...styles.ddView, zIndex: 77 }}>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        setIsoopsProgramFocus(!isOopsProgramFocus);
-                        setIsSourceFocus(false);
-                        setIsPriorityFocus(false);
-                      }}
-                      style={styles.ddContainer}
-                    >
-                      <View>
-                        <Text style={styles.ddLabelText}>{'Oops program'}</Text>
-                        <Text style={styles.ddSelectedText}>{oopsProgram}</Text>
-                      </View>
-                      <Image
-                        source={icons.downChevron}
-                        style={[
-                          commonStyles.icon24,
-                          {
-                            transform: [
-                              {
-                                rotate: !isOopsProgramFocus
-                                  ? `0deg`
-                                  : `${180}deg`,
-                              },
-                            ],
-                          },
-                        ]}
-                      />
-                    </TouchableOpacity>
-                    {isOopsProgramFocus && (
-                      <Shadow shadowStyle={styles.ddShadowStyle}>
-                        {oopsProgramData?.map((item) =>
-                          renderOopsDDItems(item),
-                        )}
-                      </Shadow>
-                    )}
-                  </View>
+                  <KeyboardAwareScrollView
+                    enableOnAndroid
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                  >
+                    <View style={{ ...styles.ddView, zIndex: 99 }}>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                          setIsSourceFocus(!isSourceFocus);
+                          setIsoopsProgramFocus(false);
+                          setIsPriorityFocus(false);
+                        }}
+                        style={styles.ddContainer}
+                      >
+                        <View>
+                          <Text style={styles.ddLabelText}>{'Source'}</Text>
+                          <Text style={styles.ddSelectedText}>
+                            {leadSource}
+                          </Text>
+                        </View>
+                        <Image
+                          source={icons.downChevron}
+                          style={[
+                            commonStyles.icon24,
+                            {
+                              transform: [
+                                {
+                                  rotate: !isSourceFocus ? `0deg` : `${180}deg`,
+                                },
+                              ],
+                            },
+                          ]}
+                        />
+                      </TouchableOpacity>
+                      {isSourceFocus && (
+                        <Shadow shadowStyle={styles.ddShadowStyle}>
+                          {leadSourceData?.map((item) =>
+                            renderSourceDDItems(item),
+                          )}
+                        </Shadow>
+                      )}
+                    </View>
+                    <View style={{ ...styles.ddView, zIndex: 77 }}>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                          setIsoopsProgramFocus(!isOopsProgramFocus);
+                          setIsSourceFocus(false);
+                          setIsPriorityFocus(false);
+                        }}
+                        style={styles.ddContainer}
+                      >
+                        <View>
+                          <Text style={styles.ddLabelText}>
+                            {'Oops program'}
+                          </Text>
+                          <Text style={styles.ddSelectedText}>
+                            {oopsProgram}
+                          </Text>
+                        </View>
+                        <Image
+                          source={icons.downChevron}
+                          style={[
+                            commonStyles.icon24,
+                            {
+                              transform: [
+                                {
+                                  rotate: !isOopsProgramFocus
+                                    ? `0deg`
+                                    : `${180}deg`,
+                                },
+                              ],
+                            },
+                          ]}
+                        />
+                      </TouchableOpacity>
+                      {isOopsProgramFocus && (
+                        <Shadow shadowStyle={styles.ddShadowStyle}>
+                          {oopsProgramData?.map((item) =>
+                            renderOopsDDItems(item),
+                          )}
+                        </Shadow>
+                      )}
+                    </View>
 
-                  <View style={{ ...styles.ddView, zIndex: 55 }}>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        setIsSourceFocus(false);
-                        setIsoopsProgramFocus(false);
-                        setIsPriorityFocus(!isPriorityFocus);
-                      }}
-                      style={styles.ddContainer}
-                    >
-                      <View>
-                        <Text style={styles.ddLabelText}>
-                          {'Lead priority'}
-                        </Text>
-                        <Text style={styles.ddSelectedText}>
-                          {leadPriority}
-                        </Text>
-                      </View>
-                      <Image
-                        source={icons.downChevron}
-                        style={[
-                          commonStyles.icon24,
-                          {
-                            transform: [
-                              {
-                                rotate: !isPriorityFocus ? `0deg` : `${180}deg`,
-                              },
-                            ],
-                          },
-                        ]}
-                      />
-                    </TouchableOpacity>
-                    {isPriorityFocus && (
-                      <Shadow shadowStyle={styles.ddShadowStyle}>
-                        {leadPriorityData?.map((item) =>
-                          renderPriorityDDItems(item),
-                        )}
-                      </Shadow>
-                    )}
-                  </View>
-                  <View style={styles.titleView}>
-                    <Text style={styles.headerText}>
-                      {'Contact information'}
-                    </Text>
-                    <Text style={styles.descText}>
-                      {'Main information about contact for this lead.'}
-                    </Text>
-                  </View>
-                  <TextInputComp
-                    value={formState.firstName}
-                    maxLength={20}
-                    labelText={'First name'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        firstName: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.lastName}
-                    maxLength={20}
-                    labelText={'Last name'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        lastName: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.phoneNumber.startsWith('+91 ') ? formState.phoneNumber : `+91 ${formState.phoneNumber}`}
-                    maxLength={14}
-                    keyboardType={'number-pad'}
-                    labelText={'Phone number'}
-                    onChangeText={handlePhoneNumberChange}
-                  />
-                  <TextInputComp
-                    value={formState.email}
-                    maxLength={100}
-                    labelText={'Email address (Optional)'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        email: text,
-                      }))
-                    }
-                  />
-
-                  <View style={styles.titleView}>
-                    <Text style={styles.headerText}>{'Lead address'}</Text>
-                    <Text style={styles.descText}>
-                      {'Precise data regarding the address of lead.'}
-                    </Text>
-                  </View>
-                  <TextInputComp
-                    value={formState.address}
-                    maxLength={100}
-                    labelText={'Address'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        address: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.aptSuit}
-                    maxLength={100}
-                    labelText={'Apt, suite, etc...'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        aptSuit: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.city}
-                    maxLength={30}
-                    labelText={'City'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        city: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.postalCode}
-                    maxLength={8}
-                    labelText={'Postal code'}
-                    keyboardType={'number-pad'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        postalCode: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.state}
-                    maxLength={30}
-                    labelText={'State'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        state: text,
-                      }))
-                    }
-                  />
-                  <TextInputComp
-                    value={formState.country}
-                    maxLength={30}
-                    labelText={'Country'}
-                    onChangeText={(text) =>
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        country: text,
-                      }))
-                    }
-                  />
-
-                  <View style={styles.titleView}>
-                    <Text style={styles.headerText}>{'Description'}</Text>
-                    <Text style={styles.descText}>
-                      {`Brief overview of the lead's nature and requirements.`}
-                    </Text>
-                  </View>
-                  <View style={{ marginTop: hp(16) }}>
-                    <BottomSheetTextInput
-                      placeholder="Type Here..."
-                      multiline={true}
-                      textAlignVertical="top"
-                      onChangeText={(text) => {
+                    <View style={{ ...styles.ddView, zIndex: 55 }}>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                          setIsSourceFocus(false);
+                          setIsoopsProgramFocus(false);
+                          setIsPriorityFocus(!isPriorityFocus);
+                        }}
+                        style={styles.ddContainer}
+                      >
+                        <View>
+                          <Text style={styles.ddLabelText}>
+                            {'Lead priority'}
+                          </Text>
+                          <Text style={styles.ddSelectedText}>
+                            {leadPriority}
+                          </Text>
+                        </View>
+                        <Image
+                          source={icons.downChevron}
+                          style={[
+                            commonStyles.icon24,
+                            {
+                              transform: [
+                                {
+                                  rotate: !isPriorityFocus
+                                    ? `0deg`
+                                    : `${180}deg`,
+                                },
+                              ],
+                            },
+                          ]}
+                        />
+                      </TouchableOpacity>
+                      {isPriorityFocus && (
+                        <Shadow shadowStyle={styles.ddShadowStyle}>
+                          {leadPriorityData?.map((item) =>
+                            renderPriorityDDItems(item),
+                          )}
+                        </Shadow>
+                      )}
+                    </View>
+                    <View style={styles.titleView}>
+                      <Text style={styles.headerText}>
+                        {'Contact information'}
+                      </Text>
+                      <Text style={styles.descText}>
+                        {'Main information about contact for this lead.'}
+                      </Text>
+                    </View>
+                    <TextInputComp
+                      value={formState.firstName}
+                      maxLength={20}
+                      labelText={'First name'}
+                      onChangeText={(text) =>
                         setFormState((prevState) => ({
                           ...prevState,
-                          description: text,
-                        }));
-                      }}
-                      style={styles.textInput}
-                      maxLength={300}
-                      autoCorrect={false}
-                      autoCapitalize={'sentences'}
+                          firstName: text,
+                        }))
+                      }
                     />
-                    {/* <View {...panResponder.panHandlers} style={styles.resizeHandle}>
+                    <TextInputComp
+                      value={formState.lastName}
+                      maxLength={20}
+                      labelText={'Last name'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          lastName: text,
+                        }))
+                      }
+                    />
+                    <TextInputComp
+                      value={
+                        formState.phoneNumber.startsWith('+91 ')
+                          ? formState.phoneNumber
+                          : `+91 ${formState.phoneNumber}`
+                      }
+                      maxLength={14}
+                      keyboardType={'number-pad'}
+                      labelText={'Phone number'}
+                      onChangeText={handlePhoneNumberChange}
+                    />
+                    <TextInputComp
+                      value={formState.email}
+                      maxLength={100}
+                      labelText={'Email address (Optional)'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          email: text,
+                        }))
+                      }
+                    />
+
+                    <View style={styles.titleView}>
+                      <Text style={styles.headerText}>{'Lead address'}</Text>
+                      <Text style={styles.descText}>
+                        {'Precise data regarding the address of lead.'}
+                      </Text>
+                    </View>
+                    <TextInputComp
+                      value={formState.address}
+                      maxLength={100}
+                      labelText={'Address'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          address: text,
+                        }))
+                      }
+                    />
+                    <TextInputComp
+                      value={formState.aptSuit}
+                      maxLength={100}
+                      labelText={'Apt, suite, etc...'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          aptSuit: text,
+                        }))
+                      }
+                    />
+                    <TextInputComp
+                      value={formState.city}
+                      maxLength={30}
+                      labelText={'City'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          city: text,
+                        }))
+                      }
+                    />
+                    <TextInputComp
+                      value={formState.postalCode}
+                      maxLength={8}
+                      labelText={'Postal code'}
+                      keyboardType={'number-pad'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          postalCode: text,
+                        }))
+                      }
+                    />
+                    <TextInputComp
+                      value={formState.state}
+                      maxLength={30}
+                      labelText={'State'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          state: text,
+                        }))
+                      }
+                    />
+                    <TextInputComp
+                      value={formState.country}
+                      maxLength={30}
+                      labelText={'Country'}
+                      onChangeText={(text) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          country: text,
+                        }))
+                      }
+                    />
+
+                    <View style={styles.titleView}>
+                      <Text style={styles.headerText}>{'Description'}</Text>
+                      <Text style={styles.descText}>
+                        {`Brief overview of the lead's nature and requirements.`}
+                      </Text>
+                    </View>
+                    <View style={{ marginTop: hp(16) }}>
+                      <BottomSheetTextInput
+                        placeholder="Type Here..."
+                        multiline={true}
+                        textAlignVertical="top"
+                        onChangeText={(text) => {
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            description: text,
+                          }));
+                        }}
+                        style={styles.textInput}
+                        maxLength={300}
+                        autoCorrect={false}
+                        autoCapitalize={'sentences'}
+                      />
+                      {/* <View {...panResponder.panHandlers} style={styles.resizeHandle}>
                 <Image source={icons.expander} style={commonStyles.icon24} />
               </View> */}
-                  </View>
+                    </View>
 
-                  <View style={styles.titleView}>
-                    <Text style={styles.headerText}>
-                      {'Upload attachments (Optional)'}
-                    </Text>
-                    <Text style={styles.descText}>
-                      {`Include any relevant images or reports of damage by adding up to 10 files. The maximum size for each image is 5 MB.`}
-                    </Text>
-                  </View>
-                  <FlatList
-                    key={1}
-                    data={imageData}
-                    renderItem={renderImageItems}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    ItemSeparatorComponent={() => (
-                      <View style={{ width: wp(8) }} />
-                    )}
-                    style={{
-                      marginVertical: hp(16),
-                    }}
-                  />
-                </KeyboardAwareScrollView>
+                    <View style={styles.titleView}>
+                      <Text style={styles.headerText}>
+                        {'Upload attachments (Optional)'}
+                      </Text>
+                      <Text style={styles.descText}>
+                        {`Include any relevant images or reports of damage by adding up to 10 files. The maximum size for each image is 5 MB.`}
+                      </Text>
+                    </View>
+                    <FlatList
+                      key={1}
+                      data={imageData}
+                      renderItem={renderImageItems}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      ItemSeparatorComponent={() => (
+                        <View style={{ width: wp(8) }} />
+                      )}
+                      style={{
+                        marginVertical: hp(16),
+                      }}
+                    />
+                  </KeyboardAwareScrollView>
+                </BottomSheetScrollView>
                 <BottomButton
                   title={'Create lead'}
                   disabled={!isButtonEnable()}
