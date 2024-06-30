@@ -84,6 +84,23 @@ const PayBilling = () => {
     setHasChanges(true);
   };
 
+  const isReadyToEdit = () => {
+    if (
+      formData?.address?.address !== '' &&
+      formData?.address?.name !== '' &&
+      formData?.address?.city !== '' &&
+      formData?.address?.postal_code !== '' &&
+      formData?.address?.state !== '' &&
+      formData?.address?.country !== ''
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  console.log(isReadyToEdit(), formData?.address)
+
   const payBilling = async () => {
     setLoading(true);
 
@@ -172,7 +189,7 @@ const PayBilling = () => {
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <TextInputComp
             value={formData?.address?.postal_code.toString()}
@@ -189,7 +206,7 @@ const PayBilling = () => {
             rightIcon={
               <Image source={icons.downChevron} style={commonStyles.icon24} />
             }
-            onRightPress={() => {}}
+            onRightPress={() => { }}
           />
           <Pressable
             onPress={() => setIsConditionChecked(!isConditionChecked)}
@@ -218,7 +235,7 @@ const PayBilling = () => {
       </View>
       <BottomButton
         title={'Update'}
-        disabled={loading || !hasChanges}
+        disabled={loading || !hasChanges || isReadyToEdit()}
         onPress={payBilling}
       />
       <SafeAreaView style={styles.safeAreaViewStyle} />
