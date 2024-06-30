@@ -181,7 +181,7 @@ const TransactionList = () => {
         isFilterList?.period?.allTime &&
         isFilterList?.transactionType?.check
       ) {
-        return false;
+        return true;
       } else {
         return true;
       }
@@ -241,8 +241,10 @@ const TransactionList = () => {
           </View>
         ) : searchWalletData?.transactions?.length ? (
           <View>
-            <Text style={styles.searchResultText}>{'Result'}</Text>
             <FlatList
+              ListHeaderComponent={() => (
+                <Text style={styles.searchResultText}>{'Result'}</Text>
+              )}
               data={searchWalletData?.transactions}
               showsVerticalScrollIndicator={false}
               renderItem={renderTransactionList}
