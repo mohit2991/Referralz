@@ -39,7 +39,7 @@ import axios from 'axios';
 import { Shadow, ToastAlert } from '../../components';
 import { isValidEmail } from '../../utils/globalFunctions';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
@@ -338,7 +338,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
         email_id: formState.email,
         first_name: formState.firstName,
         last_name: formState.lastName,
-        phone_number: formState.phoneNumber,
+        phone_number: formState.phoneNumber.replace("+91 ", ""),
       },
       amount: 0,
       status: 'REFERRAL_RECEIVED',
@@ -366,7 +366,6 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
         .filter((item) => item?.fileName)
         .map((item) => item.fileName),
     };
-
     setIsLoading(true);
     await handleApiCall(
       () => createLead(userPayload),
@@ -413,8 +412,10 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
   };
 
   const handlePhoneNumberChange = (text) => {
-    if (!text.startsWith('+91 ')) {
-      text = '+91 ' + text.replace('+91 ', '');
+    if (text === "+91 " || text === "+91") {
+      text = "";
+    } else if (!text.startsWith("+91 ") && text.length > 0) {
+      text = "+91 " + text.replace("+91 ", "");
     }
     setFormState((prevState) => ({
       ...prevState,
@@ -427,7 +428,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
       firstName !== '' &&
       lastName !== '' &&
       phoneNumber !== '' &&
-      phoneNumber?.length === 10 &&
+      phoneNumber?.length === 14 &&
       address !== '' &&
       aptSuit !== '' &&
       city !== '' &&
@@ -455,6 +456,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
       return false;
     }
   };
+
 
   return (
     <Portal>
@@ -643,7 +645,7 @@ const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
                     }
                   />
                   <TextInputComp
-                    value={formState.phoneNumber}
+                    value={formState.phoneNumber.startsWith('+91 ') ? formState.phoneNumber : `+91 ${formState.phoneNumber}`}
                     maxLength={14}
                     keyboardType={'number-pad'}
                     labelText={'Phone number'}
@@ -924,6 +926,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(16),
     paddingVertical: hp(12),
     backgroundColor: colors.white,
+    textTransform: 'capitalize',
   },
   addFileView: {
     height: hp(100),
@@ -979,6 +982,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(24),
     color: colors.darkBlack,
     fontFamily: fonts.regular,
+    textTransform: 'capitalize',
   },
   ddShadowStyle: {
     shadowOffset: {

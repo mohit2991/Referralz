@@ -137,6 +137,16 @@ const EditProfileScreen = () => {
     setHasChanges(true);
   };
 
+  const handlePhoneNumberChange = (text) => {
+    if (text === "+91 " || text === "+91") {
+      text = "";
+    } else if (!text.startsWith("+91 ") && text.length > 0) {
+      text = "+91 " + text.replace("+91 ", "");
+    }
+    handleChange("contact_no", text);
+  };
+
+
   const isReadyToEdit = () => {
     if (
       formData.first_name !== '' &&
@@ -144,7 +154,7 @@ const EditProfileScreen = () => {
       formData.email_id !== '' &&
       formData.contact_no !== '' &&
       formData.birth_date !== '' &&
-      formData.contact_no?.length === 10
+      formData.contact_no?.length === 14
     ) {
       return false;
     } else {
@@ -159,7 +169,7 @@ const EditProfileScreen = () => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       email_id: formData.email_id,
-      contact_no: formData.contact_no,
+      contact_no: formData.contact_no.replace("+91 ", ""),
       birth_date: formData.birth_date
         ? moment(formData.birth_date, 'YYYY/MM/DD').format('YYYY/MM/DD')
         : null,
@@ -176,6 +186,7 @@ const EditProfileScreen = () => {
           ? false
           : true;
 
+    console.log({ bbbb: userPayload })
     if (!shouldVerifyContact) {
       // Update User Deatils API Call
       await handleApiCall(
@@ -264,11 +275,11 @@ const EditProfileScreen = () => {
             }}
           />
           <TextInputComp
-            value={formData.contact_no}
-            maxLength={10}
+            value={formData.contact_no.startsWith('+91 ') ? formData.contact_no : `+91 ${formData.contact_no}`}
+            maxLength={14}
             keyboardType={'number-pad'}
             labelText={'Phone number'}
-            onChangeText={(text) => handleChange('contact_no', text)}
+            onChangeText={handlePhoneNumberChange}
             rightIcon={
               !userData?.contact_verification_status && (
                 <Image
@@ -278,7 +289,7 @@ const EditProfileScreen = () => {
               )
             }
           />
-          {formData.contact_no?.length !== 10 && formData.contact_no !== '' && (
+          {!formData.contact_no.startsWith('+91 ') && (formData.contact_no?.length !== 10 && formData.contact_no !== '') && (
             <Text style={styles.errText}>
               Length of Phone number should be 10.
             </Text>

@@ -50,7 +50,8 @@ const EditProfileVerification = () => {
                   ...prevUserData,
                   ...userPayload,
                 }));
-                navigate('EditProfileScreen', { fromVerification: true });
+                // navigate('EditProfileScreen', { fromVerification: true });
+                navigate('ProfileScreen')
               }
             },
             messages.profileSubmitted,
