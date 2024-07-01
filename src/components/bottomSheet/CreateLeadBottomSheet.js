@@ -41,7 +41,7 @@ import { Shadow, ToastAlert } from '../../components';
 import { isValidEmail } from '../../utils/globalFunctions';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => {} }) => {
+const CreateLeadBottomSheet = ({ isOpen = false, onClose = () => { } }) => {
   const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const bottomSheetRef = useRef(null);
