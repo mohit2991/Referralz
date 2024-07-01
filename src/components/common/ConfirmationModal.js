@@ -8,6 +8,7 @@ import { colors, fontSize, fonts, hp, wp } from '../../utils';
 
 const ConfirmationModal = ({
   title,
+  loading,
   isVisible,
   toggleModal,
   description,
@@ -31,6 +32,7 @@ const ConfirmationModal = ({
         <Text style={styles.titleText}>{title}</Text>
         <Text style={styles.descriptionText}>{description}</Text>
         <Button
+          loading={loading}
           title={primaryBtnText}
           onPress={primaryBtnPress}
           customTitleStyle={primaryTextStyle}

@@ -137,6 +137,31 @@ const EditProfileScreen = () => {
     setHasChanges(true);
   };
 
+  const handlePhoneNumberChange = (text) => {
+    if (text === "+91 " || text === "+91") {
+      text = "";
+    } else if (!text.startsWith("+91 ") && text.length > 0) {
+      text = "+91 " + text.replace("+91 ", "");
+    }
+    handleChange("contact_no", text);
+  };
+
+
+  const isReadyToEdit = () => {
+    if (
+      formData.first_name !== '' &&
+      formData.last_name !== '' &&
+      formData.email_id !== '' &&
+      formData.contact_no !== '' &&
+      formData.birth_date !== '' &&
+      formData.contact_no?.length === 14
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const updateProfile = async () => {
     setLoading(true);
 
@@ -144,7 +169,7 @@ const EditProfileScreen = () => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       email_id: formData.email_id,
-      contact_no: formData.contact_no,
+      contact_no: formData.contact_no.replace("+91 ", ""),
       birth_date: formData.birth_date
         ? moment(formData.birth_date, 'YYYY/MM/DD').format('YYYY/MM/DD')
         : null,
@@ -161,6 +186,7 @@ const EditProfileScreen = () => {
           ? false
           : true;
 
+    console.log({ bbbb: userPayload })
     if (!shouldVerifyContact) {
       // Update User Deatils API Call
       await handleApiCall(
@@ -249,10 +275,11 @@ const EditProfileScreen = () => {
             }}
           />
           <TextInputComp
-            value={formData.contact_no}
-            maxLength={10}
+            value={formData.contact_no.startsWith('+91 ') ? formData.contact_no : `+91 ${formData.contact_no}`}
+            maxLength={14}
+            keyboardType={'number-pad'}
             labelText={'Phone number'}
-            onChangeText={(text) => handleChange('contact_no', text)}
+            onChangeText={handlePhoneNumberChange}
             rightIcon={
               !userData?.contact_verification_status && (
                 <Image
@@ -261,8 +288,12 @@ const EditProfileScreen = () => {
                 />
               )
             }
-            onRightPress={() => { }}
           />
+          {!formData.contact_no.startsWith('+91 ') && (formData.contact_no?.length !== 10 && formData.contact_no !== '') && (
+            <Text style={styles.errText}>
+              Length of Phone number should be 10.
+            </Text>
+          )}
           <TextInputComp
             value={
               formData.birth_date
@@ -282,6 +313,7 @@ const EditProfileScreen = () => {
             value={formData.company_unique_code}
             maxLength={6}
             labelText={'Company code'}
+            keyboardType={'number-pad'}
             onChangeText={(text) => handleChange('company_unique_code', text)}
           />
           <TextInputComp
@@ -295,7 +327,7 @@ const EditProfileScreen = () => {
       </View>
       <BottomButton
         title={'Update'}
-        disabled={loading || !hasChanges}
+        disabled={loading || !hasChanges || isReadyToEdit()}
         onPress={updateProfile}
       />
       <View
@@ -353,6 +385,8 @@ const styles = StyleSheet.create({
     width: wp(80),
     height: wp(80),
     borderRadius: wp(80),
+    borderWidth: wp(1),
+    borderColor: colors.xLiteGrey,
   },
   uploadImgBtn: {
     marginTop: hp(8),
@@ -363,5 +397,12 @@ const styles = StyleSheet.create({
   },
   safeAreaViewStyle: {
     backgroundColor: colors.white,
+  },
+  errText: {
+    marginTop: hp(4),
+    lineHeight: hp(16),
+    color: colors.darkRed,
+    fontSize: fontSize(12),
+    fontFamily: fonts.regular,
   },
 });

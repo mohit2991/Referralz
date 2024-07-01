@@ -19,7 +19,6 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const Dashboard = () => {
   const { handleApiCall } = useApiHandler();
-
   const [filterOptions, setFilterOptions] = useState(
     dashboardFilterOptionsList,
   );
@@ -68,7 +67,7 @@ const Dashboard = () => {
     setLoading(true);
     getUserData();
     getDasboardData();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (userData !== null && dashboardData !== null) {
@@ -125,15 +124,15 @@ const Dashboard = () => {
     return <LeadsItemCard item={item} />;
   };
 
-  return loading ? (
-    <LoadingSpinner visible={loading} />
-  ) : (
+  return (
     <View style={commonStyles.flex}>
       <Header
         isAvatar
         profileImage={userData?.download_profile_img_url}
         title={`Welcome, ${userData?.first_name || ''} ${userData?.last_name || ''}`}
       />
+      <LoadingSpinner visible={loading} />
+      <LoadingSpinner visible={loading} />
       {dashboardData?.lead_details?.length ? (
         <View style={styles.container}>
           <View style={styles.filterContainer}>
@@ -306,15 +305,17 @@ const Dashboard = () => {
         </View>
       ) : (
         <View style={{ paddingHorizontal: wp(16), flex: 1 }}>
-          <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
-            <Image
-              source={icons.chartEmpty}
-              style={{ width: '100%', height: hp(193) }}
-            />
-            <Text style={styles.emptyText}>
-              {'No data for leads in last 24 hours'}
-            </Text>
-          </ItemCard>
+          {!loading && (
+            <ItemCard cardContainerStyle={{ marginTop: hp(16) }}>
+              <Image
+                source={icons.chartEmpty}
+                style={{ width: '100%', height: hp(193) }}
+              />
+              <Text style={styles.emptyText}>
+                {'No data for leads in last 24 hours'}
+              </Text>
+            </ItemCard>
+          )}
         </View>
       )}
     </View>

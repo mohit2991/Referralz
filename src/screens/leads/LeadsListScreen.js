@@ -24,6 +24,8 @@ import {
 import useApiHandler from '../../hooks/useApiHandler';
 import { getLead } from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { isEmpty } from 'lodash';
 
 const debounce = (func, delay) => {
   let timer;
@@ -34,11 +36,11 @@ const debounce = (func, delay) => {
 };
 
 const LeadsListScreen = ({ route }) => {
+  const insets = useSafeAreaInsets();
   const { handleApiCall } = useApiHandler();
   const { navigate } = useNavigation();
   const searchInputRef = useRef(null);
-  const { userData } = useUser();
-  const [leadData, setLeadData] = useState(null);
+  const { userData, leadData, setLeadData } = useUser();
   const [searchLeadData, setSearchLeadData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -50,11 +52,12 @@ const LeadsListScreen = ({ route }) => {
   const initialParams = route.params || {};
 
   const getLeadData = async (userPayload = {}, filterStatus) => {
-    console.log({ userPayload, isFilterList, searchText, aaaaaaa: "okkkkk" })
+    setLoading(true);
     await handleApiCall(
       () => getLead(userPayload),
       async (response) => {
         if (response) {
+          setLoading(false);
           if (filterStatus) {
             setSearchLeadData(response?.data);
             setisFiltered(true);
@@ -66,9 +69,8 @@ const LeadsListScreen = ({ route }) => {
       },
       null,
     );
+    setLoading(false);
   };
-
-  console.log({ aaa: initialParams?.renderComponent })
 
   useEffect(() => {
     if (initialParams?.renderComponent) {
@@ -77,7 +79,7 @@ const LeadsListScreen = ({ route }) => {
       };
       getLeadData(payload);
     }
-  }, [initialParams?.renderComponent])
+  }, [initialParams?.renderComponent]);
 
   useEffect(() => {
     if (leadData !== null || searchLeadData !== null) {
@@ -129,14 +131,14 @@ const LeadsListScreen = ({ route }) => {
       startDate: selectedPeriod === 'custom' ? formatDate(fromDate) : null,
       endDate: selectedPeriod === 'custom' ? formatDate(toDate) : null,
       statuses: selectedLeadStatus,
-      searchText: searchText ?? "",
+      searchText: searchText ?? '',
       isPaginationRequired: false,
     };
     if (periodMapping[selectedPeriod] !== 'ALL_TIME') {
       payload.filter_by_date = periodMapping[selectedPeriod];
     }
     return payload;
-  }
+  };
 
   const handleBlurTextInput = () => {
     if (searchInputRef.current) {
@@ -172,35 +174,51 @@ const LeadsListScreen = ({ route }) => {
   const handleSearchClose = (text) => {
     setSearchText('');
     if (Object.keys(isFilterList).length > 0) {
-      payload = filterMapping({ ...isFilterList, searchText: "" });
+      payload = filterMapping({ ...isFilterList, searchText: '' });
       getLeadData(payload, true);
     } else {
-      setSearchLeadData([])
+      setSearchLeadData([]);
       setisFiltered(false);
     }
   };
 
   const applyFilters = (selectedFilters) => {
-    setIsFilterList(selectedFilters)
-    const payload = filterMapping({ ...selectedFilters, searchText: searchText });
+    setIsFilterList(selectedFilters);
+    const payload = filterMapping({
+      ...selectedFilters,
+      searchText: searchText,
+    });
     getLeadData(payload, true);
     setIsFilterOpen(false);
   };
 
   const resetFiltersHandle = () => {
-    setIsFilterList({})
+    setIsFilterList({});
     setisFiltered(false);
-    if (searchText !== "") {
+    setIsFilterOpen(false);
+    if (searchText !== '') {
       let payload = { searchText: searchText };
       getLeadData(payload, true);
     } else {
-      setSearchLeadData([])
+      setSearchLeadData([]);
     }
   };
 
-  return loading ? (
-    <LoadingSpinner visible={loading} />
-  ) : (
+  const isFilteredLeadsDataList = () => {
+    if (!isEmpty(isFilterList) && !isSearchFocused) {
+      const allLeadStatusFalse = Object.values(isFilterList?.leadStatus).every(
+        (value) => value === false,
+      );
+      if (isFilterList?.period?.allTime && allLeadStatusFalse) {
+        return false;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  return (
     <View style={commonStyles.flex}>
       {!isSearchFocused && (
         <Header
@@ -212,7 +230,8 @@ const LeadsListScreen = ({ route }) => {
       <SearchBar
         ref={searchInputRef}
         value={searchText}
-        isFiltered={false}
+        // isFiltered={false}
+        isFiltered={isFilteredLeadsDataList()}
         editable={leadData?.length > 0}
         isFocus={isSearchFocused}
         onCancelPress={() => {
@@ -228,6 +247,7 @@ const LeadsListScreen = ({ route }) => {
         placeholder={'Search Lead ID, Name'}
         onChangeText={handleSearchTextChange}
       />
+      <LoadingSpinner visible={loading} />
       {leadData?.length ? (
         <View style={styles.container}>
           {!isSearchFocused && searchText === '' && !isFiltered ? (
@@ -235,8 +255,13 @@ const LeadsListScreen = ({ route }) => {
               data={leadData}
               keyExtractor={(item) => item?.id?.toString()}
               renderItem={renderLeadsByReferrals}
-              style={styles.flatListStyle}
+              style={{
+                ...styles.flatListStyle,
+                marginBottom: hp(60) + insets.bottom,
+                paddingBottom: hp(16),
+              }}
               showsVerticalScrollIndicator={false}
+              ListFooterComponent={() => <View style={{ height: hp(16) }} />}
             />
           ) : !searchLeadData?.length && !isFiltered ? (
             <View style={styles.searchTipView}>
@@ -257,13 +282,20 @@ const LeadsListScreen = ({ route }) => {
             </View>
           ) : searchLeadData?.length ? (
             <View>
-              <Text style={styles.searchResultText}>{'Result'}</Text>
               <FlatList
+                ListHeaderComponent={() => (
+                  <Text style={styles.searchResultText}>{'Result'}</Text>
+                )}
                 data={searchLeadData}
                 keyExtractor={(item) => item?.id?.toString()}
                 renderItem={renderLeadsByReferrals}
-                style={styles.flatListStyle}
+                style={{
+                  ...styles.flatListStyle,
+                  marginBottom: hp(60) + insets.bottom,
+                  paddingBottom: hp(16),
+                }}
                 showsVerticalScrollIndicator={false}
+                ListFooterComponent={() => <View style={{ height: hp(66) }} />}
               />
             </View>
           ) : (
@@ -285,19 +317,21 @@ const LeadsListScreen = ({ route }) => {
         </View>
       ) : (
         <KeyboardAvoidingView style={styles.emptyContainer}>
-          <InfoComponent
-            icon={icons.leadsEmpty}
-            title={'No leads yet'}
-            description={
-              'Start creating leads to begin earning. Your first opportunity is just a few clicks away!'
-            }
-            btnText={'Create lead'}
-            btnStyle={{ borderColor: colors.darkBlack }}
-            btnTextStyle={{ color: colors.xDarkGrey }}
-            onPress={() => {
-              setIsCreateLeadVisible(true);
-            }}
-          />
+          {!loading && (
+            <InfoComponent
+              icon={icons.leadsEmpty}
+              title={'No leads yet'}
+              description={
+                'Start creating leads to begin earning. Your first opportunity is just a few clicks away!'
+              }
+              btnText={'Create lead'}
+              btnStyle={{ borderColor: colors.darkBlack }}
+              btnTextStyle={{ color: colors.xDarkGrey }}
+              onPress={() => {
+                setIsCreateLeadVisible(true);
+              }}
+            />
+          )}
         </KeyboardAvoidingView>
       )}
       {isFilterOpen && (
@@ -305,6 +339,7 @@ const LeadsListScreen = ({ route }) => {
           isLeadsFilter
           isOpen={isFilterOpen}
           applyFilters={applyFilters}
+          selectedFilterFields={isFilterList}
           resetFiltersHandle={resetFiltersHandle}
           onClose={() => setIsFilterOpen(false)}
         />
@@ -361,6 +396,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(18),
     lineHeight: hp(28),
     fontFamily: fonts.semiBold,
-    marginTop: hp(22),
+    marginBottom: hp(5),
+    color: colors.xDarkGrey,
   },
 });

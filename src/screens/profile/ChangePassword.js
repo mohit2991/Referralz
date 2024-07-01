@@ -11,26 +11,16 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 import { commonStyles } from '../../styles/styles';
-import { BottomButton, Header, TextInputComp } from '../../components';
+import {
+  BottomButton,
+  CheckItem,
+  Header,
+  TextInputComp,
+} from '../../components';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { changePassword } from '../../services/apiService';
 import useApiHandler from '../../hooks/useApiHandler';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-
-export const CheckItem = ({ condition, value }) => {
-  return (
-    <View style={styles.itemContainer}>
-      <Image
-        source={icons.checkRing}
-        style={[
-          commonStyles.icon16,
-          { tintColor: value ? colors.green : colors.grey300 },
-        ]}
-      />
-      <Text style={styles.conditionText}>{condition}</Text>
-    </View>
-  );
-};
 
 const ChangePassword = () => {
   const { navigate } = useNavigation();
@@ -202,18 +192,6 @@ const styles = StyleSheet.create({
     marginVertical: hp(6),
     backgroundColor: colors.xLiteGrey,
   },
-  conditionText: {
-    fontSize: fontSize(12),
-    lineHeight: hp(16),
-    fontFamily: fonts.regular,
-    color: colors.black,
-    marginLeft: wp(8),
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: hp(4),
-  },
   pwdConditionHeader: {
     marginLeft: 0,
     marginVertical: hp(4),
@@ -223,6 +201,13 @@ const styles = StyleSheet.create({
     fontSize: fontSize(12),
     fontFamily: fonts.regular,
     marginTop: hp(2),
+    marginLeft: wp(8),
+  },
+  conditionText: {
+    fontSize: fontSize(12),
+    lineHeight: hp(16),
+    fontFamily: fonts.regular,
+    color: colors.black,
     marginLeft: wp(8),
   },
 });

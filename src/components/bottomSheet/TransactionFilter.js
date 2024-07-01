@@ -15,17 +15,21 @@ import RadioSelector from '../common/RadioSelector';
 import DatePicker from 'react-native-date-picker';
 import TextInputComp from '../common/TextInputComp';
 import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 const TransactionFilter = ({
   isOpen = false,
   applyFilters,
   resetFiltersHandle,
-  onClose = () => { },
+  onClose = () => {},
   isLeadsFilter,
+  selectedFilterFields,
 }) => {
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef(null);
   const scrollViewRef = useRef(null);
+
+  console.log('selectedFilterFields========', selectedFilterFields);
 
   const [isLoading, setIsLoading] = useState(false);
   const [fromDate, setFromDate] = useState(new Date());
@@ -71,7 +75,7 @@ const TransactionFilter = ({
     jobClosed,
     jobClosedNoOpportunity,
     jobClosedNoInsuranceNoMoney,
-    jobClosedHomeownerDeclined
+    jobClosedHomeownerDeclined,
   } = leadStatusFilter;
 
   const snapPoints = useMemo(() => ['85%'], []);
@@ -103,6 +107,42 @@ const TransactionFilter = ({
       scrollViewRef.current?.scrollToPosition(0, 0);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isEmpty(selectedFilterFields)) {
+      setPeriodFilterList({
+        allTime: selectedFilterFields?.period?.allTime,
+        last7days: selectedFilterFields?.period?.last7days,
+        last30days: selectedFilterFields?.period?.last30days,
+        last90days: selectedFilterFields?.period?.last90days,
+        custom: selectedFilterFields?.period?.custom,
+      });
+      setTransactionTypeFilterList({
+        check: selectedFilterFields?.transactionType?.check,
+        virtualCard: selectedFilterFields?.transactionType?.virtualCard,
+        ach: selectedFilterFields?.transactionType?.ach,
+        venmo: selectedFilterFields?.transactionType?.venmo,
+      });
+      setLeadStatusFilter({
+        referralReceived: selectedFilterFields?.leadStatus?.referralReceived,
+        inspectionScheduled:
+          selectedFilterFields?.leadStatus?.inspectionScheduled,
+        inspectionCompleted:
+          selectedFilterFields?.leadStatus?.inspectionCompleted,
+        referralPaid: selectedFilterFields?.leadStatus?.referralPaid,
+        jobWon: selectedFilterFields?.leadStatus?.jobWon,
+        jobClosed: selectedFilterFields?.leadStatus?.jobClosed,
+        jobClosedNoOpportunity:
+          selectedFilterFields?.leadStatus?.jobClosedNoOpportunity,
+        jobClosedNoInsuranceNoMoney:
+          selectedFilterFields?.leadStatus?.jobClosedNoInsuranceNoMoney,
+        jobClosedHomeownerDeclined:
+          selectedFilterFields?.leadStatus?.jobClosedHomeownerDeclined,
+      });
+      setFromDate(new Date(selectedFilterFields?.fromDate));
+      setToDate(new Date(selectedFilterFields?.toDate));
+    }
+  }, []);
 
   const handleDateChange = (date) => {
     if (currentPicker === 'fromDate') {
@@ -151,7 +191,7 @@ const TransactionFilter = ({
     });
     setFromDate(new Date());
     setToDate(new Date());
-    resetFiltersHandle()
+    resetFiltersHandle();
   };
 
   const getSelectedFilters = () => {
@@ -162,9 +202,9 @@ const TransactionFilter = ({
       transactionType: transactionTypeFilterList,
       leadStatus: leadStatusFilter,
     };
+
     applyFilters(selectedFilters);
   };
-
 
   return (
     <Portal>
@@ -361,7 +401,8 @@ const TransactionFilter = ({
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            jobClosedNoInsuranceNoMoney: !jobClosedNoInsuranceNoMoney,
+                            jobClosedNoInsuranceNoMoney:
+                              !jobClosedNoInsuranceNoMoney,
                           })
                         }
                         containerStyle={styles.radioContainer}
@@ -373,7 +414,8 @@ const TransactionFilter = ({
                         onPress={() =>
                           setLeadStatusFilter({
                             ...leadStatusFilter,
-                            jobClosedHomeownerDeclined: !jobClosedHomeownerDeclined,
+                            jobClosedHomeownerDeclined:
+                              !jobClosedHomeownerDeclined,
                           })
                         }
                         containerStyle={styles.radioContainer}
@@ -415,7 +457,10 @@ const TransactionFilter = ({
                 <Text style={styles.btnText}>{'Reset'}</Text>
               </TouchableOpacity>
               <View style={{ width: wp(8) }} />
-              <TouchableOpacity style={styles.resultBtn} onPress={getSelectedFilters}>
+              <TouchableOpacity
+                style={styles.resultBtn}
+                onPress={getSelectedFilters}
+              >
                 <Text style={{ ...styles.btnText, color: colors.white }}>
                   {'See result'}
                 </Text>

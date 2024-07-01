@@ -55,11 +55,11 @@ const LeadDetails = () => {
     getLeadActivityData();
   }, [item]);
 
-  const DetailItemView = ({ title, detail }) => {
+  const DetailItemView = ({ title, detail, detailStyle }) => {
     return (
       <View>
         {title && <Text style={styles.itemTitleText}>{title}</Text>}
-        <Text style={styles.itemDetailText}>{detail}</Text>
+        <Text style={[styles.itemDetailText, detailStyle]}>{detail}</Text>
       </View>
     );
   };
@@ -86,6 +86,15 @@ const LeadDetails = () => {
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const getFormattedStatus = (status) => {
+    return status
+      ?.toLowerCase()
+      .replace('_', ' ')
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   return (
@@ -228,6 +237,22 @@ const LeadDetails = () => {
               />
               <Text style={styles.referalCardInt}>{item?.priority?.name}</Text>
             </View>
+            <View style={commonStyles.flexRowCenter}>
+              <View style={[
+                styles.tagView,
+                {
+                  backgroundColor: getTagColor(item?.internal_status)?.light,
+                },
+              ]}>
+                <Text style={[
+                  styles.tagText,
+                  {
+                    color: getTagColor(item?.internal_status)?.dark,
+                  },
+                ]}>{getFormattedStatus(item?.status)}</Text>
+              </View>
+            </View>
+
           </ItemCard>
 
           <ItemCard
@@ -241,11 +266,12 @@ const LeadDetails = () => {
             <DetailItemView
               title={'Full name'}
               detail={`${item?.customer?.first_name} ${item?.customer?.last_name}`}
+              detailStyle={styles.textCapitalize}
             />
             <View style={styles.height16} />
             <DetailItemView
               title={'Phone number'}
-              detail={item?.customer?.phone_number}
+              detail={`+91 ${item?.customer?.phone_number}`}
             />
             <View style={styles.height16} />
             <DetailItemView
@@ -433,6 +459,9 @@ const styles = StyleSheet.create({
     lineHeight: hp(24),
     fontFamily: fonts.regular,
     color: colors.xDarkGrey,
+  },
+  textCapitalize: {
+    textTransform: 'capitalize',
   },
   height16: {
     height: hp(16),

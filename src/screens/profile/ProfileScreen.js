@@ -105,7 +105,6 @@ const ProfileScreen = () => {
 
   return (
     <View style={commonStyles.flex}>
-      <LoadingSpinner visible={loading} />
       <Header isBackButton title={'Profile'} />
       <View style={styles.container}>
         <ScrollView bounces={false} style={styles.scrollViewStyle}>
@@ -146,25 +145,27 @@ const ProfileScreen = () => {
         </ScrollView>
       </View>
       <ConfirmationModal
+        loading={loading}
         isVisible={isDeleteModal}
         title={messages.deleteConfirmation}
         description={messages.deleteConfirmation}
         primaryBtnText={'Yes, Delete'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleDeleteAccount}
-        secondaryBtnPress={() => { }}
+        secondaryBtnPress={() => {}}
         toggleModal={() => setIsDeleteModal(!isDeleteModal)}
         primaryBtnStyle={{ backgroundColor: colors.darkRed }}
         secondaryTextStyle={{ color: colors.darkGrey }}
       />
       <ConfirmationModal
+        loading={loading}
         isVisible={isLogoutModal}
         title={'Log out'}
         description={messages.logoutConfirmation}
         primaryBtnText={'Log out'}
         secondaryBtnText={'Cancel'}
         primaryBtnPress={handleLogout}
-        secondaryBtnPress={() => { }}
+        secondaryBtnPress={() => {}}
         primaryBtnStyle={{ marginTop: hp(48) }}
         toggleModal={() => setIsLogoutModal(!isLogoutModal)}
       />

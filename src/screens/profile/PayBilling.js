@@ -84,6 +84,23 @@ const PayBilling = () => {
     setHasChanges(true);
   };
 
+  const isReadyToEdit = () => {
+    if (
+      formData?.address?.address !== '' &&
+      formData?.address?.name !== '' &&
+      formData?.address?.city !== '' &&
+      formData?.address?.postal_code !== '' &&
+      formData?.address?.state !== '' &&
+      formData?.address?.country !== ''
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  console.log(isReadyToEdit(), formData?.address)
+
   const payBilling = async () => {
     setLoading(true);
 
@@ -177,6 +194,7 @@ const PayBilling = () => {
           <TextInputComp
             value={formData?.address?.postal_code.toString()}
             maxLength={8}
+            keyboardType={'number-pad'}
             labelText={'Postal code'}
             onChangeText={(text) => handleChange('postal_code', text)}
           />
@@ -217,7 +235,7 @@ const PayBilling = () => {
       </View>
       <BottomButton
         title={'Update'}
-        disabled={loading || !hasChanges}
+        disabled={loading || !hasChanges || isReadyToEdit()}
         onPress={payBilling}
       />
       <SafeAreaView style={styles.safeAreaViewStyle} />

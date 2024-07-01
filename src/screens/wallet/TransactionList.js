@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { FlatList, StyleSheet, View, Image, Text } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { isEmpty } from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, fontSize, fonts, hp, icons, wp } from '../../utils';
 import { commonStyles } from '../../styles/styles';
@@ -13,6 +14,7 @@ import {
 } from '../../components';
 import useApiHandler from '../../hooks/useApiHandler';
 import { getWallet } from '../../services/apiService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const debounce = (func, delay) => {
   let timer;
@@ -33,23 +35,27 @@ const TransactionList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFiltered, setisFiltered] = useState(false);
   const [isFilterList, setIsFilterList] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const getWalletData = async (userPayload = {}, filterStatus) => {
+    setIsLoading(true);
     await handleApiCall(
       () => getWallet(userPayload),
       async (response) => {
         if (response) {
+          setIsLoading(false);
           if (filterStatus) {
             setSearchWalletData(response?.data);
-            setisFiltered(true)
+            setisFiltered(true);
           } else {
             setWalletData(response?.data);
-            setisFiltered(false)
+            setisFiltered(false);
           }
         }
       },
       null,
     );
+    setIsLoading(false);
   };
 
   useFocusEffect(
@@ -66,7 +72,8 @@ const TransactionList = () => {
   };
 
   const filterMapping = (filterDataList) => {
-    const { fromDate, toDate, transactionType, period, searchText } = filterDataList;
+    const { fromDate, toDate, transactionType, period, searchText } =
+      filterDataList;
 
     const periodMapping = {
       allTime: 'ALL_TIME',
@@ -77,10 +84,10 @@ const TransactionList = () => {
     };
 
     const transactionTypeMapping = {
-      ach: "ACH",
-      check: "CHECK",
-      venmo: "VENMO",
-      virtualCard: "VIRTUAL_CARD",
+      ach: 'ACH',
+      check: 'CHECK',
+      venmo: 'VENMO',
+      virtualCard: 'VIRTUAL_CARD',
     };
 
     const selectedPeriod = Object.keys(period).find((key) => period[key]);
@@ -95,14 +102,14 @@ const TransactionList = () => {
       startDate: selectedPeriod === 'custom' ? formatDate(fromDate) : null,
       endDate: selectedPeriod === 'custom' ? formatDate(toDate) : null,
       payment_method: selectedTransactionTypes,
-      searchText: searchText ?? "",
+      searchText: searchText ?? '',
       isPaginationRequired: false,
     };
     if (periodMapping[selectedPeriod] !== 'ALL_TIME') {
       payload.filter_by_date = periodMapping[selectedPeriod];
     }
     return payload;
-  }
+  };
 
   const handleBlurTextInput = () => {
     if (searchInputRef.current) {
@@ -138,44 +145,58 @@ const TransactionList = () => {
   const handleSearchClose = (text) => {
     setSearchText('');
     if (Object.keys(isFilterList).length > 0) {
-      payload = filterMapping({ ...isFilterList, searchText: "" });
+      payload = filterMapping({ ...isFilterList, searchText: '' });
       getWalletData(payload, true);
     } else {
-      setSearchWalletData([])
+      setSearchWalletData([]);
       setisFiltered(false);
     }
   };
 
   const applyFilters = (selectedFilters) => {
-    setIsFilterList(selectedFilters)
-    const payload = filterMapping({ ...selectedFilters, searchText: searchText });
+    setIsFilterList(selectedFilters);
+    const payload = filterMapping({
+      ...selectedFilters,
+      searchText: searchText,
+    });
     getWalletData(payload, true);
     setIsFilterOpen(false);
   };
 
   const resetFiltersHandle = () => {
-    setIsFilterList({})
+    setIsFilterList({});
     setisFiltered(false);
-    if (searchText !== "") {
+    setIsFilterOpen(false);
+    if (searchText !== '') {
       let payload = { searchText: searchText };
       getWalletData(payload, true);
     } else {
-      setSearchWalletData([])
+      setSearchWalletData([]);
+    }
+  };
+
+  const isFilteredWalletDataList = () => {
+    if (!isEmpty(isFilterList) && !isSearchFocused) {
+      if (
+        isFilterList?.period?.allTime &&
+        isFilterList?.transactionType?.check
+      ) {
+        return true;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
     }
   };
 
   return (
     <View style={commonStyles.flex}>
-      {!isSearchFocused && (
-        <Header
-          isBackButton
-          title={'Transactions'}
-        />
-      )}
+      {!isSearchFocused && <Header isBackButton title={'Transactions'} />}
       <SearchBar
         ref={searchInputRef}
         value={searchText}
-        isFiltered={false}
+        isFiltered={isFilteredWalletDataList()}
         editable={walletData?.transactions?.length > 0}
         isFocus={isSearchFocused}
         onCancelPress={() => {
@@ -191,6 +212,7 @@ const TransactionList = () => {
         placeholder={'Search Transaction ID'}
         onChangeText={handleSearchTextChange}
       />
+      <LoadingSpinner visible={isLoading} />
       <View style={styles.container}>
         {!isSearchFocused && searchText === '' && !isFiltered ? (
           <FlatList
@@ -219,8 +241,10 @@ const TransactionList = () => {
           </View>
         ) : searchWalletData?.transactions?.length ? (
           <View>
-            <Text style={styles.searchResultText}>{'Result'}</Text>
             <FlatList
+              ListHeaderComponent={() => (
+                <Text style={styles.searchResultText}>{'Result'}</Text>
+              )}
               data={searchWalletData?.transactions}
               showsVerticalScrollIndicator={false}
               renderItem={renderTransactionList}
@@ -241,9 +265,7 @@ const TransactionList = () => {
                 />
               </View>
             </Shadow>
-            <Text style={styles.searchTipText}>
-              {'No Record Found'}
-            </Text>
+            <Text style={styles.searchTipText}>{'No Record Found'}</Text>
           </View>
         )}
       </View>
@@ -251,6 +273,7 @@ const TransactionList = () => {
         <TransactionFilter
           isOpen={isFilterOpen}
           applyFilters={applyFilters}
+          selectedFilterFields={isFilterList}
           resetFiltersHandle={resetFiltersHandle}
           onClose={() => setIsFilterOpen(false)}
         />

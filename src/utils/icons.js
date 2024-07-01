@@ -46,3 +46,7 @@ export const icons = {
   dollarSquare: require('../../assets/icons/dollarSquare.png'),
   transactionEmpty: require('../../assets/icons/transactionEmpty.png'),
 };
+
+export const lotties = {
+  loader: require('../../assets/lotties/loader.json'),
+};

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
-import { Button, Header, ToastAlert } from '../../components';
+import { Button, Header } from '../../components';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {
   updateUserDetails,
@@ -12,6 +12,7 @@ import {
 } from '../../services/apiService';
 import { useUser } from '../../contexts/userContext';
 import useApiHandler from '../../hooks/useApiHandler';
+import messages from '../../constants/messages';
 
 const EditProfileVerification = () => {
   const { navigate } = useNavigation();
@@ -49,7 +50,8 @@ const EditProfileVerification = () => {
                   ...prevUserData,
                   ...userPayload,
                 }));
-                navigate('EditProfileScreen', { fromVerification: true });
+                // navigate('EditProfileScreen', { fromVerification: true });
+                navigate('ProfileScreen')
               }
             },
             messages.profileSubmitted,
@@ -64,7 +66,9 @@ const EditProfileVerification = () => {
 
   useEffect(() => {
     if (otpInputRef.current) {
-      otpInputRef.current.focusField(0);
+      setTimeout(() => {
+        otpInputRef.current.focusField(0);
+      }, 500);
     }
   }, []);
 
@@ -74,7 +78,7 @@ const EditProfileVerification = () => {
       <View style={styles.container}>
         <Text style={styles.titleText}>{'Enter code'}</Text>
         <Text style={styles.descText}>
-          {`We sent a verification code to your phone number ${userPayload?.contact_no}`}
+          {`We sent a verification code to your phone number +91 ${userPayload?.contact_no}`}
         </Text>
         <View style={styles.otpInputView}>
           <OTPInputView
@@ -85,11 +89,11 @@ const EditProfileVerification = () => {
             autoFocusOnLoad={false}
             onCodeChanged={handleOtpChange}
             codeInputFieldStyle={styles.underlineStyleBase}
-            codeInputHighlightStyle={styles.underlineStyleHighLighted}
             onCodeFilled={handleOtpComplete}
             keyboardType="number-pad"
             placeholderCharacter="—"
             placeholderTextColor={colors.grey}
+            selectionColor={colors.transparent}
           />
         </View>
         <Button
@@ -142,11 +146,7 @@ const styles = StyleSheet.create({
     height: hp(56),
     borderColor: colors.transparent,
     fontSize: fontSize(16),
-    lineHeight: hp(24),
     color: colors.darkBlack,
     fontFamily: fonts.regular,
-  },
-  underlineStyleHighLighted: {
-    // borderColor: '#03DAC6',
   },
 });

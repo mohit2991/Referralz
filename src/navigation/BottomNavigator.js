@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   labelText: {
     lineHeight: hp(16),
     marginBottom: hp(5),
-    fontSize: fontSize(12),
+    fontSize: fontSize(11),
     fontFamily: fonts.regular,
   },
 });

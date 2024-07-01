@@ -7,6 +7,7 @@ import { forgotPassword } from '../../services/apiService';
 import useApiHandler from '../../hooks/useApiHandler';
 import { Button, Header, TextInputComp } from '../../components';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { isValidEmail } from '../../utils/globalFunctions';
 
 const ForgotPassword = () => {
   const { navigate } = useNavigation();
@@ -17,7 +18,7 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (email !== '') {
+    if (isValidEmail(email)) {
       setIsButtonDisabled(false);
     } else {
       setIsButtonDisabled(true);

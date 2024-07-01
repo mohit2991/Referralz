@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Switch } from 'react-native-paper';
-import { Header, ToastAlert } from '../../components';
+import { Header } from '../../components';
 import { commonStyles } from '../../styles/styles';
 import { colors, fontSize, fonts, hp, wp } from '../../utils';
 import { updateUserDetails } from '../../services/apiService';

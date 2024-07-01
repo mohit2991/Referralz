@@ -18,14 +18,22 @@ const BarGraph = ({ graphData }) => {
       .join(' ');
   });
 
+  const maxValue = Math.max(...data?.map((item) => item?.value));
+  const noOfSections = 6;
+  const stepValue = Math.ceil(maxValue / noOfSections);
+  const yAxisLabelTexts = Array.from(
+    { length: noOfSections + 1 },
+    (_, i) => i * stepValue,
+  );
+
   return (
     <View>
       <BarChart
         data={data}
         width={wp(280)}
-        barWidth={wp(42)}
+        barWidth={wp(40)}
         initialSpacing={15}
-        spacing={wp(36)}
+        spacing={wp(30)}
         barBorderRadius={4}
         showGradient
         frontColor={'#248DDE'}
@@ -33,13 +41,13 @@ const BarGraph = ({ graphData }) => {
         yAxisThickness={0}
         xAxisType={'solid'}
         xAxisColor={colors.mediumGrey}
-        stepValue={1}
+        stepValue={stepValue}
         yAxisLabelPrefix={'$'}
-        maxValue={Math.max(...data?.map((item) => item?.value)) + 2}
-        noOfSections={6}
+        maxValue={stepValue * noOfSections}
+        noOfSections={noOfSections}
         xAxisLabelTexts={xAxisLabelTexts}
         xAxisTextNumberOfLines={2}
-        yAxisLabelTexts={['0', '1', '2', '3', '4', '5']}
+        yAxisLabelTexts={yAxisLabelTexts}
         yAxisExtraHeight={16}
         labelWidth={42}
         xAxisLabelTextStyle={styles.labelText}
@@ -63,7 +71,7 @@ export default BarGraph;
 const styles = StyleSheet.create({
   labelText: {
     lineHeight: hp(16),
-    fontSize: fontSize(12),
+    fontSize: fontSize(11),
     color: colors.xDarkGrey,
     fontFamily: fonts.regular,
   },
